@@ -1,0 +1,2808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceFlow - Smart Money Management</title>
+    <link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap)" rel="stylesheet">
+    <link rel="stylesheet" href="[cdnjs.cloudflare.com](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Landing Page Styles */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .landing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .landing-header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .landing-header p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .user-type-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+        }
+
+        .user-type-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 50px 40px;
+            width: 320px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-type-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .user-type-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .user-type-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-type-card .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2.5rem;
+            transition: all 0.4s ease;
+        }
+
+        .user-type-card.student .icon-wrapper {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .user-type-card.freelancer .icon-wrapper {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .user-type-card.custom .icon-wrapper {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .user-type-card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .user-type-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .user-type-card p {
+            color: var(--gray);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header .logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+        }
+
+        .nav-link i {
+            width: 22px;
+            font-size: 1.1rem;
+        }
+
+        .nav-section-title {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 30px 0 15px 18px;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--secondary), #059669);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .user-info h4 {
+            color: white;
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+        }
+
+        .user-info span {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 30px;
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .page-title p {
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--secondary), #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            opacity: 0.1;
+            transform: translate(30%, -30%);
+        }
+
+        .stat-card.balance::after { background: var(--primary); }
+        .stat-card.income::after { background: var(--secondary); }
+        .stat-card.expense::after { background: var(--danger); }
+        .stat-card.savings::after { background: var(--warning); }
+
+        .stat-card .card-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+        }
+
+        .stat-card.balance .card-icon {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+        }
+
+        .stat-card.income .card-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--secondary);
+        }
+
+        .stat-card.expense .card-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .stat-card.savings .card-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .stat-card h3 {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .stat-card .trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .stat-card .trend.up { color: var(--secondary); }
+        .stat-card .trend.down { color: var(--danger); }
+
+        /* Panel Cards */
+        .panel {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 25px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .panel-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-header h2 i {
+            color: var(--primary);
+        }
+
+        /* Money Jar */
+        .jar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .jar {
+            position: relative;
+            width: 180px;
+            height: 240px;
+            margin-bottom: 25px;
+        }
+
+        .jar-body {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+            border: 4px solid #cbd5e1;
+            border-radius: 0 0 40px 40px;
+            overflow: hidden;
+        }
+
+        .jar-lid {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 50px;
+            background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .jar-lid::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: -20px;
+            right: -20px;
+            height: 20px;
+            background: linear-gradient(180deg, #64748b 0%, #475569 100%);
+            border-radius: 5px;
+        }
+
+        .jar-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 0 0 36px 36px;
+        }
+
+        .jar-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+        }
+
+        .jar-coins {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            z-index: 10;
+        }
+
+        .jar-percentage {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .jar-label {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* Transaction Form */
+        .transaction-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        /* Transaction History */
+        .transaction-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+
+        .transaction-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 18px;
+        }
+
+        .transaction-item.income .transaction-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--secondary);
+        }
+
+        .transaction-item.expense .transaction-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-details h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .transaction-details span {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .transaction-item.income .transaction-amount {
+            color: var(--secondary);
+        }
+
+        .transaction-item.expense .transaction-amount {
+            color: var(--danger);
+        }
+
+        /* Bills Panel */
+        .bills-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .bill-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border-left: 4px solid transparent;
+        }
+
+        .bill-item.urgent {
+            background: rgba(239, 68, 68, 0.08);
+            border-left-color: var(--danger);
+        }
+
+        .bill-item.soon {
+            background: rgba(245, 158, 11, 0.08);
+            border-left-color: var(--warning);
+        }
+
+        .bill-item.normal {
+            border-left-color: var(--secondary);
+        }
+
+        .bill-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 18px;
+            background: white;
+        }
+
+        .bill-item.urgent .bill-icon { color: var(--danger); }
+        .bill-item.soon .bill-icon { color: var(--warning); }
+        .bill-item.normal .bill-icon { color: var(--secondary); }
+
+        .bill-details {
+            flex: 1;
+        }
+
+        .bill-details h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .bill-details .due-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .bill-amount {
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bill-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        .bill-item.urgent .bill-badge {
+            background: var(--danger);
+            color: white;
+        }
+
+        .bill-item.soon .bill-badge {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Calendar */
+        .calendar-container {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-name {
+            text-align: center;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.8rem;
+            padding: 10px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.has-bill::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--danger);
+        }
+
+        .calendar-day.other-month {
+            color: #cbd5e1;
+        }
+
+        /* What-If Panel */
+        .whatif-result {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .whatif-days {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Poppins', sans-serif;
+            line-height: 1;
+        }
+
+        .whatif-label {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        .whatif-warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--danger);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        /* Exam Schedule */
+        .exam-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .exam-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 18px;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+        }
+
+        .exam-details {
+            flex: 1;
+        }
+
+        .exam-details h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .exam-details span {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .exam-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .exam-status.upcoming {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+        }
+
+        .exam-status.active {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        /* Alerts */
+        .alerts-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .alert {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: slideIn 0.4s ease;
+            border-left: 4px solid;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.warning {
+            border-left-color: var(--warning);
+        }
+
+        .alert.danger {
+            border-left-color: var(--danger);
+        }
+
+        .alert.info {
+            border-left-color: var(--primary);
+        }
+
+        .alert.gentle {
+            border-left-color: var(--secondary);
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .alert-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .alert.warning .alert-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .alert.danger .alert-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .alert.info .alert-icon {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+        }
+
+        .alert.gentle .alert-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--secondary);
+        }
+
+        .alert-content h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .alert-content p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 5px;
+            margin-left: auto;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            padding: 35px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Question Modal */
+        .question-modal {
+            text-align: center;
+        }
+
+        .question-modal .question-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 25px;
+        }
+
+        .question-modal h2 {
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 15px;
+        }
+
+        .question-modal p {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .question-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .question-buttons .btn {
+            min-width: 140px;
+        }
+
+        /* Two Column Layout */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .landing-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .user-type-card {
+                width: 100%;
+                max-width: 320px;
+            }
+            
+            .transaction-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Page sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* Delete button for items */
+        .delete-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 56px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.4s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-header">
+            <h1>💰 FinanceFlow</h1>
+            <p>Smart money management tailored to your lifestyle. Take control of your finances today.</p>
+        </div>
+        
+        <div class="user-type-container">
+            <div class="user-type-card student" onclick="selectUserType('student')">
+                <div class="icon-wrapper">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2>Student</h2>
+                <p>Perfect for managing student life expenses, tracking bills, and staying on budget during exam season.</p>
+            </div>
+            
+            <div class="user-type-card freelancer" onclick="selectUserType('freelancer')">
+                <div class="icon-wrapper">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h2>Freelancer</h2>
+                <p>Track your irregular income, manage project payments, and keep your freelance finances organized.</p>
+            </div>
+            
+            <div class="user-type-card custom" onclick="selectUserType('custom')">
+                <div class="icon-wrapper">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h2>Customizable</h2>
+                <p>Build your own financial dashboard with the features that matter most to you.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h2>FinanceFlow</h2>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="overview">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="transactions">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Transactions</span>
+                    </a>
+                </li>
+                <li class="nav-item student-only">
+                    <a href="#" class="nav-link" data-page="bills">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Bills & Calendar</span>
+                    </a>
+                </li>
+                <li class="nav-item student-only">
+                    <a href="#" class="nav-link" data-page="whatif">
+                        <i class="fas fa-calculator"></i>
+                        <span>What-If Analysis</span>
+                    </a>
+                </li>
+                
+                <div class="nav-section-title student-only">Student Tools</div>
+                <li class="nav-item student-only">
+                    <a href="#" class="nav-link" data-page="exams">
+                        <i class="fas fa-book-open"></i>
+                        <span>Exam Schedule</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h4 id="userName">User</h4>
+                    <span id="userType">Student</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Welcome back! Here's your financial summary.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="showModal('settingsModal')">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                    <button class="btn btn-primary" onclick="showModal('addTransactionModal')">
+                        <i class="fas fa-plus"></i> Add Transaction
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Page -->
+            <div class="page-section active" id="overviewPage">
+                <!-- Stats Cards -->
+                <div class="cards-grid">
+                    <div class="stat-card balance">
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <h3>Total Balance</h3>
+                        <div class="amount" id="totalBalance">$0.00</div>
+                        <div class="trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Updated just now</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card income">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <h3>Total Income</h3>
+                        <div class="amount" id="totalIncome">$0.00</div>
+                        <div class="trend up">
+                            <i class="fas fa-plus"></i>
+                            <span>Money added</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card expense">
+                        <div class="card-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <h3>Total Spent</h3>
+                        <div class="amount" id="totalExpense">$0.00</div>
+                        <div class="trend down">
+                            <i class="fas fa-minus"></i>
+                            <span>Money spent</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card savings">
+                        <div class="card-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <h3>Savings Rate</h3>
+                        <div class="amount" id="savingsRate">0%</div>
+                        <div class="trend up">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Of income saved</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="two-columns">
+                    <!-- Money Jar -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-coins"></i> Money Jar</h2>
+                        </div>
+                        <div class="jar-container">
+                            <div class="jar">
+                                <div class="jar-lid"></div>
+                                <div class="jar-body">
+                                    <div class="jar-fill" id="jarFill" style="height: 0%"></div>
+                                    <div class="jar-coins">🪙</div>
+                                </div>
+                            </div>
+                            <div class="jar-percentage" id="jarPercentage">0%</div>
+                            <div class="jar-label">of your budget remaining</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-history"></i> Recent Transactions</h2>
+                            <a href="#" class="btn btn-secondary" onclick="navigateTo('transactions')">View All</a>
+                        </div>
+                        <div class="transaction-list" id="recentTransactions">
+                            <div class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <p>No transactions yet. Add your first transaction!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bills Overview (Student Only) -->
+                <div class="panel student-only" id="billsOverviewPanel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-exclamation-circle"></i> Upcoming Bills</h2>
+                        <a href="#" class="btn btn-secondary" onclick="navigateTo('bills')">Manage Bills</a>
+                    </div>
+                    <div class="bills-list" id="upcomingBills">
+                        <div class="empty-state">
+                            <i class="fas fa-file-invoice"></i>
+                            <p>No bills scheduled. Add bills to track due dates!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Page -->
+            <div class="page-section" id="transactionsPage">
+                <div class="two-columns">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-plus-circle"></i> Add Transaction</h2>
+                        </div>
+                        <form id="transactionForm" class="transaction-form">
+                            <div class="form-group">
+                                <label>Transaction Type</label>
+                                <select id="transactionType" required>
+                                    <option value="income">💰 Income (Add Money)</option>
+                                    <option value="expense">💸 Expense (Spend Money)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount ($)</label>
+                                <input type="number" id="transactionAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <input type="text" id="transactionDescription" placeholder="e.g., Salary, Groceries, Rent..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="transactionCategory">
+                                    <option value="general">General</option>
+                                    <option value="food">🍔 Food & Dining</option>
+                                    <option value="transport">🚗 Transportation</option>
+                                    <option value="shopping">🛒 Shopping</option>
+                                    <option value="entertainment">🎬 Entertainment</option>
+                                    <option value="bills">📄 Bills & Utilities</option>
+                                    <option value="education">📚 Education</option>
+                                    <option value="health">💊 Health</option>
+                                    <option value="salary">💼 Salary</option>
+                                    <option value="freelance">💻 Freelance</option>
+                                    <option value="other">📦 Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="transactionDate" required>
+                            </div>
+                            <div class="form-group full-width form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Transaction
+                                </button>
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-list"></i> Transaction History</h2>
+                        </div>
+                        <div class="transaction-list" id="allTransactions">
+                            <div class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <p>No transactions recorded yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bills Page (Student Only) -->
+            <div class="page-section" id="billsPage">
+                <div class="two-columns">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-plus-circle"></i> Add Bill</h2>
+                        </div>
+                        <form id="billForm">
+                            <div class="form-group">
+                                <label>Bill Name</label>
+                                <input type="text" id="billName" placeholder="e.g., Rent, Internet, Phone..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount ($)</label>
+                                <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="date" id="billDueDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="billCategory">
+                                    <option value="rent">🏠 Rent</option>
+                                    <option value="utilities">💡 Utilities</option>
+                                    <option value="internet">📶 Internet</option>
+                                    <option value="phone">📱 Phone</option>
+                                    <option value="insurance">🛡️ Insurance</option>
+                                    <option value="subscription">📺 Subscription</option>
+                                    <option value="loan">💳 Loan Payment</option>
+                                    <option value="other">📄 Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Bill
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-calendar-alt"></i> Bills Calendar</h2>
+                        </div>
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <h3 id="calendarMonth">December 2024</h3>
+                                <div class="calendar-nav">
+                                    <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                                    <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar will be generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-file-invoice-dollar"></i> All Bills</h2>
+                    </div>
+                    <div class="bills-list" id="allBills">
+                        <div class="empty-state">
+                            <i class="fas fa-file-invoice"></i>
+                            <p>No bills added yet. Add your recurring bills to track them!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What-If Page (Student Only) -->
+            <div class="page-section" id="whatifPage">
+                <div class="two-columns">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-calculator"></i> What-If Calculator</h2>
+                        </div>
+                        <p style="color: var(--gray); margin-bottom: 20px;">
+                            Enter your daily spending to see how long your money will last.
+                        </p>
+                        <form id="whatifForm">
+                            <div class="form-group">
+                                <label>Current Balance ($)</label>
+                                <input type="number" id="whatifBalance" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Daily Spending ($)</label>
+                                <input type="number" id="whatifDaily" placeholder="e.g., 30" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Include Upcoming Bills?</label>
+                                <select id="whatifIncludeBills">
+                                    <option value="yes">Yes, include bills due in next 30 days</option>
+                                    <option value="no">No, just daily spending</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-chart-line"></i> Calculate
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="whatif-result" id="whatifResult" style="display: none;">
+                            <div class="whatif-days" id="whatifDays">0</div>
+                            <div class="whatif-label">days until money runs out</div>
+                            <div class="whatif-warning" id="whatifWarning" style="display: none;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span id="whatifWarningText"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-lightbulb"></i> Smart Insights</h2>
+                        </div>
+                        <div id="smartInsights">
+                            <div class="empty-state">
+                                <i class="fas fa-brain"></i>
+                                <p>Run a What-If calculation to get personalized insights!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exams Page (Student Only) -->
+            <div class="page-section" id="examsPage">
+                <div class="two-columns">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-plus-circle"></i> Add Exam</h2>
+                        </div>
+                        <form id="examForm">
+                            <div class="form-group">
+                                <label>Subject/Exam Name</label>
+                                <input type="text" id="examName" placeholder="e.g., Mathematics Final" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Exam Date</label>
+                                <input type="date" id="examDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Exam Time (Optional)</label>
+                                <input type="time" id="examTime">
+                            </div>
+                            <div class="form-group form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add Exam
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="examModeToggle" onchange="toggleExamMode()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Exam Season Mode (Gentle Reminders)</span>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-book-open"></i> Exam Schedule</h2>
+                        </div>
+                        <div id="examList">
+                            <div class="empty-state">
+                                <i class="fas fa-graduation-cap"></i>
+                                <p>No exams scheduled. Add your exams to get gentle bill reminders!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Alerts Container -->
+    <div class="alerts-container" id="alertsContainer"></div>
+
+    <!-- Bills Question Modal -->
+    <div class="modal-overlay" id="billsQuestionModal">
+        <div class="modal question-modal">
+            <div class="question-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h2>Do you have bills to track?</h2>
+            <p>We can help you manage recurring bills like rent, utilities, subscriptions, and more. We'll remind you before they're due!</p>
+            <div class="question-buttons">
+                <button class="btn btn-primary" onclick="setBillsTracking(true)">
+                    <i class="fas fa-check"></i> Yes, track bills
+                </button>
+                <button class="btn btn-secondary" onclick="setBillsTracking(false)">
+                    <i class="fas fa-times"></i> No, skip this
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal-overlay" id="addTransactionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Quick Add Transaction</h2>
+                <button class="modal-close" onclick="closeModal('addTransactionModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="quickTransactionForm">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="quickTransType" required>
+                        <option value="income">💰 Income</option>
+                        <option value="expense">💸 Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="quickTransAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="quickTransDesc" placeholder="What was this for?" required>
+                </div>
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addTransactionModal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" onclick="closeModal('settingsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="settingsName" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label>Monthly Budget ($)</label>
+                <input type="number" id="settingsBudget" placeholder="e.g., 2000" step="0.01" min="0">
+            </div>
+            <div class="form-group form-actions">
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+                <button class="btn btn-danger" onclick="resetAllData()">
+                    <i class="fas fa-trash"></i> Reset All Data
+                </button>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <button class="btn btn-secondary" onclick="backToLanding()" style="width: 100%;">
+                <i class="fas fa-arrow-left"></i> Change User Type
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DATA MANAGEMENT
+        // ============================================
+        let appData = {
+            userType: null,
+            userName: 'User',
+            hasBills: false,
+            monthlyBudget: 2000,
+            transactions: [],
+            bills: [],
+            exams: [],
+            examMode: false,
+            currentMonth: new Date().getMonth(),
+            currentYear: new Date().getFullYear()
+        };
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('financeFlowData');
+            if (saved) {
+                appData = { ...appData, ...JSON.parse(saved) };
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('financeFlowData', JSON.stringify(appData));
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            
+            // Set default date for forms
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('transactionDate').value = today;
+            document.getElementById('billDueDate').min = today;
+            document.getElementById('examDate').min = today;
+
+            // If user already selected type, show dashboard
+            if (appData.userType) {
+                showDashboard();
+            }
+
+            // Setup form listeners
+            setupFormListeners();
+            
+            // Setup navigation
+            setupNavigation();
+
+            // Check for alerts
+            checkAlerts();
+
+            // Update What-If balance field with current balance
+            updateWhatIfBalance();
+        });
+
+        function setupFormListeners() {
+            // Transaction form
+            document.getElementById('transactionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addTransaction();
+            });
+
+            // Quick transaction form
+            document.getElementById('quickTransactionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addQuickTransaction();
+            });
+
+            // Bill form
+            document.getElementById('billForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addBill();
+            });
+
+            // Exam form
+            document.getElementById('examForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addExam();
+            });
+
+            // What-If form
+            document.getElementById('whatifForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateWhatIf();
+            });
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    navigateTo(page);
+                });
+            });
+        }
+
+        // ============================================
+        // USER TYPE SELECTION
+        // ============================================
+        function selectUserType(type) {
+            appData.userType = type;
+            saveData();
+            
+            if (type === 'student') {
+                showModal('billsQuestionModal');
+            } else {
+                appData.hasBills = false;
+                saveData();
+                showDashboard();
+            }
+        }
+
+        function setBillsTracking(hasBills) {
+            appData.hasBills = hasBills;
+            saveData();
+            closeModal('billsQuestionModal');
+            showDashboard();
+        }
+
+        function showDashboard() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            
+            // Update user info
+            document.getElementById('userName').textContent = appData.userName;
+            document.getElementById('userAvatar').textContent = appData.userName.charAt(0).toUpperCase();
+            document.getElementById('userType').textContent = capitalizeFirst(appData.userType);
+
+            // Show/hide student-only elements
+            const studentElements = document.querySelectorAll('.student-only');
+            studentElements.forEach(el => {
+                el.style.display = appData.userType === 'student' ? '' : 'none';
+            });
+
+            // Hide bills panel if student chose no bills
+            if (appData.userType === 'student' && !appData.hasBills) {
+                document.getElementById('billsOverviewPanel').style.display = 'none';
+                document.querySelectorAll('.nav-link[data-page="bills"]').forEach(el => {
+                    el.parentElement.style.display = 'none';
+                });
+            }
+
+            // Update all displays
+            updateDashboard();
+            renderCalendar();
+            
+            // Check exam mode
+            document.getElementById('examModeToggle').checked = appData.examMode;
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function navigateTo(page) {
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Update page sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(page + 'Page').classList.add('active');
+
+            // Update header
+            const titles = {
+                overview: ['Dashboard Overview', 'Welcome back! Here\'s your financial summary.'],
+                transactions: ['Transactions', 'Track your income and expenses.'],
+                bills: ['Bills & Calendar', 'Manage your recurring bills and due dates.'],
+                whatif: ['What-If Analysis', 'Plan ahead and see how your money will last.'],
+                exams: ['Exam Schedule', 'Track your exams for gentler financial reminders.']
+            };
+
+            document.getElementById('pageTitle').textContent = titles[page][0];
+            document.getElementById('pageSubtitle').textContent = titles[page][1];
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ============================================
+        // TRANSACTIONS
+        // ============================================
+        function addTransaction() {
+            const type = document.getElementById('transactionType').value;
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const description = document.getElementById('transactionDescription').value;
+            const category = document.getElementById('transactionCategory').value;
+            const date = document.getElementById('transactionDate').value;
+
+            const transaction = {
+                id: Date.now(),
+                type,
+                amount,
+                description,
+                category,
+                date,
+                timestamp: new Date().toISOString()
+            };
+
+            appData.transactions.unshift(transaction);
+            saveData();
+            
+            document.getElementById('transactionForm').reset();
+            document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+            
+            updateDashboard();
+            showAlert('success', 'Transaction Added', `${type === 'income' ? 'Added' : 'Recorded'} $${amount.toFixed(2)} - ${description}`);
+            
+            // Check spending alerts
+            checkSpendingAlerts();
+        }
+
+        function addQuickTransaction() {
+            const type = document.getElementById('quickTransType').value;
+            const amount = parseFloat(document.getElementById('quickTransAmount').value);
+            const description = document.getElementById('quickTransDesc').value;
+
+            const transaction = {
+                id: Date.now(),
+                type,
+                amount,
+                description,
+                category: 'general',
+                date: new Date().toISOString().split('T')[0],
+                timestamp: new Date().toISOString()
+            };
+
+            appData.transactions.unshift(transaction);
+            saveData();
+            
+            closeModal('addTransactionModal');
+            document.getElementById('quickTransactionForm').reset();
+            
+            updateDashboard();
+            showAlert('success', 'Transaction Added', `${type === 'income' ? 'Added' : 'Recorded'} $${amount.toFixed(2)}`);
+            
+            checkSpendingAlerts();
+        }
+
+        function deleteTransaction(id) {
+            appData.transactions = appData.transactions.filter(t => t.id !== id);
+            saveData();
+            updateDashboard();
+        }
+
+        function renderTransactions(containerId, limit = null) {
+            const container = document.getElementById(containerId);
+            let transactions = [...appData.transactions];
+            
+            if (limit) {
+                transactions = transactions.slice(0, limit);
+            }
+
+            if (transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <p>No transactions yet. Add your first transaction!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = transactions.map(t => {
+                const icon = t.type === 'income' ? 'fa-arrow-down' : 'fa-arrow-up';
+                const sign = t.type === 'income' ? '+' : '-';
+                const date = new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                
+                return `
+                    <div class="transaction-item ${t.type}">
+                        <div class="transaction-icon">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <h4>${t.description}</h4>
+                            <span>${date} • ${capitalizeFirst(t.category)}</span>
+                        </div>
+                        <div class="transaction-amount">${sign}$${t.amount.toFixed(2)}</div>
+                        ${containerId === 'allTransactions' ? `
+                            <button class="delete-btn" onclick="deleteTransaction(${t.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // BILLS
+        // ============================================
+        function addBill() {
+            const name = document.getElementById('billName').value;
+            const amount = parseFloat(document.getElementById('billAmount').value);
+            const dueDate = document.getElementById('billDueDate').value;
+            const category = document.getElementById('billCategory').value;
+
+            const bill = {
+                id: Date.now(),
+                name,
+                amount,
+                dueDate,
+                category,
+                paid: false
+            };
+
+            appData.bills.push(bill);
+            appData.bills.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            saveData();
+            
+            document.getElementById('billForm').reset();
+            
+            updateDashboard();
+            renderCalendar();
+            showAlert('success', 'Bill Added', `${name} due on ${formatDate(dueDate)}`);
+            
+            // Check if bill is due soon
+            const daysUntil = getDaysUntil(dueDate);
+            if (daysUntil <= 3 && daysUntil >= 0) {
+                showAlert('warning', 'Bill Due Soon!', `${name} ($${amount.toFixed(2)}) is due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}!`);
+            }
+        }
+
+        function deleteBill(id) {
+            appData.bills = appData.bills.filter(b => b.id !== id);
+            saveData();
+            updateDashboard();
+            renderCalendar();
+        }
+
+        function renderBills(containerId, showAll = false) {
+            const container = document.getElementById(containerId);
+            let bills = [...appData.bills].filter(b => !b.paid);
+            
+            if (!showAll) {
+                bills = bills.slice(0, 5);
+            }
+
+            if (bills.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice"></i>
+                        <p>No upcoming bills!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bills.map(b => {
+                const daysUntil = getDaysUntil(b.dueDate);
+                let urgency = 'normal';
+                let badge = '';
+                
+                if (daysUntil < 0) {
+                    urgency = 'urgent';
+                    badge = 'OVERDUE';
+                } else if (daysUntil <= 3) {
+                    urgency = 'urgent';
+                    badge = daysUntil === 0 ? 'TODAY' : `${daysUntil} DAY${daysUntil !== 1 ? 'S' : ''}`;
+                } else if (daysUntil <= 7) {
+                    urgency = 'soon';
+                    badge = `${daysUntil} DAYS`;
+                }
+
+                const categoryIcons = {
+                    rent: 'fa-home',
+                    utilities: 'fa-lightbulb',
+                    internet: 'fa-wifi',
+                    phone: 'fa-mobile-alt',
+                    insurance: 'fa-shield-alt',
+                    subscription: 'fa-tv',
+                    loan: 'fa-credit-card',
+                    other: 'fa-file-alt'
+                };
+
+                return `
+                    <div class="bill-item ${urgency}">
+                        <div class="bill-icon">
+                            <i class="fas ${categoryIcons[b.category] || 'fa-file-alt'}"></i>
+                        </div>
+                        <div class="bill-details">
+                            <h4>${b.name}</h4>
+                            <span class="due-date">Due: ${formatDate(b.dueDate)}</span>
+                        </div>
+                        <div class="bill-amount">$${b.amount.toFixed(2)}</div>
+                        ${badge ? `<span class="bill-badge">${badge}</span>` : ''}
+                        ${showAll ? `
+                            <button class="delete-btn" onclick="deleteBill(${b.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // CALENDAR
+        // ============================================
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthLabel = document.getElementById('calendarMonth');
+            
+            const year = appData.currentYear;
+            const month = appData.currentMonth;
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            monthLabel.textContent = `${monthNames[month]} ${year}`;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            
+            // Get bill dates for this month
+            const billDates = appData.bills
+                .filter(b => {
+                    const d = new Date(b.dueDate);
+                    return d.getMonth() === month && d.getFullYear() === year;
+                })
+                .map(b => new Date(b.dueDate).getDate());
+            
+            let html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                .map(d => `<div class="calendar-day-name">${d}</div>`)
+                .join('');
+            
+            // Empty cells for days before first day of month
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="calendar-day other-month"></div>`;
+            }
+            
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = today.getDate() === day && 
+                               today.getMonth() === month && 
+                               today.getFullYear() === year;
+                const hasBill = billDates.includes(day);
+                
+                html += `<div class="calendar-day ${isToday ? 'today' : ''} ${hasBill ? 'has-bill' : ''}">${day}</div>`;
+            }
+            
+            grid.innerHTML = html;
+        }
+
+        function changeMonth(delta) {
+            appData.currentMonth += delta;
+            
+            if (appData.currentMonth > 11) {
+                appData.currentMonth = 0;
+                appData.currentYear++;
+            } else if (appData.currentMonth < 0) {
+                appData.currentMonth = 11;
+                appData.currentYear--;
+            }
+            
+            renderCalendar();
+        }
+
+        // ============================================
+        // WHAT-IF CALCULATOR
+        // ============================================
+        function calculateWhatIf() {
+            const balance = parseFloat(document.getElementById('whatifBalance').value) || calculateBalance();
+            const dailySpending = parseFloat(document.getElementById('whatifDaily').value);
+            const includeBills = document.getElementById('whatifIncludeBills').value === 'yes';
+            
+            let effectiveBalance = balance;
+            
+            // Subtract upcoming bills if included
+            if (includeBills && appData.hasBills) {
+                const thirtyDaysFromNow = new Date();
+                thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+                
+                const upcomingBillsTotal = appData.bills
+                    .filter(b => {
+                        const dueDate = new Date(b.dueDate);
+                        return dueDate <= thirtyDaysFromNow && !b.paid;
+                    })
+                    .reduce((sum, b) => sum + b.amount, 0);
+                
+                effectiveBalance -= upcomingBillsTotal;
+            }
+            
+            const daysRemaining = Math.max(0, Math.floor(effectiveBalance / dailySpending));
+            
+            document.getElementById('whatifDays').textContent = daysRemaining;
+            document.getElementById('whatifResult').style.display = 'block';
+            
+            // Show warning if needed
+            const warningEl = document.getElementById('whatifWarning');
+            if (daysRemaining < 7) {
+                warningEl.style.display = 'block';
+                document.getElementById('whatifWarningText').textContent = 
+                    `At this rate, you'll run out of money in less than a week! Consider reducing daily spending.`;
+            } else if (daysRemaining < 14) {
+                warningEl.style.display = 'block';
+                document.getElementById('whatifWarningText').textContent = 
+                    `You have less than two weeks of funds. Plan your expenses carefully.`;
+            } else {
+                warningEl.style.display = 'none';
+            }
+            
+            // Generate insights
+            generateInsights(balance, dailySpending, daysRemaining, includeBills);
+        }
+
+        function generateInsights(balance, dailySpending, days, includeBills) {
+            const insightsEl = document.getElementById('smartInsights');
+            let insights = [];
+            
+            // Calculate average spending from history
+            const last30Days = new Date();
+            last30Days.setDate(last30Days.getDate() - 30);
+            
+            const recentExpenses = appData.transactions
+                .filter(t => t.type === 'expense' && new Date(t.date) >= last30Days)
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const avgDaily = recentExpenses / 30;
+            
+            if (avgDaily > 0) {
+                if (dailySpending > avgDaily * 1.5) {
+                    insights.push({
+                        icon: 'fa-exclamation-triangle',
+                        color: 'var(--danger)',
+                        title: 'Spending Above Average',
+                        text: `Your projected $${dailySpending.toFixed(2)}/day is ${Math.round((dailySpending/avgDaily - 1) * 100)}% higher than your recent average of $${avgDaily.toFixed(2)}/day.`
+                    });
+                } else if (dailySpending < avgDaily * 0.7) {
+                    insights.push({
+                        icon: 'fa-thumbs-up',
+                        color: 'var(--secondary)',
+                        title: 'Great Budget Planning!',
+                        text: `You're planning to spend less than your average. Keep it up!`
+                    });
+                }
+            }
+            
+            // Bill insights
+            if (includeBills && appData.hasBills && appData.bills.length > 0) {
+                const urgentBills = appData.bills.filter(b => getDaysUntil(b.dueDate) <= 7 && !b.paid);
+                if (urgentBills.length > 0) {
+                    const total = urgentBills.reduce((sum, b) => sum + b.amount, 0);
+                    insights.push({
+                        icon: 'fa-calendar-exclamation',
+                        color: 'var(--warning)',
+                        title: 'Bills Coming Up',
+                        text: `You have ${urgentBills.length} bill${urgentBills.length > 1 ? 's' : ''} totaling $${total.toFixed(2)} due within a week.`
+                    });
+                }
+            }
+            
+            // Savings suggestion
+            if (days > 30) {
+                const savingsPerDay = dailySpending * 0.1;
+                insights.push({
+                    icon: 'fa-piggy-bank',
+                    color: 'var(--primary)',
+                    title: 'Savings Opportunity',
+                    text: `If you save just $${savingsPerDay.toFixed(2)} per day, you could have $${(savingsPerDay * 30).toFixed(2)} extra next month!`
+                });
+            }
+            
+            if (insights.length === 0) {
+                insights.push({
+                    icon: 'fa-check-circle',
+                    color: 'var(--secondary)',
+                    title: 'Looking Good!',
+                    text: 'Your financial planning seems solid. Keep tracking your expenses!'
+                });
+            }
+            
+            insightsEl.innerHTML = insights.map(i => `
+                <div style="display: flex; gap: 15px; padding: 15px; background: #f8fafc; border-radius: 12px; margin-bottom: 12px;">
+                    <div style="width: 45px; height: 45px; border-radius: 12px; background: ${i.color}20; color: ${i.color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas ${i.icon}"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-weight: 600; margin-bottom: 5px;">${i.title}</h4>
+                        <p style="color: var(--gray); font-size: 0.9rem;">${i.text}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateWhatIfBalance() {
+            const balanceInput = document.getElementById('whatifBalance');
+            balanceInput.value = calculateBalance().toFixed(2);
+        }
+
+        // ============================================
+        // EXAMS
+        // ============================================
+        function addExam() {
+            const name = document.getElementById('examName').value;
+            const date = document.getElementById('examDate').value;
+            const time = document.getElementById('examTime').value;
+
+            const exam = {
+                id: Date.now(),
+                name,
+                date,
+                time
+            };
+
+            appData.exams.push(exam);
+            appData.exams.sort((a, b) => new Date(a.date) - new Date(b.date));
+            saveData();
+            
+            document.getElementById('examForm').reset();
+            
+            renderExams();
+            showAlert('success', 'Exam Added', `${name} on ${formatDate(date)}`);
+        }
+
+        function deleteExam(id) {
+            appData.exams = appData.exams.filter(e => e.id !== id);
+            saveData();
+            renderExams();
+        }
+
+        function renderExams() {
+            const container = document.getElementById('examList');
+            const now = new Date();
+            
+            // Filter out past exams
+            const upcomingExams = appData.exams.filter(e => new Date(e.date) >= new Date(now.toDateString()));
+
+            if (upcomingExams.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-graduation-cap"></i>
+                        <p>No upcoming exams. Add your exams to get gentle reminders!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = upcomingExams.map(e => {
+                const daysUntil = getDaysUntil(e.date);
+                let status = 'upcoming';
+                let statusText = `In ${daysUntil} days`;
+                
+                if (daysUntil === 0) {
+                    status = 'active';
+                    statusText = 'TODAY';
+                } else if (daysUntil === 1) {
+                    status = 'active';
+                    statusText = 'TOMORROW';
+                } else if (daysUntil <= 7) {
+                    status = 'upcoming';
+                    statusText = `${daysUntil} days`;
+                }
+
+                return `
+                    <div class="exam-item">
+                        <div class="exam-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="exam-details">
+                            <h4>${e.name}</h4>
+                            <span>${formatDate(e.date)}${e.time ? ' at ' + e.time : ''}</span>
+                        </div>
+                        <span class="exam-status ${status}">${statusText}</span>
+                        <button class="delete-btn" onclick="deleteExam(${e.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleExamMode() {
+            appData.examMode = document.getElementById('examModeToggle').checked;
+            saveData();
+            
+            if (appData.examMode) {
+                showAlert('gentle', 'Exam Mode Activated 📚', 'You\'ll receive gentler, more supportive reminders about bills during your exam period. Good luck with your studies!');
+            } else {
+                showAlert('info', 'Exam Mode Deactivated', 'Regular bill notifications resumed.');
+            }
+        }
+
+        // ============================================
+        // DASHBOARD UPDATE
+        // ============================================
+        function updateDashboard() {
+            const income = appData.transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const expenses = appData.transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const balance = income - expenses;
+            const savingsRate = income > 0 ? Math.round(((income - expenses) / income) * 100) : 0;
+
+            document.getElementById('totalBalance').textContent = formatCurrency(balance);
+            document.getElementById('totalIncome').textContent = formatCurrency(income);
+            document.getElementById('totalExpense').textContent = formatCurrency(expenses);
+            document.getElementById('savingsRate').textContent = savingsRate + '%';
+
+            // Update jar
+            const jarPercentage = appData.monthlyBudget > 0 
+                ? Math.max(0, Math.min(100, (balance / appData.monthlyBudget) * 100))
+                : 0;
+            
+            document.getElementById('jarFill').style.height = jarPercentage + '%';
+            document.getElementById('jarPercentage').textContent = Math.round(jarPercentage) + '%';
+
+            // Update transaction lists
+            renderTransactions('recentTransactions', 5);
+            renderTransactions('allTransactions');
+
+            // Update bills if student with bills
+            if (appData.userType === 'student' && appData.hasBills) {
+                renderBills('upcomingBills', false);
+                renderBills('allBills', true);
+            }
+
+            // Update exams
+            if (appData.userType === 'student') {
+                renderExams();
+            }
+
+            // Update What-If balance
+            updateWhatIfBalance();
+        }
+
+        function calculateBalance() {
+            const income = appData.transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const expenses = appData.transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            return income - expenses;
+        }
+
+        // ============================================
+        // ALERTS SYSTEM
+        // ============================================
+        function showAlert(type, title, message) {
+            const container = document.getElementById('alertsContainer');
+            const id = 'alert-' + Date.now();
+            
+            const icons = {
+                success: 'fa-check-circle',
+                warning: 'fa-exclamation-triangle',
+                danger: 'fa-times-circle',
+                info: 'fa-info-circle',
+                gentle: 'fa-heart'
+            };
+
+            const alertHtml = `
+                <div class="alert ${type}" id="${id}">
+                    <div class="alert-icon">
+                        <i class="fas ${icons[type] || icons.info}"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                    <button class="alert-close" onclick="closeAlert('${id}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', alertHtml);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => closeAlert(id), 5000);
+        }
+
+        function closeAlert(id) {
+            const alert = document.getElementById(id);
+            if (alert) {
+                alert.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }
+
+        function checkAlerts() {
+            if (!appData.userType) return;
+            
+            // Check for bills due soon
+            if (appData.hasBills) {
+                const urgentBills = appData.bills.filter(b => {
+                    const days = getDaysUntil(b.dueDate);
+                    return days >= 0 && days <= 3 && !b.paid;
+                });
+
+                urgentBills.forEach(bill => {
+                    const days = getDaysUntil(bill.dueDate);
+                    const isExamMode = appData.examMode;
+                    
+                    if (isExamMode) {
+                        // Gentle reminder for exam mode
+                        showAlert('gentle', 'Friendly Reminder 💙', 
+                            `Hey! Just a gentle heads up - ${bill.name} ($${bill.amount.toFixed(2)}) is due ${days === 0 ? 'today' : `in ${days} day${days !== 1 ? 's' : ''}`}. You've got this! Focus on your exams, but don't forget to take care of this when you can. 📚`);
+                    } else {
+                        showAlert('warning', 'Bill Due Soon!', 
+                            `${bill.name} ($${bill.amount.toFixed(2)}) is due ${days === 0 ? 'today' : `in ${days} day${days !== 1 ? 's' : ''}`}!`);
+                    }
+                });
+            }
+        }
+
+        function checkSpendingAlerts() {
+            if (!appData.hasBills) return;
+            
+            // Check if spending increased significantly
+            const last7Days = new Date();
+            last7Days.setDate(last7Days.getDate() - 7);
+            
+            const recentSpending = appData.transactions
+                .filter(t => t.type === 'expense' && new Date(t.date) >= last7Days)
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const avgWeeklySpending = appData.transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0) / Math.max(1, Math.ceil(appData.transactions.filter(t => t.type === 'expense').length / 7));
+            
+            const hasUpcomingBills = appData.bills.some(b => getDaysUntil(b.dueDate) <= 7 && !b.paid);
+            
+            if (recentSpending > avgWeeklySpending * 1.5 && hasUpcomingBills) {
+                const isExamMode = appData.examMode;
+                
+                if (isExamMode) {
+                    showAlert('gentle', 'Spending Check-in 💡', 
+                        'We noticed you\'ve been spending a bit more lately, and you have some bills coming up. No pressure, but you might want to keep an eye on expenses. You\'re doing great! 🌟');
+                } else {
+                    showAlert('warning', 'Spending Alert', 
+                        'Your recent spending is higher than usual and you have bills due soon. Consider reducing expenses to ensure you can cover upcoming bills.');
+                }
+            }
+        }
+
+        // ============================================
+        // SETTINGS & MODALS
+        // ============================================
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            
+            if (modalId === 'settingsModal') {
+                document.getElementById('settingsName').value = appData.userName;
+                document.getElementById('settingsBudget').value = appData.monthlyBudget;
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function saveSettings() {
+            appData.userName = document.getElementById('settingsName').value || 'User';
+            appData.monthlyBudget = parseFloat(document.getElementById('settingsBudget').value) || 2000;
+            saveData();
+            
+            document.getElementById('userName').textContent = appData.userName;
+            document.getElementById('userAvatar').textContent = appData.userName.charAt(0).toUpperCase();
+            
+            closeModal('settingsModal');
+            updateDashboard();
+            showAlert('success', 'Settings Saved', 'Your preferences have been updated.');
+        }
+
+        function resetAllData() {
+            if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+                localStorage.removeItem('financeFlowData');
+                location.reload();
+            }
+        }
+
+        function backToLanding() {
+            appData.userType = null;
+            saveData();
+            location.reload();
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function formatCurrency(amount) {
+            return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function getDaysUntil(dateStr) {
+            const date = new Date(dateStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            date.setHours(0, 0, 0, 0);
+            return Math.ceil((date - today) / (1000 * 60 * 60 * 24));
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

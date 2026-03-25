@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashLine — Custom Finance Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --ink: #0d1117;
+            --ink-soft: #1c2333;
+            --ink-muted: #30363d;
+            --surface: #161b22;
+            --surface-raised: #21262d;
+            --surface-overlay: #2d333b;
+            --border: rgba(255,255,255,0.08);
+            --border-active: rgba(255,255,255,0.18);
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --text-dim: #484f58;
+            --accent: #39d353;
+            --accent-glow: rgba(57,211,83,0.15);
+            --accent-dark: #238636;
+            --amber: #e3b341;
+            --amber-glow: rgba(227,179,65,0.15);
+            --coral: #f85149;
+            --coral-glow: rgba(248,81,73,0.15);
+            --sky: #58a6ff;
+            --sky-glow: rgba(88,166,255,0.15);
+            --violet: #bc8cff;
+            --violet-glow: rgba(188,140,255,0.15);
+            --teal: #2dd4bf;
+            --teal-glow: rgba(45,212,191,0.15);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+            --shadow: 0 8px 32px rgba(0,0,0,0.5);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+            --r-sm: 8px;
+            --r: 12px;
+            --r-lg: 18px;
+            --r-xl: 24px;
+        }
+
+        body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--text); min-height: 100vh; line-height: 1.5; }
+
+        /* ============================  FEATURE PICKER  ============================ */
+        .picker-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 24px;
+            background:
+                radial-gradient(ellipse 70% 40% at 50% -5%, rgba(227,179,65,0.1) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 40% at 85% 90%, rgba(248,81,73,0.07) 0%, transparent 60%),
+                var(--ink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .picker-page::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .picker-header {
+            text-align: center;
+            margin-bottom: 52px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .picker-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .picker-logo-mark {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--amber), #c97d10);
+            border-radius: var(--r);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 0 40px rgba(227,179,65,0.35);
+        }
+
+        .picker-logo h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem; font-weight: 800;
+            letter-spacing: -0.02em; color: var(--text);
+        }
+
+        .picker-logo h1 span { color: var(--amber); }
+
+        .picker-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem; font-weight: 700;
+            color: var(--text); margin-bottom: 10px;
+        }
+
+        .picker-header p { font-size: 0.95rem; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
+
+        /* ONBOARD FORM */
+        .onboard-form {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-xl);
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .onboard-form h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: var(--text); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .onboard-form h3 i { color: var(--amber); font-size: 0.9rem; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block; font-size: 0.78rem; font-weight: 600;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%; padding: 11px 14px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none; border-color: var(--amber);
+        }
+
+        .form-group select option { background: var(--surface-raised); }
+
+        /* FEATURE CATEGORY */
+        .picker-categories {
+            width: 100%; max-width: 1100px;
+            position: relative; z-index: 1;
+        }
+
+        .cat-label {
+            font-size: 0.72rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-dim); margin-bottom: 14px; margin-top: 32px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .cat-label::after {
+            content: ''; flex: 1;
+            height: 1px; background: var(--border);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-active);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feature-card.selected {
+            border-color: var(--amber);
+            background: rgba(227,179,65,0.06);
+            box-shadow: 0 0 0 1px var(--amber), var(--shadow-sm);
+        }
+
+        .feature-card.selected .fc-check { opacity: 1; transform: scale(1); }
+
+        .fc-check {
+            position: absolute; top: 14px; right: 14px;
+            width: 22px; height: 22px;
+            background: var(--amber); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--ink); font-size: 0.65rem;
+            opacity: 0; transform: scale(0.5);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .fc-icon {
+            width: 44px; height: 44px;
+            border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; margin-bottom: 14px;
+        }
+
+        .feature-card h4 {
+            font-size: 0.9rem; font-weight: 600;
+            color: var(--text); margin-bottom: 6px; padding-right: 28px;
+        }
+
+        .feature-card p {
+            font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;
+        }
+
+        .feature-card .fc-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.7rem; font-weight: 600;
+            padding: 3px 8px; border-radius: 20px;
+            margin-top: 10px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        /* PICKER FOOTER */
+        .picker-footer {
+            position: sticky; bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, var(--ink) 70%, transparent);
+            padding: 24px;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            z-index: 10;
+        }
+
+        .selected-count {
+            font-size: 0.85rem; color: var(--text-muted);
+        }
+
+        .selected-count strong { color: var(--amber); }
+
+        .btn-build {
+            padding: 14px 48px;
+            background: linear-gradient(135deg, var(--amber), #c97d10);
+            color: var(--ink);
+            border: none; border-radius: var(--r-sm);
+            font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: all 0.25s ease;
+            display: inline-flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 20px rgba(227,179,65,0.3);
+        }
+
+        .btn-build:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(227,179,65,0.4);
+        }
+
+        .btn-build:disabled {
+            opacity: 0.4; cursor: not-allowed; transform: none;
+        }
+
+        /* ============================  DASHBOARD  ============================ */
+        .dashboard { display: none; min-height: 100vh; }
+        .dashboard.active { display: flex; }
+
+        .sidebar {
+            width: 260px; background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed; height: 100vh;
+            overflow-y: auto; z-index: 100;
+            display: flex; flex-direction: column;
+        }
+
+        .sidebar-brand {
+            display: flex; align-items: center; gap: 12px;
+            padding: 8px 12px 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .brand-mark {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--amber), #c97d10);
+            border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+
+        .brand-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        .brand-name span { color: var(--amber); }
+
+        .nav-section-label {
+            font-size: 0.68rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-dim); padding: 0 12px;
+            margin: 20px 0 8px;
+        }
+
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 2px; }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; border-radius: var(--r-sm);
+            color: var(--text-muted);
+            text-decoration: none; font-size: 0.9rem; font-weight: 500;
+            transition: all 0.2s ease; cursor: pointer;
+            background: none; border: none; width: 100%; text-align: left;
+        }
+
+        .nav-link i { width: 18px; font-size: 0.95rem; }
+        .nav-link:hover { background: var(--surface-raised); color: var(--text); }
+        .nav-link.active { background: var(--amber-glow); color: var(--amber); border: 1px solid rgba(227,179,65,0.2); }
+
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+
+        .user-chip {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px; background: var(--surface-raised); border-radius: var(--r);
+        }
+
+        .user-avatar {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--amber), var(--coral));
+            border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--ink); font-weight: 700; font-size: 1rem; flex-shrink: 0;
+        }
+
+        .user-meta h4 { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+        .user-meta span { font-size: 0.75rem; color: var(--amber); }
+
+        .main-content {
+            margin-left: 260px; flex: 1;
+            padding: 32px; background: var(--ink); min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 32px; flex-wrap: wrap; gap: 16px;
+        }
+
+        .page-title h1 {
+            font-family: 'Syne', sans-serif; font-size: 1.75rem; font-weight: 700;
+            color: var(--text); letter-spacing: -0.02em;
+        }
+
+        .page-title p { color: var(--text-muted); font-size: 0.9rem; margin-top: 4px; }
+        .header-actions { display: flex; gap: 12px; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 10px 20px; border-radius: var(--r-sm); border: none;
+            font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.875rem;
+            cursor: pointer; transition: all 0.2s ease;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+
+        .btn-primary { background: var(--amber); color: var(--ink); }
+        .btn-primary:hover { background: #f0c44c; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(227,179,65,0.35); }
+        .btn-secondary { background: var(--surface-raised); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--border-active); background: var(--surface-overlay); }
+        .btn-danger { background: var(--coral); color: white; }
+        .btn-sm { padding: 7px 14px; font-size: 0.8rem; }
+
+        /* PAGES */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        /* STAT CARDS */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px; margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r-lg); padding: 24px;
+            position: relative; overflow: hidden; transition: border-color 0.2s;
+        }
+
+        .stat-card:hover { border-color: var(--border-active); }
+
+        .stat-card-glow {
+            position: absolute; top: -20px; right: -20px;
+            width: 80px; height: 80px; border-radius: 50%; opacity: 0.3; filter: blur(20px);
+        }
+
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 0.78rem; color: var(--text-muted); font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 700;
+            color: var(--text); line-height: 1;
+        }
+
+        .stat-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; }
+
+        /* PANEL */
+        .panel {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--r-lg); padding: 24px; margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+            color: var(--text); display: flex; align-items: center; gap: 10px;
+        }
+
+        .panel-title i { color: var(--amber); font-size: 0.95rem; }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+        @media (max-width: 1200px) { .three-col { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 1050px) { .two-col { grid-template-columns: 1fr; } }
+        @media (max-width: 800px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+            .three-col { grid-template-columns: 1fr; }
+        }
+
+        /* RUNWAY BAR */
+        .runway-bar-wrap { background: var(--surface-raised); border-radius: 6px; height: 10px; margin: 12px 0; overflow: hidden; }
+        .runway-bar-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; }
+
+        /* TAG */
+        .tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+        }
+
+        .tag-green { background: var(--accent-glow); color: var(--accent); }
+        .tag-amber { background: var(--amber-glow); color: var(--amber); }
+        .tag-coral { background: var(--coral-glow); color: var(--coral); }
+        .tag-sky { background: var(--sky-glow); color: var(--sky); }
+        .tag-violet { background: var(--violet-glow); color: var(--violet); }
+
+        /* EMI TIMELINE */
+        .emi-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px; background: var(--surface-raised);
+            border-radius: var(--r); margin-bottom: 10px;
+            border: 1px solid transparent; transition: border-color 0.2s;
+        }
+
+        .emi-item:hover { border-color: var(--border); }
+
+        .emi-icon {
+            width: 40px; height: 40px; border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem; flex-shrink: 0;
+        }
+
+        .emi-meta { flex: 1; }
+        .emi-meta h4 { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+        .emi-meta span { font-size: 0.78rem; color: var(--text-muted); }
+        .emi-amount { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
+
+        /* GOAL TRACKER */
+        .goal-ring-wrap {
+            display: flex; align-items: center; gap: 20px;
+            padding: 16px; background: var(--surface-raised); border-radius: var(--r);
+        }
+
+        .goal-ring-svg { flex-shrink: 0; }
+
+        /* SCENARIO SIMULATOR */
+        .scenario-input-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+
+        .scenario-input-row input, .scenario-input-row select {
+            flex: 1; min-width: 140px; padding: 10px 14px;
+            background: var(--surface-raised); border: 1px solid var(--border);
+            border-radius: var(--r-sm); color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+        }
+
+        .scenario-input-row input:focus, .scenario-input-row select:focus {
+            outline: none; border-color: var(--amber);
+        }
+
+        .scenario-result {
+            background: var(--surface-raised); border-radius: var(--r);
+            padding: 20px; margin-top: 14px;
+        }
+
+        .scenario-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+        .scenario-row:last-child { border-bottom: none; }
+        .scenario-row span:first-child { color: var(--text-muted); }
+
+        /* PAYROLL CONFLICT */
+        .conflict-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 14px; background: var(--surface-raised); border-radius: var(--r);
+            margin-bottom: 10px; border-left: 3px solid transparent;
+        }
+
+        .conflict-item.pay { border-left-color: var(--accent); }
+        .conflict-item.defer { border-left-color: var(--amber); }
+        .conflict-item.warn { border-left-color: var(--coral); }
+
+        .conflict-badge {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+        }
+
+        /* PENALTY CALC */
+        .penalty-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .penalty-row:last-child { border-bottom: none; }
+        .penalty-pct { font-family: 'Syne', sans-serif; font-weight: 700; }
+
+        /* MULTI ACCOUNT */
+        .account-card {
+            background: var(--surface-raised); border-radius: var(--r);
+            padding: 16px 20px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 14px;
+            border: 1px solid transparent; transition: border-color 0.2s;
+        }
+
+        .account-card:hover { border-color: var(--border); }
+
+        .account-icon {
+            width: 44px; height: 44px; border-radius: var(--r-sm);
+            display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+        }
+
+        .account-meta { flex: 1; }
+        .account-meta h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+        .account-meta span { font-size: 0.78rem; color: var(--text-muted); }
+        .account-bal { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; }
+
+        .account-total {
+            background: var(--amber-glow); border: 1px solid rgba(227,179,65,0.25);
+            border-radius: var(--r); padding: 14px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 14px;
+        }
+
+        /* ANNUAL EXPENSES */
+        .expense-month {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .expense-month:last-child { border-bottom: none; }
+        .expense-month-name { width: 36px; font-weight: 600; color: var(--text-muted); flex-shrink: 0; }
+        .expense-month-bar { flex: 1; height: 8px; background: var(--surface-overlay); border-radius: 4px; overflow: hidden; }
+        .expense-month-fill { height: 100%; border-radius: 4px; }
+        .expense-month-amt { width: 80px; text-align: right; font-weight: 600; color: var(--text); }
+
+        /* ALERTS */
+        .alerts-container {
+            position: fixed; top: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 10px;
+            z-index: 9999; max-width: 360px;
+        }
+
+        .alert {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 16px; border-radius: var(--r);
+            background: var(--surface-overlay);
+            border: 1px solid var(--border-active);
+            box-shadow: var(--shadow);
+            transform: translateX(0); transition: all 0.3s ease;
+        }
+
+        .alert-icon-wrap { width: 36px; height: 36px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+        .alert.success .alert-icon-wrap { background: var(--accent-glow); color: var(--accent); }
+        .alert.warning .alert-icon-wrap { background: var(--amber-glow); color: var(--amber); }
+        .alert.danger .alert-icon-wrap { background: var(--coral-glow); color: var(--coral); }
+        .alert.info .alert-icon-wrap { background: var(--sky-glow); color: var(--sky); }
+
+        .alert-body h4 { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+        .alert-body p { font-size: 0.8rem; color: var(--text-muted); }
+
+        .alert-close-btn { margin-left: auto; background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 4px; font-size: 0.8rem; flex-shrink: 0; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--surface); border: 1px solid var(--border-active);
+            border-radius: var(--r-xl); padding: 32px;
+            max-width: 460px; width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-header h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); }
+        .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 4px; }
+
+        .hint { font-size: 0.78rem; color: var(--text-dim); margin-top: 12px; line-height: 1.5; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 36px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 2rem; opacity: 0.3; display: block; margin-bottom: 12px; }
+        .empty-state p { font-size: 0.88rem; }
+
+        /* MOBILE */
+        .mobile-menu-btn {
+            display: none; width: 40px; height: 40px; border-radius: var(--r-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text); font-size: 1rem; cursor: pointer;
+            align-items: center; justify-content: center;
+        }
+
+        @media (max-width: 800px) {
+            .mobile-menu-btn { display: flex !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- =====================  FEATURE PICKER PAGE  ===================== -->
+<div id="pickerPage" class="picker-page">
+    <div class="picker-header">
+        <div class="picker-logo">
+            <div class="picker-logo-mark">⚙️</div>
+            <h1>Cash<span>Line</span></h1>
+        </div>
+        <h2>Build Your Dashboard</h2>
+        <p>Tell us a bit about yourself, then pick the features that match your life. Your dashboard is built around exactly what you choose.</p>
+    </div>
+
+    <!-- ONBOARD FORM -->
+    <div class="onboard-form">
+        <h3><i class="fas fa-user-circle"></i> About You</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="cfgName" placeholder="e.g. Priya">
+            </div>
+            <div class="form-group">
+                <label>Monthly Income (₹)</label>
+                <input type="number" id="cfgIncome" placeholder="50000" min="0" step="1000">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Monthly Expenses (₹)</label>
+                <input type="number" id="cfgExpenses" placeholder="30000" min="0" step="1000">
+            </div>
+            <div class="form-group">
+                <label>Current Savings (₹)</label>
+                <input type="number" id="cfgSavings" placeholder="100000" min="0" step="1000">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>I am primarily a...</label>
+            <select id="cfgRole">
+                <option value="custom">Custom / Mixed</option>
+                <option value="student">Student</option>
+                <option value="freelancer">Freelancer / Gig Worker</option>
+                <option value="employee">Salaried Employee</option>
+                <option value="business">Small Business Owner</option>
+                <option value="household">Household / Family</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- FEATURE SELECTION -->
+    <div class="picker-categories" id="featureList">
+
+        <div class="cat-label">💰 Core Finance Tracking</div>
+        <div class="features-grid">
+            <div class="feature-card selected" data-id="transactions" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-exchange-alt"></i></div>
+                <h4>Transaction Tracker</h4>
+                <p>Log income and expenses, categorise spending, and see your full history.</p>
+                <span class="fc-badge" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-star"></i> Core</span>
+            </div>
+            <div class="feature-card selected" data-id="accounts" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--sky-glow);color:var(--sky)"><i class="fas fa-university"></i></div>
+                <h4>Multi-Account View</h4>
+                <p>Consolidate HDFC, SBI, GPay, and any account into one clear balance view.</p>
+                <span class="fc-badge" style="background:var(--sky-glow);color:var(--sky)"><i class="fas fa-layer-group"></i> All users</span>
+            </div>
+        </div>
+
+        <div class="cat-label">🎓 Student Features</div>
+        <div class="features-grid">
+            <div class="feature-card" data-id="budget" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--violet-glow);color:var(--violet)"><i class="fas fa-wallet"></i></div>
+                <h4>Monthly Budget Guard</h4>
+                <p>Set category budgets, get alerts when you're approaching limits. Zero-effort.</p>
+                <span class="fc-badge" style="background:var(--violet-glow);color:var(--violet)"><i class="fas fa-graduation-cap"></i> Student</span>
+            </div>
+            <div class="feature-card" data-id="subscriptions" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--violet-glow);color:var(--violet)"><i class="fas fa-bell"></i></div>
+                <h4>Subscription Detector</h4>
+                <p>Track all recurring charges — Netflix, Swiggy One, Spotify — in one place.</p>
+                <span class="fc-badge" style="background:var(--violet-glow);color:var(--violet)"><i class="fas fa-graduation-cap"></i> Student</span>
+            </div>
+            <div class="feature-card" data-id="splitbill" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--violet-glow);color:var(--violet)"><i class="fas fa-users"></i></div>
+                <h4>Shared Expense Splitter</h4>
+                <p>Track who owes what for hostel bills, group trips, and flat expenses.</p>
+                <span class="fc-badge" style="background:var(--violet-glow);color:var(--violet)"><i class="fas fa-graduation-cap"></i> Student</span>
+            </div>
+        </div>
+
+        <div class="cat-label">💼 Freelancer / Income Features</div>
+        <div class="features-grid">
+            <div class="feature-card" data-id="liquidity" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-tachometer-alt"></i></div>
+                <h4>Days-to-Zero Runway</h4>
+                <p>Know exactly how many days your current cash can sustain all obligations.</p>
+                <span class="fc-badge" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-laptop-code"></i> Freelancer</span>
+            </div>
+            <div class="feature-card" data-id="invoices" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-file-invoice"></i></div>
+                <h4>Invoice Calendar</h4>
+                <p>Track all client payments, due dates, and reliability scores visually.</p>
+                <span class="fc-badge" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-laptop-code"></i> Freelancer</span>
+            </div>
+            <div class="feature-card" data-id="tax" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-percentage"></i></div>
+                <h4>Tax Withholding Estimator</h4>
+                <p>Estimate GST/TDS obligations so tax season never catches you off-guard.</p>
+                <span class="fc-badge" style="background:var(--accent-glow);color:var(--accent)"><i class="fas fa-laptop-code"></i> Freelancer</span>
+            </div>
+        </div>
+
+        <div class="cat-label">🏠 Household / EMI Features</div>
+        <div class="features-grid">
+            <div class="feature-card" data-id="emi" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--sky-glow);color:var(--sky)"><i class="fas fa-calendar-alt"></i></div>
+                <h4>EMI Timeline Calendar</h4>
+                <p>See all your loan repayments (home, car, appliance) plotted by due date.</p>
+                <span class="fc-badge" style="background:var(--sky-glow);color:var(--sky)"><i class="fas fa-home"></i> Household</span>
+            </div>
+            <div class="feature-card" data-id="annual" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--sky-glow);color:var(--sky)"><i class="fas fa-chart-area"></i></div>
+                <h4>Annual Expense Predictor</h4>
+                <p>Model school fees, insurance premiums, and seasonal expenses across the year.</p>
+                <span class="fc-badge" style="background:var(--sky-glow);color:var(--sky)"><i class="fas fa-home"></i> Household</span>
+            </div>
+            <div class="feature-card" data-id="jobloss" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--coral-glow);color:var(--coral)"><i class="fas fa-shield-alt"></i></div>
+                <h4>What-If: Job Loss Runway</h4>
+                <p>Simulate how long you'd survive if income stopped — and what to cut first.</p>
+                <span class="fc-badge" style="background:var(--coral-glow);color:var(--coral)"><i class="fas fa-exclamation-triangle"></i> Emergency</span>
+            </div>
+            <div class="feature-card" data-id="goal" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--teal-glow);color:var(--teal)"><i class="fas fa-bullseye"></i></div>
+                <h4>Savings Goal Tracker</h4>
+                <p>Set a target (e.g. ₹5L) and see exactly when you'll hit it given current savings rate.</p>
+                <span class="fc-badge" style="background:var(--teal-glow);color:var(--teal)"><i class="fas fa-rocket"></i> Goals</span>
+            </div>
+        </div>
+
+        <div class="cat-label">🏪 Business / Advanced Features</div>
+        <div class="features-grid">
+            <div class="feature-card" data-id="payroll" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--amber-glow);color:var(--amber)"><i class="fas fa-balance-scale"></i></div>
+                <h4>Payroll vs Payables Resolver</h4>
+                <p>When cash is short, the engine tells you what to pay, defer, and who to email.</p>
+                <span class="fc-badge" style="background:var(--amber-glow);color:var(--amber)"><i class="fas fa-store"></i> Business</span>
+            </div>
+            <div class="feature-card" data-id="penalty" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--amber-glow);color:var(--amber)"><i class="fas fa-gavel"></i></div>
+                <h4>Penalty-Aware Prioritiser</h4>
+                <p>Score every obligation by penalty risk, urgency, and flexibility before deciding.</p>
+                <span class="fc-badge" style="background:var(--amber-glow);color:var(--amber)"><i class="fas fa-store"></i> Business</span>
+            </div>
+            <div class="feature-card" data-id="whatif" onclick="toggleFeature(this)">
+                <div class="fc-check"><i class="fas fa-check"></i></div>
+                <div class="fc-icon" style="background:var(--amber-glow);color:var(--amber)"><i class="fas fa-project-diagram"></i></div>
+                <h4>What-If Scenario Simulator</h4>
+                <p>Model scenarios: "If client delays 3 weeks, which bills do I defer and by how long?"</p>
+                <span class="fc-badge" style="background:var(--amber-glow);color:var(--amber)"><i class="fas fa-store"></i> Business</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="picker-footer">
+        <div class="selected-count">
+            <strong id="selCount">2</strong> features selected — your dashboard will have <strong id="selPages" style="color:var(--amber)">2</strong> pages
+        </div>
+        <button class="btn-build" id="buildBtn" onclick="buildDashboard()">
+            <i class="fas fa-magic"></i> Build My Dashboard
+        </button>
+    </div>
+</div>
+
+<!-- =====================  DASHBOARD  ===================== -->
+<div class="dashboard" id="dashboard">
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-mark">⚙️</div>
+            <span class="brand-name">Cash<span>Line</span></span>
+        </div>
+        <div class="nav-section-label">Navigation</div>
+        <ul class="nav-menu" id="navMenu"></ul>
+        <div class="sidebar-footer">
+            <div class="user-chip">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-meta">
+                    <h4 id="userName">User</h4>
+                    <span id="userRole">Custom</span>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="goBack()" style="width:100%;margin-top:10px;justify-content:center;">
+                <i class="fas fa-arrow-left"></i> Reconfigure
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div class="page-title">
+                <h1 id="pageTitle">Overview</h1>
+                <p id="pageSubtitle">Your personalised financial snapshot.</p>
+            </div>
+            <div class="header-actions">
+                <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- PAGES RENDERED DYNAMICALLY -->
+        <div id="pageContainer"></div>
+    </main>
+</div>
+
+<div class="alerts-container" id="alertsContainer"></div>
+
+<script>
+// ================================================================
+// STATE
+// ================================================================
+let cfg = {
+    name: 'User', income: 50000, expenses: 30000, savings: 100000,
+    role: 'custom', features: ['transactions','accounts']
+};
+
+const ALL_FEATURES = {
+    transactions: { icon: 'fa-exchange-alt', label: 'Transactions', sub: 'Track income & expenses' },
+    accounts:     { icon: 'fa-university',   label: 'Accounts',     sub: 'Consolidated balances' },
+    budget:       { icon: 'fa-wallet',       label: 'Budget Guard', sub: 'Monthly limits & alerts' },
+    subscriptions:{ icon: 'fa-bell',         label: 'Subscriptions',sub: 'Recurring charges' },
+    splitbill:    { icon: 'fa-users',        label: 'Bill Splitter', sub: 'Shared expenses' },
+    liquidity:    { icon: 'fa-tachometer-alt',label: 'Runway',      sub: 'Days-to-zero meter' },
+    invoices:     { icon: 'fa-file-invoice', label: 'Invoices',     sub: 'Client payment calendar' },
+    tax:          { icon: 'fa-percentage',   label: 'Tax Estimator',sub: 'GST/TDS witholding' },
+    emi:          { icon: 'fa-calendar-alt', label: 'EMI Timeline', sub: 'Loan repayment calendar' },
+    annual:       { icon: 'fa-chart-area',   label: 'Annual Planner',sub: 'School fees & insurance' },
+    jobloss:      { icon: 'fa-shield-alt',   label: 'Job Loss Sim', sub: 'Emergency runway' },
+    goal:         { icon: 'fa-bullseye',     label: 'Savings Goal', sub: 'Hit ₹5L and beyond' },
+    payroll:      { icon: 'fa-balance-scale',label: 'Payroll Resolver',sub: 'Pay vs defer engine' },
+    penalty:      { icon: 'fa-gavel',        label: 'Penalty Prioritiser',sub: 'Obligation risk scores' },
+    whatif:       { icon: 'fa-project-diagram',label:'What-If Simulator',sub:'Delay & scenario modelling' },
+};
+
+let state = {
+    transactions: [],
+    accounts: [
+        { id:1, name:'HDFC Savings', type:'bank', balance:32000, color:'var(--sky)' },
+        { id:2, name:'SBI Account', type:'bank', balance:18500, color:'var(--accent)' },
+        { id:3, name:'GPay Wallet', type:'wallet', balance:4200, color:'var(--amber)' },
+    ],
+    emis: [
+        { id:1, name:'Home Loan', amount:18000, dueDay:1, icon:'🏠', color:'var(--sky)' },
+        { id:2, name:'Car EMI', amount:9500, dueDay:5, icon:'🚗', color:'var(--accent)' },
+        { id:3, name:'Phone EMI', amount:2800, dueDay:10, icon:'📱', color:'var(--violet)' },
+    ],
+    subscriptions: [
+        { id:1, name:'Netflix', amount:649, dueDay:14, icon:'🎬' },
+        { id:2, name:'Swiggy One', amount:299, dueDay:22, icon:'🍜' },
+        { id:3, name:'Spotify', amount:119, dueDay:8, icon:'🎵' },
+    ],
+    budget: { food:8000, transport:3000, entertainment:2000, utilities:4000 },
+    goalTarget: 500000,
+    goalLabel: '₹5L Emergency Fund',
+    splits: [],
+    invoices: [
+        { id:1, client:'Client A', amount:45000, due:'2025-04-10', status:'pending' },
+        { id:2, client:'Client B', amount:22000, due:'2025-03-28', status:'pending' },
+    ],
+    obligations: [
+        { id:1, name:'Office Rent', amount:25000, dueDay:1, penalty:5, flexible:false },
+        { id:2, name:'Vendor Ramesh', amount:15000, dueDay:8, penalty:2, flexible:true },
+        { id:3, name:'Salaries', amount:60000, dueDay:1, penalty:10, flexible:false },
+        { id:4, name:'Electricity', amount:4500, dueDay:15, penalty:3, flexible:false },
+    ],
+    currentPage: 'transactions'
+};
+
+// ================================================================
+// PICKER LOGIC
+// ================================================================
+function toggleFeature(card) {
+    card.classList.toggle('selected');
+    updateCount();
+}
+
+function updateCount() {
+    const cards = document.querySelectorAll('.feature-card.selected');
+    const count = cards.size || document.querySelectorAll('.feature-card.selected').length;
+    document.getElementById('selCount').textContent = count;
+    document.getElementById('selPages').textContent = count;
+    document.getElementById('buildBtn').disabled = count < 1;
+}
+
+document.querySelectorAll('.feature-card').forEach(() => {});
+updateCount();
+
+function buildDashboard() {
+    const nameVal = document.getElementById('cfgName').value.trim() || 'User';
+    const incomeVal = parseFloat(document.getElementById('cfgIncome').value) || 50000;
+    const expVal = parseFloat(document.getElementById('cfgExpenses').value) || 30000;
+    const savVal = parseFloat(document.getElementById('cfgSavings').value) || 100000;
+    const roleVal = document.getElementById('cfgRole').value;
+
+    const selected = [];
+    document.querySelectorAll('.feature-card.selected').forEach(c => selected.push(c.dataset.id));
+
+    if (!selected.length) { alert('Please select at least one feature.'); return; }
+
+    cfg = { name: nameVal, income: incomeVal, expenses: expVal, savings: savVal, role: roleVal, features: selected };
+    state.currentPage = selected[0];
+
+    document.getElementById('pickerPage').style.display = 'none';
+    document.getElementById('dashboard').classList.add('active');
+    document.getElementById('userName').textContent = cfg.name;
+    document.getElementById('userAvatar').textContent = cfg.name.charAt(0).toUpperCase();
+
+    const roleLabels = { custom:'Custom', student:'Student', freelancer:'Freelancer', employee:'Employee', business:'Business Owner', household:'Household' };
+    document.getElementById('userRole').textContent = roleLabels[cfg.role] || 'Custom';
+
+    buildNav();
+    renderPage(cfg.features[0]);
+    showAlert('success', 'Dashboard Ready!', `Welcome ${cfg.name} — your ${cfg.features.length}-feature dashboard is live.`);
+}
+
+// ================================================================
+// NAV BUILDER
+// ================================================================
+function buildNav() {
+    const menu = document.getElementById('navMenu');
+    menu.innerHTML = cfg.features.map(fid => {
+        const f = ALL_FEATURES[fid];
+        return `<li class="nav-item">
+            <button class="nav-link" data-page="${fid}" onclick="renderPage('${fid}')">
+                <i class="fas ${f.icon}"></i> ${f.label}
+            </button>
+        </li>`;
+    }).join('');
+}
+
+function setActiveNav(fid) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.page === fid));
+}
+
+function goBack() {
+    document.getElementById('dashboard').classList.remove('active');
+    document.getElementById('pickerPage').style.display = 'flex';
+    document.getElementById('pageContainer').innerHTML = '';
+}
+
+// ================================================================
+// PAGE ROUTER
+// ================================================================
+function renderPage(fid) {
+    state.currentPage = fid;
+    setActiveNav(fid);
+    const f = ALL_FEATURES[fid];
+    document.getElementById('pageTitle').textContent = f.label;
+    document.getElementById('pageSubtitle').textContent = f.sub;
+    const container = document.getElementById('pageContainer');
+    container.innerHTML = '';
+
+    const renderers = {
+        transactions: renderTransactions,
+        accounts:     renderAccounts,
+        budget:       renderBudget,
+        subscriptions:renderSubscriptions,
+        splitbill:    renderSplitBill,
+        liquidity:    renderLiquidity,
+        invoices:     renderInvoices,
+        tax:          renderTax,
+        emi:          renderEMI,
+        annual:       renderAnnual,
+        jobloss:      renderJobLoss,
+        goal:         renderGoal,
+        payroll:      renderPayroll,
+        penalty:      renderPenalty,
+        whatif:       renderWhatIf,
+    };
+
+    if (renderers[fid]) renderers[fid](container);
+    else container.innerHTML = `<div class="empty-state"><i class="fas fa-tools"></i><p>This widget is coming soon.</p></div>`;
+}
+
+// ================================================================
+// HELPER
+// ================================================================
+function fmtINR(n) {
+    if (n >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
+    if (n >= 1000)   return '₹' + (n/1000).toFixed(1) + 'k';
+    return '₹' + Math.round(n);
+}
+
+function fmtFull(n) {
+    return '₹' + (Math.round(n)).toLocaleString('en-IN');
+}
+
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function statCard(cls, glowColor, iconCls, iconColor, label, value, sub) {
+    return `<div class="stat-card ${cls}" style="border-top:2px solid ${glowColor}">
+        <div class="stat-card-glow" style="background:${glowColor}"></div>
+        <div class="stat-icon" style="background:${glowColor}22;color:${glowColor}"><i class="fas ${iconCls}"></i></div>
+        <div class="stat-label">${label}</div>
+        <div class="stat-value">${value}</div>
+        ${sub ? `<div class="stat-sub">${sub}</div>` : ''}
+    </div>`;
+}
+
+// ================================================================
+// TRANSACTIONS
+// ================================================================
+function renderTransactions(c) {
+    const income = state.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const expense = state.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    const balance = cfg.savings + income - expense;
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--sky)','wallet','','Net Balance',fmtFull(balance),'')}
+        ${statCard('','var(--accent)','arrow-up','','Income This Month',fmtFull(cfg.income + income),'')}
+        ${statCard('','var(--coral)','arrow-down','','Expenses This Month',fmtFull(cfg.expenses + expense),'')}
+        ${statCard('','var(--amber)','piggy-bank','','Savings Rate',Math.round(((cfg.income-cfg.expenses)/cfg.income)*100)+'%','')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-plus-circle"></i> Add Transaction</div></div>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="txType"><option value="income">💰 Income</option><option value="expense">💸 Expense</option></select>
+            </div>
+            <div class="form-group"><label>Amount (₹)</label><input type="number" id="txAmt" placeholder="0" min="1"></div>
+            <div class="form-group"><label>Description</label><input type="text" id="txDesc" placeholder="e.g. Freelance project payment"></div>
+            <div class="form-group"><label>Category</label>
+                <select id="txCat">
+                    <option>🍔 Food</option><option>🚗 Transport</option><option>🏠 Rent</option>
+                    <option>💊 Health</option><option>🎓 Education</option><option>💼 Business</option>
+                    <option>🎬 Entertainment</option><option>💰 Salary</option><option>🔧 Utilities</option><option>📦 Other</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="addTransaction()"><i class="fas fa-plus"></i> Add</button>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-list"></i> Recent Transactions</div></div>
+            <div id="txList">${state.transactions.length ? '' : '<div class="empty-state"><i class="fas fa-receipt"></i><p>No transactions yet. Add one!</p></div>'}</div>
+        </div>
+    </div>`;
+    renderTxList();
+}
+
+function addTransaction() {
+    const type = document.getElementById('txType').value;
+    const amount = parseFloat(document.getElementById('txAmt').value);
+    const desc = document.getElementById('txDesc').value.trim() || 'Transaction';
+    const cat = document.getElementById('txCat').value;
+    if (!amount || amount <= 0) { showAlert('warning','Invalid Amount','Please enter a valid amount.'); return; }
+    state.transactions.unshift({ id: Date.now(), type, amount, desc, cat, date: today() });
+    renderTxList();
+    document.getElementById('txAmt').value = '';
+    document.getElementById('txDesc').value = '';
+    showAlert('success','Added!', `${type === 'income' ? 'Income' : 'Expense'} of ${fmtFull(amount)} recorded.`);
+}
+
+function renderTxList() {
+    const el = document.getElementById('txList');
+    if (!el) return;
+    if (!state.transactions.length) { el.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>No transactions yet.</p></div>'; return; }
+    el.innerHTML = state.transactions.slice(0,10).map(t => `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface-raised);border-radius:var(--r);margin-bottom:8px;">
+            <div style="width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:0.85rem;background:${t.type==='income'?'var(--accent-glow)':'var(--coral-glow)'};color:${t.type==='income'?'var(--accent)':'var(--coral)'}">
+                <i class="fas ${t.type==='income'?'fa-arrow-up':'fa-arrow-down'}"></i>
+            </div>
+            <div style="flex:1"><div style="font-size:0.88rem;font-weight:500;color:var(--text)">${t.desc}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">${t.cat} · ${t.date}</div></div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:${t.type==='income'?'var(--accent)':'var(--coral)'}">${t.type==='income'?'+':'-'}${fmtFull(t.amount)}</div>
+        </div>`).join('');
+}
+
+// ================================================================
+// ACCOUNTS
+// ================================================================
+function renderAccounts(c) {
+    if (!c) c = document.getElementById('pageContainer');
+    const total = state.accounts.reduce((s,a)=>s+a.balance,0);
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--sky)','university','','Total Across All Accounts',fmtFull(total),state.accounts.length + ' accounts linked')}
+        ${statCard('','var(--accent)','trending-up','','Highest Balance',fmtFull(Math.max(...state.accounts.map(a=>a.balance))),state.accounts.sort((a,b)=>b.balance-a.balance)[0]?.name||'')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-university"></i> Your Accounts</div></div>
+            ${state.accounts.map(a=>`
+                <div class="account-card">
+                    <div class="account-icon" style="background:${a.color}22;color:${a.color}"><i class="fas fa-${a.type==='bank'?'university':'mobile-alt'}"></i></div>
+                    <div class="account-meta"><h4>${a.name}</h4><span>${a.type === 'bank' ? 'Bank Account' : 'Digital Wallet'}</span></div>
+                    <div class="account-bal" style="color:${a.color}">${fmtFull(a.balance)}</div>
+                </div>`).join('')}
+            <div class="account-total">
+                <div><div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">Total Liquid</div>
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;color:var(--amber)">${fmtFull(total)}</div></div>
+                <i class="fas fa-check-circle" style="color:var(--accent);font-size:1.5rem"></i>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-plus"></i> Add Account</div></div>
+            <div class="form-group"><label>Account Name</label><input type="text" id="accName" placeholder="e.g. Axis Savings"></div>
+            <div class="form-group"><label>Type</label>
+                <select id="accType"><option value="bank">🏦 Bank Account</option><option value="wallet">📱 Digital Wallet</option></select>
+            </div>
+            <div class="form-group"><label>Current Balance (₹)</label><input type="number" id="accBal" placeholder="0" min="0"></div>
+            <div class="form-group"><label>Colour</label>
+                <select id="accColor">
+                    <option value="var(--sky)">Blue</option><option value="var(--accent)">Green</option>
+                    <option value="var(--amber)">Amber</option><option value="var(--coral)">Coral</option>
+                    <option value="var(--violet)">Violet</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="addAccount()"><i class="fas fa-plus"></i> Add Account</button>
+        </div>
+    </div>`;
+}
+
+function addAccount() {
+    const name = document.getElementById('accName').value.trim();
+    const balance = parseFloat(document.getElementById('accBal').value) || 0;
+    const type = document.getElementById('accType').value;
+    const color = document.getElementById('accColor').value;
+    if (!name) { showAlert('warning','Missing Name','Please enter an account name.'); return; }
+    state.accounts.push({ id: Date.now(), name, type, balance, color });
+    renderPage('accounts');
+    showAlert('success','Account Added', `${name} with balance ${fmtFull(balance)} linked.`);
+}
+
+// ================================================================
+// BUDGET GUARD
+// ================================================================
+function renderBudget(c) {
+    const cats = [
+        { key:'food', icon:'🍔', label:'Food & Groceries', limit: state.budget.food },
+        { key:'transport', icon:'🚗', label:'Transport', limit: state.budget.transport },
+        { key:'entertainment', icon:'🎬', label:'Entertainment', limit: state.budget.entertainment },
+        { key:'utilities', icon:'🔧', label:'Utilities & Bills', limit: state.budget.utilities },
+    ];
+    const spent = { food: 6200, transport: 2100, entertainment: 2800, utilities: 3900 };
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--violet)','wallet','','Total Budget',fmtFull(Object.values(state.budget).reduce((a,b)=>a+b,0)),'')}
+        ${statCard('','var(--coral)','fire','','Over Budget',cats.filter(cat=>spent[cat.key]>cat.limit).length + ' categories','Watch these!')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-wallet"></i> Category Budgets</div></div>
+            ${cats.map(cat => {
+                const s = spent[cat.key]; const pct = Math.min(100, Math.round((s/cat.limit)*100));
+                const over = s > cat.limit;
+                return `<div style="margin-bottom:20px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                        <span style="font-size:0.88rem;font-weight:500">${cat.icon} ${cat.label}</span>
+                        <span style="font-size:0.8rem;color:${over?'var(--coral)':'var(--text-muted)'};font-weight:600">${fmtFull(s)} / ${fmtFull(cat.limit)}</span>
+                    </div>
+                    <div class="runway-bar-wrap"><div class="runway-bar-fill" style="width:${pct}%;background:${over?'var(--coral)':pct>80?'var(--amber)':'var(--accent)'}"></div></div>
+                    ${over?`<div style="font-size:0.75rem;color:var(--coral);margin-top:4px">⚠️ Over by ${fmtFull(s-cat.limit)}</div>`:''}
+                </div>`;
+            }).join('')}
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-sliders-h"></i> Set Budget Limits</div></div>
+            ${cats.map(cat=>`
+                <div class="form-group">
+                    <label>${cat.icon} ${cat.label} (₹)</label>
+                    <input type="number" id="bgt_${cat.key}" value="${state.budget[cat.key]}" min="0">
+                </div>`).join('')}
+            <button class="btn btn-primary" style="width:100%" onclick="saveBudget()"><i class="fas fa-save"></i> Save Budgets</button>
+        </div>
+    </div>`;
+}
+
+function saveBudget() {
+    ['food','transport','entertainment','utilities'].forEach(k => {
+        const val = parseFloat(document.getElementById('bgt_'+k).value);
+        if (val >= 0) state.budget[k] = val;
+    });
+    renderPage('budget');
+    showAlert('success','Budget Saved','Your category limits have been updated.');
+}
+
+// ================================================================
+// SUBSCRIPTIONS
+// ================================================================
+function renderSubscriptions(c) {
+    const total = state.subscriptions.reduce((s,sub)=>s+sub.amount,0);
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--violet)','bell','','Monthly Subscriptions',fmtFull(total),state.subscriptions.length + ' active')}
+        ${statCard('','var(--amber)','calendar-check','','Yearly Spend on Subs',fmtFull(total*12),'Avoid auto-renew surprises')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-bell"></i> Active Subscriptions</div></div>
+            ${state.subscriptions.map(sub=>{
+                const daysLeft = sub.dueDay - new Date().getDate();
+                const soon = daysLeft >= 0 && daysLeft <= 3;
+                return `<div class="emi-item" style="${soon?'border-left:3px solid var(--amber)':''}">
+                    <div class="emi-icon" style="background:var(--violet-glow);color:var(--violet);font-size:1.3rem">${sub.icon}</div>
+                    <div class="emi-meta"><h4>${sub.name}</h4><span>Renews on ${sub.dueDay}th${soon?` <span style="color:var(--amber)">· Due in ${daysLeft}d!</span>`:''}</span></div>
+                    <div><div class="emi-amount" style="color:var(--violet)">${fmtFull(sub.amount)}/mo</div>
+                    <button onclick="removeSub(${sub.id})" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:0.75rem;margin-top:4px"><i class="fas fa-trash"></i></button></div>
+                </div>`;
+            }).join('')}
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-plus"></i> Add Subscription</div></div>
+            <div class="form-group"><label>Service Name</label><input type="text" id="subName" placeholder="e.g. Amazon Prime"></div>
+            <div class="form-group"><label>Monthly Cost (₹)</label><input type="number" id="subAmt" placeholder="199" min="1"></div>
+            <div class="form-group"><label>Renewal Day of Month</label><input type="number" id="subDay" placeholder="15" min="1" max="31"></div>
+            <div class="form-group"><label>Icon (emoji)</label><input type="text" id="subIcon" placeholder="📦" maxlength="2"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="addSub()"><i class="fas fa-plus"></i> Track Subscription</button>
+            <div class="hint">💡 Total subscription spend: <strong>${fmtFull(total)}/mo</strong> — that's <strong>${fmtFull(total*12)}/yr</strong>.</div>
+        </div>
+    </div>`;
+}
+
+function removeSub(id) { state.subscriptions = state.subscriptions.filter(s=>s.id!==id); renderPage('subscriptions'); }
+function addSub() {
+    const name = document.getElementById('subName').value.trim();
+    const amount = parseFloat(document.getElementById('subAmt').value)||0;
+    const dueDay = parseInt(document.getElementById('subDay').value)||1;
+    const icon = document.getElementById('subIcon').value || '📦';
+    if (!name||!amount) { showAlert('warning','Missing Info','Please fill in name and amount.'); return; }
+    state.subscriptions.push({ id:Date.now(), name, amount, dueDay, icon });
+    renderPage('subscriptions');
+    showAlert('success','Tracked!', `${name} added — ${fmtFull(amount)}/mo.`);
+}
+
+// ================================================================
+// SPLIT BILL
+// ================================================================
+function renderSplitBill(c) {
+    const total = state.splits.reduce((s,sp)=>s+sp.amount,0);
+    const owed = state.splits.reduce((s,sp)=>s+sp.splits.filter(p=>!p.paid).reduce((a,p)=>a+p.share,0),0);
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--violet)','receipt','','Total Bills Tracked',fmtFull(total),state.splits.length + ' bills')}
+        ${statCard('','var(--coral)','hand-holding-usd','','Still Owed to You',fmtFull(owed),'Pending settlements')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-receipt"></i> Add Bill to Split</div></div>
+            <div class="form-group"><label>Bill Description</label><input type="text" id="splDesc" placeholder="e.g. Flat electricity bill"></div>
+            <div class="form-group"><label>Total Amount (₹)</label><input type="number" id="splAmt" placeholder="2400" min="1"></div>
+            <div class="form-group"><label>Number of People (incl. you)</label><input type="number" id="splPeople" placeholder="4" min="2" max="20"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="addSplit()"><i class="fas fa-divide"></i> Split Bill</button>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-users"></i> Active Splits</div></div>
+            ${state.splits.length ? state.splits.map(sp=>`
+                <div style="background:var(--surface-raised);border-radius:var(--r);padding:14px;margin-bottom:10px">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                        <span style="font-weight:600;font-size:0.88rem">${sp.desc}</span>
+                        <span style="color:var(--amber);font-weight:700">${fmtFull(sp.amount)}</span>
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-muted)">Each person owes: ${fmtFull(sp.perPerson)} · ${sp.splits.filter(p=>!p.paid).length} pending</div>
+                    <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+                        ${sp.splits.map((p,i)=>`
+                            <button onclick="togglePaid(${sp.id},${i})" style="padding:4px 10px;border-radius:20px;border:1px solid ${p.paid?'var(--accent)':'var(--border)'};background:${p.paid?'var(--accent-glow)':'transparent'};color:${p.paid?'var(--accent)':'var(--text-muted)'};cursor:pointer;font-size:0.72rem">
+                                Person ${i+1} ${p.paid?'✓':'?'}
+                            </button>`).join('')}
+                    </div>
+                </div>`).join('') : '<div class="empty-state"><i class="fas fa-receipt"></i><p>No bills split yet.</p></div>'}
+        </div>
+    </div>`;
+}
+
+function addSplit() {
+    const desc = document.getElementById('splDesc').value.trim();
+    const amount = parseFloat(document.getElementById('splAmt').value)||0;
+    const people = parseInt(document.getElementById('splPeople').value)||2;
+    if (!desc||!amount) { showAlert('warning','Missing Info','Fill in bill description and amount.'); return; }
+    const perPerson = amount / people;
+    const splits = Array.from({length:people-1}, (_,i)=>({ label:'Person '+(i+2), share: perPerson, paid:false }));
+    state.splits.push({ id:Date.now(), desc, amount, perPerson, splits });
+    renderPage('splitbill');
+    showAlert('success','Bill Split!', `${fmtFull(perPerson)} per person.`);
+}
+
+function togglePaid(billId, personIdx) {
+    const bill = state.splits.find(s=>s.id===billId);
+    if (bill) { bill.splits[personIdx].paid = !bill.splits[personIdx].paid; renderPage('splitbill'); }
+}
+
+// ================================================================
+// LIQUIDITY / RUNWAY
+// ================================================================
+function renderLiquidity(c) {
+    const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0);
+    const monthlyOut = cfg.expenses;
+    const dailyBurn = monthlyOut / 30;
+    const runway = Math.floor(totalCash / dailyBurn);
+    const cls = runway >= 90 ? 'var(--accent)' : runway >= 30 ? 'var(--amber)' : 'var(--coral)';
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('',cls,'tachometer-alt','','Days to Zero',runway + 'd',runway>=90?'Healthy runway ✓':runway>=30?'Caution zone':'Critical!')}
+        ${statCard('','var(--sky)','piggy-bank','','Total Liquid Cash',fmtFull(totalCash),'Across all accounts')}
+        ${statCard('','var(--coral)','fire-alt','','Daily Burn Rate',fmtFull(Math.round(dailyBurn)),`${fmtFull(monthlyOut)}/month`)}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-tachometer-alt"></i> Liquidity Runway</div></div>
+            <div style="text-align:center;padding:20px 0">
+                <div style="font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;color:${cls};line-height:1">${runway}</div>
+                <div style="color:var(--text-muted);margin-top:8px">days of runway remaining</div>
+                <div class="runway-bar-wrap" style="margin:20px 0">
+                    <div class="runway-bar-fill" style="width:${Math.min(100,(runway/180)*100)}%;background:${cls}"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-dim)">
+                    <span>0d</span><span>Critical (30d)</span><span>Healthy (180d)</span>
+                </div>
+            </div>
+            <div style="background:var(--surface-raised);border-radius:var(--r);padding:16px;margin-top:16px">
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px">💡 Runway Recommendation</div>
+                <div style="font-size:0.88rem;color:var(--text)">${
+                    runway >= 90 ? 'Great position. Consider investing surplus in liquid mutual funds.' :
+                    runway >= 30 ? 'You have about a month. Reduce discretionary spend immediately.' :
+                    'Critical! Cut all non-essential spend and explore additional income sources.'
+                }</div>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-sliders-h"></i> Adjust Variables</div></div>
+            <div class="form-group"><label>Monthly Fixed Costs (₹)</label>
+                <input type="number" id="liqFixed" value="${cfg.expenses}" min="0" oninput="recalcRunway()">
+            </div>
+            <div class="form-group"><label>Additional Cash Reserves (₹)</label>
+                <input type="number" id="liqExtra" value="0" min="0" oninput="recalcRunway()">
+            </div>
+            <div class="form-group"><label>Expected Income Next 30 Days (₹)</label>
+                <input type="number" id="liqIncome" value="${cfg.income}" min="0" oninput="recalcRunway()">
+            </div>
+            <div style="background:var(--surface-raised);border-radius:var(--r);padding:16px;margin-top:8px">
+                <div style="font-size:0.78rem;color:var(--text-muted)">Adjusted Runway</div>
+                <div id="adjRunway" style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:${cls};margin-top:4px">${runway}d</div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function recalcRunway() {
+    const fixed = parseFloat(document.getElementById('liqFixed').value)||cfg.expenses;
+    const extra = parseFloat(document.getElementById('liqExtra').value)||0;
+    const income = parseFloat(document.getElementById('liqIncome').value)||0;
+    const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0) + extra;
+    const netDailyBurn = Math.max(1,(fixed - income/30)/30 * 30);
+    const adj = Math.max(0, Math.floor((totalCash) / (fixed/30)));
+    const el = document.getElementById('adjRunway');
+    if (el) { el.textContent = adj + 'd'; el.style.color = adj>=90?'var(--accent)':adj>=30?'var(--amber)':'var(--coral)'; }
+}
+
+// ================================================================
+// INVOICES
+// ================================================================
+function renderInvoices(c) {
+    const pending = state.invoices.filter(i=>i.status==='pending').reduce((s,i)=>s+i.amount,0);
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--accent)','file-invoice-dollar','','Pending Payments',fmtFull(pending),state.invoices.filter(i=>i.status==='pending').length + ' invoices')}
+        ${statCard('','var(--sky)','check-circle','','Received',fmtFull(state.invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+i.amount,0)),'This cycle')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-file-invoice"></i> Add Invoice</div></div>
+            <div class="form-group"><label>Client Name</label><input type="text" id="invClient" placeholder="e.g. Acme Corp"></div>
+            <div class="form-group"><label>Amount (₹)</label><input type="number" id="invAmt" placeholder="45000" min="1"></div>
+            <div class="form-group"><label>Due Date</label><input type="date" id="invDue" value="${today()}"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="addInvoice()"><i class="fas fa-plus"></i> Add Invoice</button>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-list"></i> Invoice Tracker</div></div>
+            ${state.invoices.map(inv=>{
+                const daysLeft = Math.ceil((new Date(inv.due)-new Date())/(1000*60*60*24));
+                const overdue = daysLeft < 0;
+                return `<div class="emi-item" style="border-left:3px solid ${inv.status==='paid'?'var(--accent)':overdue?'var(--coral)':'var(--amber)'}">
+                    <div class="emi-icon" style="background:${inv.status==='paid'?'var(--accent-glow)':overdue?'var(--coral-glow)':'var(--amber-glow)'};color:${inv.status==='paid'?'var(--accent)':overdue?'var(--coral)':'var(--amber)'}">
+                        <i class="fas fa-${inv.status==='paid'?'check':'file-invoice'}"></i>
+                    </div>
+                    <div class="emi-meta">
+                        <h4>${inv.client}</h4>
+                        <span style="color:${overdue&&inv.status!=='paid'?'var(--coral)':'var(--text-muted)'}">${inv.status==='paid'?'Paid ✓':overdue?'Overdue by '+Math.abs(daysLeft)+'d':'Due in '+daysLeft+'d · '+inv.due}</span>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="emi-amount" style="color:${inv.status==='paid'?'var(--accent)':'var(--text)'}">${fmtFull(inv.amount)}</div>
+                        ${inv.status==='pending'?`<button onclick="markPaid(${inv.id})" style="margin-top:4px;padding:3px 8px;border-radius:20px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:0.7rem">Mark Paid</button>`:''}
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+    </div>`;
+}
+
+function addInvoice() {
+    const client = document.getElementById('invClient').value.trim();
+    const amount = parseFloat(document.getElementById('invAmt').value)||0;
+    const due = document.getElementById('invDue').value;
+    if (!client||!amount||!due) { showAlert('warning','Missing Info','Fill all invoice fields.'); return; }
+    state.invoices.unshift({ id:Date.now(), client, amount, due, status:'pending' });
+    renderPage('invoices');
+    showAlert('success','Invoice Added', `${client} — ${fmtFull(amount)} due ${due}.`);
+}
+
+function markPaid(id) {
+    const inv = state.invoices.find(i=>i.id===id);
+    if (inv) { inv.status = 'paid'; renderPage('invoices'); showAlert('success','Payment Received!',`${fmtFull(inv.amount)} from ${inv.client} marked as paid.`); }
+}
+
+// ================================================================
+// TAX ESTIMATOR
+// ================================================================
+function renderTax(c) {
+    c.innerHTML = `
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-percentage"></i> Tax Estimator (India)</div></div>
+            <div class="form-group"><label>Annual Gross Income (₹)</label><input type="number" id="taxIncome" placeholder="600000" value="${cfg.income*12}" min="0"></div>
+            <div class="form-group"><label>Regime</label>
+                <select id="taxRegime">
+                    <option value="new">New Tax Regime (FY 2024-25)</option>
+                    <option value="old">Old Tax Regime</option>
+                </select>
+            </div>
+            <div class="form-group"><label>TDS Already Deducted (₹)</label><input type="number" id="taxTDS" placeholder="0" min="0"></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="calcTax()"><i class="fas fa-calculator"></i> Estimate Tax</button>
+            <div class="hint">⚠️ This is an estimate only. Consult a tax professional for actual liability.</div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-receipt"></i> Tax Breakdown</div></div>
+            <div id="taxResult"><div class="empty-state"><i class="fas fa-percentage"></i><p>Enter income details to calculate.</p></div></div>
+        </div>
+    </div>`;
+}
+
+function calcTax() {
+    const income = parseFloat(document.getElementById('taxIncome').value)||0;
+    const regime = document.getElementById('taxRegime').value;
+    const tds = parseFloat(document.getElementById('taxTDS').value)||0;
+    let tax = 0;
+
+    if (regime === 'new') {
+        if (income <= 300000) tax = 0;
+        else if (income <= 600000) tax = (income-300000)*0.05;
+        else if (income <= 900000) tax = 15000+(income-600000)*0.10;
+        else if (income <= 1200000) tax = 45000+(income-900000)*0.15;
+        else if (income <= 1500000) tax = 90000+(income-1200000)*0.20;
+        else tax = 150000+(income-1500000)*0.30;
+        if (income <= 700000) tax = 0;
+    } else {
+        if (income <= 250000) tax = 0;
+        else if (income <= 500000) tax = (income-250000)*0.05;
+        else if (income <= 1000000) tax = 12500+(income-500000)*0.20;
+        else tax = 112500+(income-1000000)*0.30;
+        if (income <= 500000) tax = 0;
+    }
+
+    const cess = tax * 0.04;
+    const total = tax + cess;
+    const payable = Math.max(0, total - tds);
+    const eff = income > 0 ? ((total/income)*100).toFixed(1) : 0;
+
+    document.getElementById('taxResult').innerHTML = `
+        <div class="scenario-row"><span>Gross Income</span><span style="color:var(--text)">${fmtFull(income)}</span></div>
+        <div class="scenario-row"><span>Base Tax</span><span style="color:var(--amber)">${fmtFull(Math.round(tax))}</span></div>
+        <div class="scenario-row"><span>Health & Education Cess (4%)</span><span style="color:var(--amber)">${fmtFull(Math.round(cess))}</span></div>
+        <div class="scenario-row"><span>Total Tax Liability</span><span style="color:var(--coral);font-weight:700">${fmtFull(Math.round(total))}</span></div>
+        <div class="scenario-row"><span>TDS Deducted</span><span style="color:var(--accent)">-${fmtFull(tds)}</span></div>
+        <div class="scenario-row" style="border-top:2px solid var(--amber);padding-top:12px;margin-top:4px">
+            <span style="font-weight:700">Net Payable / Refund</span>
+            <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:${payable>0?'var(--coral)':'var(--accent)'}">
+                ${payable > 0 ? fmtFull(Math.round(payable)) + ' to pay' : fmtFull(Math.round(Math.abs(payable))) + ' refund'}
+            </span>
+        </div>
+        <div style="margin-top:14px;padding:12px;background:var(--surface-raised);border-radius:var(--r);font-size:0.82rem;color:var(--text-muted)">
+            Effective tax rate: <strong style="color:var(--text)">${eff}%</strong> · 
+            Set aside <strong style="color:var(--amber)">${fmtFull(Math.round(total/12))}/month</strong> to stay prepared.
+        </div>`;
+}
+
+// ================================================================
+// EMI TIMELINE
+// ================================================================
+function renderEMI(c) {
+    const totalEMI = state.emis.reduce((s,e)=>s+e.amount,0);
+    const today_day = new Date().getDate();
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--sky)','calendar-alt','','Total EMIs / Month',fmtFull(totalEMI),state.emis.length + ' active loans')}
+        ${statCard('','var(--coral)','exclamation-circle','','Due This Week',fmtFull(state.emis.filter(e=>e.dueDay>=today_day&&e.dueDay<=today_day+7).reduce((s,e)=>s+e.amount,0)),'Stay on top!')}
+        ${statCard('','var(--amber)','percentage','','Income vs EMIs',Math.round((totalEMI/cfg.income)*100)+'%','EMI-to-income ratio')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-calendar-alt"></i> EMI Calendar</div></div>
+            ${state.emis.sort((a,b)=>a.dueDay-b.dueDay).map(e=>{
+                const daysLeft = e.dueDay - today_day;
+                const urgent = daysLeft >= 0 && daysLeft <= 3;
+                return `<div class="emi-item" style="border-left:3px solid ${urgent?'var(--coral)':e.color}">
+                    <div class="emi-icon" style="background:${e.color}22;color:${e.color};font-size:1.2rem">${e.icon}</div>
+                    <div class="emi-meta">
+                        <h4>${e.name}</h4>
+                        <span>Due on <strong>${e.dueDay}${e.dueDay===1?'st':e.dueDay===2?'nd':e.dueDay===3?'rd':'th'}</strong> every month${urgent?` <span style="color:var(--coral)">· In ${daysLeft}d!</span>`:''}</span>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="emi-amount" style="color:${e.color}">${fmtFull(e.amount)}</div>
+                        <button onclick="removeEMI(${e.id})" style="background:none;border:none;color:var(--coral);cursor:pointer;font-size:0.75rem;margin-top:4px"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-plus"></i> Add EMI</div></div>
+            <div class="form-group"><label>Loan Name</label><input type="text" id="emiName" placeholder="e.g. Personal Loan"></div>
+            <div class="form-group"><label>Monthly EMI (₹)</label><input type="number" id="emiAmt" placeholder="5000" min="1"></div>
+            <div class="form-group"><label>Due Day of Month</label><input type="number" id="emiDay" placeholder="5" min="1" max="31"></div>
+            <div class="form-group"><label>Icon (emoji)</label><input type="text" id="emiIcon" placeholder="🏦" maxlength="2"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="addEMI()"><i class="fas fa-plus"></i> Add EMI</button>
+            <div class="hint">💡 Healthy EMI-to-income ratio is below 40%. Yours is <strong>${Math.round((totalEMI/cfg.income)*100)}%</strong>.</div>
+        </div>
+    </div>`;
+}
+
+function removeEMI(id) { state.emis = state.emis.filter(e=>e.id!==id); renderPage('emi'); }
+function addEMI() {
+    const name = document.getElementById('emiName').value.trim();
+    const amount = parseFloat(document.getElementById('emiAmt').value)||0;
+    const dueDay = parseInt(document.getElementById('emiDay').value)||1;
+    const icon = document.getElementById('emiIcon').value||'🏦';
+    const colors = ['var(--sky)','var(--accent)','var(--violet)','var(--amber)','var(--teal)'];
+    if (!name||!amount) { showAlert('warning','Missing Info','Fill name and amount.'); return; }
+    state.emis.push({ id:Date.now(), name, amount, dueDay, icon, color: colors[state.emis.length % colors.length] });
+    renderPage('emi');
+    showAlert('success','EMI Added',`${name} — ${fmtFull(amount)}/mo due on ${dueDay}th.`);
+}
+
+// ================================================================
+// ANNUAL PREDICTOR
+// ================================================================
+function renderAnnual(c) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const base = cfg.expenses;
+    const spikes = { 3:45000, 6:20000, 9:15000, 11:30000 }; // school fees Apr, Jul, Oct, Dec
+    const monthlyData = months.map((m,i)=>({ m, total: base + (spikes[i]||0), spike: spikes[i]||0 }));
+    const maxVal = Math.max(...monthlyData.map(d=>d.total));
+    const yearTotal = monthlyData.reduce((s,d)=>s+d.total,0);
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--sky)','chart-area','','Projected Annual Spend',fmtFull(yearTotal),'Including known spikes')}
+        ${statCard('','var(--amber)','exclamation-triangle','','Spike Months',Object.keys(spikes).length + ' months','Apr, Jul, Oct, Dec')}
+        ${statCard('','var(--teal)','save','','Monthly Surplus',fmtFull(cfg.income-cfg.expenses),'Available after base costs')}
+    </div>
+    <div class="panel">
+        <div class="panel-header"><div class="panel-title"><i class="fas fa-chart-area"></i> Monthly Expense Forecast</div></div>
+        ${monthlyData.map(d=>`
+            <div class="expense-month">
+                <div class="expense-month-name">${d.m}</div>
+                <div class="expense-month-bar">
+                    <div class="expense-month-fill" style="width:${Math.round((d.total/maxVal)*100)}%;background:${d.spike>0?'var(--amber)':'var(--sky)'}"></div>
+                </div>
+                <div class="expense-month-amt">${fmtFull(d.total)}</div>
+                ${d.spike > 0 ? `<span class="tag tag-amber" style="flex-shrink:0">+${fmtFull(d.spike)} spike</span>` : ''}
+            </div>`).join('')}
+        <div class="hint" style="margin-top:16px">
+            💡 Amber bars indicate months with one-time costs (school fees, insurance, etc.).
+            Start saving <strong>${fmtFull(Math.round(Object.values(spikes).reduce((a,b)=>a+b,0)/12))}/mo</strong> now to cover annual spikes.
+        </div>
+    </div>`;
+}
+
+// ================================================================
+// JOB LOSS SIMULATION
+// ================================================================
+function renderJobLoss(c) {
+    const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0) + cfg.savings;
+    const essentials = Math.round(cfg.expenses * 0.6);
+    const runwayFull = Math.floor(totalCash / (cfg.expenses/30));
+    const runwayCut = Math.floor(totalCash / (essentials/30));
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--coral)','shield-alt','','Runway (No Changes)',runwayFull + 'd',`₹${Math.round(cfg.expenses/30)}/day burn`)}
+        ${statCard('','var(--amber)','cut','','Runway (Cut to Essentials)',runwayCut + 'd',`₹${Math.round(essentials/30)}/day if you cut`)}
+        ${statCard('','var(--accent)','piggy-bank','','Total Safety Net',fmtFull(totalCash),'Savings + all accounts')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-shield-alt"></i> Job Loss Simulation</div></div>
+            <div style="background:var(--surface-raised);border-radius:var(--r);padding:20px;margin-bottom:16px">
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px">If income stopped today...</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px">
+                            <span>Full lifestyle</span><span style="color:var(--coral)">${runwayFull} days</span>
+                        </div>
+                        <div class="runway-bar-wrap"><div class="runway-bar-fill" style="width:${Math.min(100,runwayFull/3)}%;background:var(--coral)"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px">
+                            <span>Essentials only (60% cut)</span><span style="color:var(--amber)">${runwayCut} days</span>
+                        </div>
+                        <div class="runway-bar-wrap"><div class="runway-bar-fill" style="width:${Math.min(100,runwayCut/3)}%;background:var(--amber)"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:10px">What to cut first:</div>
+            ${[['🎬 Entertainment & OTT',Math.round(cfg.expenses*0.08),'Cut immediately'],['🍔 Dining Out',Math.round(cfg.expenses*0.12),'Reduce by 80%'],['👗 Shopping',Math.round(cfg.expenses*0.10),'Pause all non-essentials'],['🚗 Transport',Math.round(cfg.expenses*0.08),'Switch to public transport']].map(([name,amt,action])=>`
+                <div class="conflict-item defer">
+                    <div style="flex:1"><div style="font-size:0.85rem;font-weight:500">${name}</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted)">${action}</div></div>
+                    <div style="color:var(--amber);font-weight:700;font-size:0.88rem">-${fmtFull(amt)}/mo</div>
+                </div>`).join('')}
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-sliders-h"></i> Customise Scenario</div></div>
+            <div class="form-group"><label>Total Savings / Cash (₹)</label><input type="number" id="jlCash" value="${totalCash}" oninput="recalcJobLoss()"></div>
+            <div class="form-group"><label>Monthly Essential Costs (₹)</label><input type="number" id="jlEssential" value="${essentials}" oninput="recalcJobLoss()"></div>
+            <div class="form-group"><label>Monthly Full Costs (₹)</label><input type="number" id="jlFull" value="${cfg.expenses}" oninput="recalcJobLoss()"></div>
+            <div id="jlResult" style="background:var(--surface-raised);border-radius:var(--r);padding:16px;margin-top:8px">
+                <div class="scenario-row"><span>Runway (Full)</span><span style="color:var(--coral)">${runwayFull}d</span></div>
+                <div class="scenario-row"><span>Runway (Cut)</span><span style="color:var(--amber)">${runwayCut}d</span></div>
+                <div class="scenario-row"><span>Recommended target</span><span style="color:var(--accent)">180d min</span></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function recalcJobLoss() {
+    const cash = parseFloat(document.getElementById('jlCash').value)||0;
+    const essential = parseFloat(document.getElementById('jlEssential').value)||1;
+    const full = parseFloat(document.getElementById('jlFull').value)||1;
+    const rf = Math.floor(cash/(full/30));
+    const rc = Math.floor(cash/(essential/30));
+    const el = document.getElementById('jlResult');
+    if (el) el.innerHTML = `
+        <div class="scenario-row"><span>Runway (Full)</span><span style="color:var(--coral)">${rf}d</span></div>
+        <div class="scenario-row"><span>Runway (Essentials)</span><span style="color:var(--amber)">${rc}d</span></div>
+        <div class="scenario-row"><span>Recommended target</span><span style="color:var(--accent)">180d min</span></div>
+        <div class="scenario-row"><span>Status</span><span style="color:${rc>=180?'var(--accent)':rc>=90?'var(--amber)':'var(--coral)'}">${rc>=180?'✓ Secure':rc>=90?'⚠ Moderate':'✗ Vulnerable'}</span></div>`;
+}
+
+// ================================================================
+// SAVINGS GOAL
+// ================================================================
+function renderGoal(c) {
+    const savingsRate = cfg.income - cfg.expenses;
+    const current = cfg.savings;
+    const target = state.goalTarget;
+    const remaining = Math.max(0, target - current);
+    const months = savingsRate > 0 ? Math.ceil(remaining / savingsRate) : Infinity;
+    const pct = Math.min(100, Math.round((current/target)*100));
+    const eta = months === Infinity ? 'N/A' : new Date(Date.now() + months*30*24*60*60*1000).toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--teal)','bullseye','','Current Savings',fmtFull(current),pct+'% of target')}
+        ${statCard('','var(--amber)','calendar','','Months to Target',months===Infinity?'∞':months+'mo',months===Infinity?'Increase savings rate!':('ETA: '+eta))}
+        ${statCard('','var(--accent)','plus-circle','','Monthly Surplus',fmtFull(savingsRate),'Going toward goal')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-bullseye"></i> ${state.goalLabel}</div></div>
+            <div style="text-align:center;padding:20px 0">
+                <svg width="140" height="140" viewBox="0 0 140 140" style="display:block;margin:0 auto">
+                    <circle cx="70" cy="70" r="58" fill="none" stroke="var(--surface-overlay)" stroke-width="14"/>
+                    <circle cx="70" cy="70" r="58" fill="none" stroke="var(--teal)" stroke-width="14"
+                        stroke-dasharray="${Math.round(pct*3.644)} 364.4"
+                        stroke-dashoffset="91.1" stroke-linecap="round" transform="rotate(-90 70 70)"/>
+                    <text x="70" y="65" text-anchor="middle" font-family="Syne,sans-serif" font-size="22" font-weight="800" fill="#2dd4bf">${pct}%</text>
+                    <text x="70" y="83" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#8b949e">of goal</text>
+                </svg>
+                <div style="margin-top:16px;font-size:0.88rem;color:var(--text-muted)">
+                    <strong style="color:var(--text)">${fmtFull(current)}</strong> saved of <strong style="color:var(--teal)">${fmtFull(target)}</strong>
+                </div>
+                <div style="margin-top:6px;font-size:0.82rem;color:var(--text-muted)">${remaining > 0 ? fmtFull(remaining) + ' remaining' : '🎉 Goal Reached!'}</div>
+                <div class="runway-bar-wrap" style="margin:16px 0">
+                    <div class="runway-bar-fill" style="width:${pct}%;background:var(--teal)"></div>
+                </div>
+                ${months !== Infinity ? `<div style="font-size:0.85rem;color:var(--text-muted)">At <strong style="color:var(--accent)">${fmtFull(savingsRate)}/mo</strong>, you'll hit this by <strong style="color:var(--teal)">${eta}</strong></div>` : ''}
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-sliders-h"></i> Configure Goal</div></div>
+            <div class="form-group"><label>Goal Name</label><input type="text" id="goalLabel" value="${state.goalLabel}"></div>
+            <div class="form-group"><label>Target Amount (₹)</label><input type="number" id="goalTarget" value="${target}" min="1000"></div>
+            <div class="form-group"><label>Current Savings (₹)</label><input type="number" id="goalCurrent" value="${current}" min="0"></div>
+            <div class="form-group"><label>Monthly Savings Contribution (₹)</label><input type="number" id="goalMonthly" value="${savingsRate}" min="0"></div>
+            <button class="btn btn-primary" style="width:100%" onclick="updateGoal()"><i class="fas fa-save"></i> Update Goal</button>
+        </div>
+    </div>`;
+}
+
+function updateGoal() {
+    state.goalLabel = document.getElementById('goalLabel').value || state.goalLabel;
+    state.goalTarget = parseFloat(document.getElementById('goalTarget').value) || state.goalTarget;
+    cfg.savings = parseFloat(document.getElementById('goalCurrent').value) || cfg.savings;
+    const monthly = parseFloat(document.getElementById('goalMonthly').value)||0;
+    if (monthly > 0) { cfg.income = cfg.expenses + monthly; }
+    renderPage('goal');
+    showAlert('success','Goal Updated',`Target: ${fmtFull(state.goalTarget)} — ${state.goalLabel}`);
+}
+
+// ================================================================
+// PAYROLL RESOLVER
+// ================================================================
+function renderPayroll(c) {
+    const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0);
+    const totalObl = state.obligations.reduce((s,o)=>s+o.amount,0);
+    const shortfall = Math.max(0, totalObl - totalCash);
+    const sorted = [...state.obligations].sort((a,b)=>b.penalty-a.penalty);
+
+    let remaining = totalCash;
+    const decisions = sorted.map(o => {
+        if (remaining >= o.amount) { remaining -= o.amount; return { ...o, action:'pay', msg:'Pay in full' }; }
+        else if (remaining > 0 && o.flexible) { const partial = remaining; remaining = 0; return { ...o, action:'partial', msg:`Pay ₹${Math.round(partial).toLocaleString('en-IN')} now` }; }
+        else return { ...o, action: o.flexible ? 'defer' : 'warn', msg: o.flexible ? 'Defer — low penalty' : 'Cannot defer — escalate!' };
+    });
+
+    c.innerHTML = `
+    <div class="cards-grid">
+        ${statCard('','var(--amber)','balance-scale','','Cash Available',fmtFull(totalCash),'Across accounts')}
+        ${statCard('','var(--coral)','file-invoice-dollar','','Total Obligations',fmtFull(totalObl),'This cycle')}
+        ${statCard('',shortfall>0?'var(--coral)':'var(--accent)','exclamation-triangle','',shortfall>0?'Shortfall':'Surplus',fmtFull(shortfall>0?shortfall:totalCash-totalObl),shortfall>0?'Action needed':'You\'re covered ✓')}
+    </div>
+    <div class="two-col">
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-balance-scale"></i> Decision Engine</div></div>
+            ${decisions.map(d=>`
+                <div class="conflict-item ${d.action==='pay'?'pay':d.action==='partial'?'defer':d.action==='defer'?'defer':'warn'}">
+                    <div class="conflict-badge" style="background:${d.action==='pay'?'var(--accent-glow)':d.action==='partial'?'var(--sky-glow)':d.action==='defer'?'var(--amber-glow)':'var(--coral-glow)'};color:${d.action==='pay'?'var(--accent)':d.action==='partial'?'var(--sky)':d.action==='defer'?'var(--amber)':'var(--coral)'}">
+                        <i class="fas fa-${d.action==='pay'?'check':d.action==='partial'?'adjust':d.action==='defer'?'clock':'exclamation'}"></i>
+                    </div>
+                    <div style="flex:1">
+                        <div style="font-size:0.88rem;font-weight:600">${d.name}</div>
+                        <div style="font-size:0.75rem;color:var(--text-muted)">${d.msg} · Penalty: ${d.penalty}%/month · ${d.flexible?'Flexible':'Fixed'}</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-weight:700;font-size:0.9rem">${fmtFull(d.amount)}</div>
+                        <span class="tag ${d.action==='pay'?'tag-green':d.action==='defer'?'tag-amber':'tag-coral'}" style="margin-top:4px">${d.action.toUpperCase()}</span>
+                    </div>
+                </div>`).join('')}
+        </div>
+        <div class="panel">
+            <div class="panel-header"><div class="panel-title"><i class="fas fa-plus"></i> Add Obligation</div></div>
+            <div class="form-group"><label>Name</label><input type="text" id="oblName" placeholder="e.g. Office Rent"></div>
+            <div class="form-group"><label>Amount (₹)</label><input type="number" id="oblAmt" placeholder="15000" min="1"></div>
+            <div class="form-group"><label>Due Day</label><input type="number" id="oblDay" placeholder="1" min="1" max="31"></div>
+            <div class="form-group"><label>Late Penalty (%/month)</label><input type="number" id="oblPenalty" placeholder="5" min="0" max="100"></div>
+            <div class="form-group"><label>Flexible (can be deferred)?</label>
+                <select id="oblFlex"><option value="true">Yes — flexible</option><option value="false">No — must pay</option></select>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="addObligation()"><i class="fas fa-plus"></i> Add</button>
+        </div>
+    </div>`;
+}
+
+function addObligation() {
+    const name = document.getElementById('oblName').value.trim();
+    const amount = parseFloat(document.getElementById('oblAmt').value)||0;
+    const dueDay = parseInt(document.getElementById('oblDay').value)||1;
+    const penalty = parseFloat(document.getElementById('oblPenalty').value)||0;
+    const flexible = document.getElementById('oblFlex').value === 'true';
+    if (!name||!amount) { showAlert('warning','Missing Info','Fill name and amount.'); return; }
+    state.obligations.push({ id:Date.now(), name, amount, dueDay, penalty, flexible });
+    renderPage('payroll');
+    showAlert('success','Obligation Added',`${name} — ${fmtFull(amount)}, penalty: ${penalty}%`);
+}
+
+// ================================================================
+// PENALTY PRIORITISER
+// ================================================================
+function renderPenalty(c) {
+    const scored = state.obligations.map(o => {
+        const penaltyScore = o.penalty * 3;
+        const urgencyScore = Math.max(0, (15 - Math.abs(o.dueDay - new Date().getDate()))) * 2;
+        const flexScore = o.flexible ? 0 : 25;
+        const total = Math.min(100, penaltyScore + urgencyScore + flexScore);
+        return { ...o, score: Math.round(total) };
+    }).sort((a,b)=>b.score-a.score);
+
+    c.innerHTML = `
+    <div class="panel">
+        <div class="panel-header"><div class="panel-title"><i class="fas fa-gavel"></i> Obligation Risk Scores</div></div>
+        <div class="hint" style="margin-bottom:16px">Scored on penalty rate (×3), urgency (days to due), and flexibility. Higher = pay first.</div>
+        ${scored.map((o,i)=>`
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface-raised);border-radius:var(--r);margin-bottom:10px;border-left:3px solid ${o.score>=70?'var(--coral)':o.score>=40?'var(--amber)':'var(--accent)'}">
+                <div style="width:28px;height:28px;border-radius:50%;background:${o.score>=70?'var(--coral-glow)':o.score>=40?'var(--amber-glow)':'var(--accent-glow)'};color:${o.score>=70?'var(--coral)':o.score>=40?'var(--amber)':'var(--accent)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0">#${i+1}</div>
+                <div style="flex:1">
+                    <div style="font-size:0.88rem;font-weight:600">${o.name}</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted)">Penalty: ${o.penalty}%/mo · Due: ${o.dueDay}th · ${o.flexible?'Flexible':'Fixed'}</div>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:${o.score>=70?'var(--coral)':o.score>=40?'var(--amber)':'var(--accent)'}">${o.score}</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted)">risk score</div>
+                </div>
+                <div>
+                    <div class="runway-bar-wrap" style="width:80px">
+                        <div class="runway-bar-fill" style="width:${o.score}%;background:${o.score>=70?'var(--coral)':o.score>=40?'var(--amber)':'var(--accent)'}"></div>
+                    </div>
+                    <div style="font-size:0.8rem;color:var(--text);margin-top:4px">${fmtFull(o.amount)}</div>
+                </div>
+            </div>`).join('')}
+        ${!scored.length ? '<div class="empty-state"><i class="fas fa-gavel"></i><p>Add obligations in the Payroll Resolver to see scores here.</p></div>' : ''}
+    </div>`;
+}
+
+// ================================================================
+// WHAT-IF SIMULATOR
+// ================================================================
+function renderWhatIf(c) {
+    c.innerHTML = `
+    <div class="panel">
+        <div class="panel-header"><div class="panel-title"><i class="fas fa-project-diagram"></i> Scenario Simulator</div></div>
+        <div class="two-col">
+            <div>
+                <div style="font-size:0.85rem;font-weight:600;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.06em">What changes?</div>
+                <div class="form-group"><label>Scenario Type</label>
+                    <select id="siType" onchange="updateSimLabel()">
+                        <option value="client_delay">Client delays payment</option>
+                        <option value="income_drop">Income drops by %</option>
+                        <option value="expense_spike">Sudden large expense</option>
+                        <option value="emi_add">New EMI added</option>
+                        <option value="job_loss">Complete income loss</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label id="siLabel">Delay Duration (days)</label>
+                    <input type="number" id="siValue" placeholder="30" min="0">
+                </div>
+                <div class="form-group"><label>Amount Affected (₹)</label><input type="number" id="siAmount" placeholder="50000" min="0"></div>
+                <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="runSimulation()">
+                    <i class="fas fa-play"></i> Run Simulation
+                </button>
+            </div>
+            <div id="simResult">
+                <div class="empty-state"><i class="fas fa-project-diagram"></i><p>Set a scenario and run it to see the projected impact on your cash position.</p></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function updateSimLabel() {
+    const type = document.getElementById('siType').value;
+    const labels = {
+        client_delay: 'Delay Duration (days)',
+        income_drop: 'Drop Percentage (%)',
+        expense_spike: 'Spike Amount (₹)',
+        emi_add: 'New EMI (₹/month)',
+        job_loss: 'Months Without Income'
+    };
+    document.getElementById('siLabel').textContent = labels[type];
+}
+
+function runSimulation() {
+    const type = document.getElementById('siType').value;
+    const value = parseFloat(document.getElementById('siValue').value)||0;
+    const amount = parseFloat(document.getElementById('siAmount').value)||0;
+    const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0);
+    const dailyBurn = cfg.expenses / 30;
+
+    let result = {};
+
+    if (type === 'client_delay') {
+        const lostDays = value;
+        const missingCash = amount;
+        const runwayBefore = Math.floor(totalCash / dailyBurn);
+        const runwayAfter = Math.floor((totalCash - missingCash) / dailyBurn);
+        const extraBridge = Math.max(0, missingCash - totalCash);
+        result = {
+            title: `Client delays ₹${Math.round(amount).toLocaleString('en-IN')} by ${value} days`,
+            rows: [
+                ['Runway before delay', runwayBefore + 'd', 'var(--accent)'],
+                ['Cash gap created', '−' + fmtFull(missingCash), 'var(--coral)'],
+                ['Runway after delay', runwayAfter + 'd', runwayAfter<30?'var(--coral)':'var(--amber)'],
+                ['Bridge needed?', extraBridge > 0 ? 'Yes — ' + fmtFull(extraBridge) : 'No ✓', extraBridge>0?'var(--coral)':'var(--accent)'],
+            ],
+            action: runwayAfter < 30 ? `⚠️ Critical: Consider requesting an advance, deferring ${fmtFull(cfg.expenses*0.3)} in expenses, or negotiating with a vendor.` : `✓ You can absorb this delay. Monitor daily spend carefully.`
+        };
+    } else if (type === 'income_drop') {
+        const newIncome = cfg.income * (1 - value/100);
+        const newSurplus = newIncome - cfg.expenses;
+        const months = newSurplus > 0 ? 'Positive' : Math.floor(-totalCash/newSurplus) + 'mo depletion';
+        result = {
+            title: `Income drops ${value}% (₹${Math.round(cfg.income-newIncome).toLocaleString('en-IN')} less/mo)`,
+            rows: [
+                ['Previous income', fmtFull(cfg.income), 'var(--accent)'],
+                ['New income', fmtFull(Math.round(newIncome)), 'var(--amber)'],
+                ['Monthly surplus/deficit', fmtFull(Math.round(newSurplus)), newSurplus>=0?'var(--accent)':'var(--coral)'],
+                ['Savings runway', months, newSurplus>=0?'var(--accent)':'var(--coral)'],
+            ],
+            action: newSurplus < 0 ? `Cut expenses by at least ${fmtFull(Math.abs(newSurplus))} to break even.` : `You remain cash-flow positive. Build emergency reserves.`
+        };
+    } else if (type === 'expense_spike') {
+        const newCash = totalCash - amount;
+        const runwayAfter = Math.floor(Math.max(0,newCash) / dailyBurn);
+        result = {
+            title: `Sudden expense of ${fmtFull(amount)}`,
+            rows: [
+                ['Current cash', fmtFull(totalCash), 'var(--sky)'],
+                ['After expense', fmtFull(Math.max(0,newCash)), newCash<0?'var(--coral)':'var(--amber)'],
+                ['Runway after spike', runwayAfter + 'd', runwayAfter<30?'var(--coral)':'var(--amber)'],
+                ['Shortfall?', newCash < 0 ? '−' + fmtFull(Math.abs(newCash)) : 'Covered ✓', newCash<0?'var(--coral)':'var(--accent)'],
+            ],
+            action: newCash < 0 ? `Shortfall of ${fmtFull(Math.abs(newCash))}. Consider a short-term loan or sell liquid assets.` : `You can absorb this. Replenish cash over the next ${Math.ceil(amount/(cfg.income-cfg.expenses))} months.`
+        };
+    } else if (type === 'emi_add') {
+        const newExpenses = cfg.expenses + value;
+        const newSurplus = cfg.income - newExpenses;
+        const emiRatio = Math.round((state.emis.reduce((s,e)=>s+e.amount,0)+value)/cfg.income*100);
+        result = {
+            title: `Adding EMI of ${fmtFull(value)}/month`,
+            rows: [
+                ['New total monthly expenses', fmtFull(newExpenses), 'var(--coral)'],
+                ['New monthly surplus', fmtFull(Math.max(0,newSurplus)), newSurplus<0?'var(--coral)':'var(--accent)'],
+                ['EMI-to-income ratio', emiRatio+'%', emiRatio>50?'var(--coral)':emiRatio>35?'var(--amber)':'var(--accent)'],
+                ['Recommendation', emiRatio>50?'High risk!':emiRatio>35?'Manageable':'Safe', emiRatio>50?'var(--coral)':emiRatio>35?'var(--amber)':'var(--accent)'],
+            ],
+            action: emiRatio > 50 ? `EMI ratio > 50% is risky. Banks may not approve new loans. Consider postponing.` : `EMI ratio is in acceptable range. Proceed with caution.`
+        };
+    } else {
+        const months = value || 1;
+        const cashLost = cfg.income * months;
+        const newCash = totalCash - Math.max(0, cashLost - totalCash);
+        result = {
+            title: `${months} month${months>1?'s':''} without income`,
+            rows: [
+                ['Total income lost', fmtFull(cashLost), 'var(--coral)'],
+                ['Current cash reserves', fmtFull(totalCash), 'var(--sky)'],
+                ['Cash after period', fmtFull(Math.max(0,totalCash-cfg.expenses*months)), totalCash-cfg.expenses*months<0?'var(--coral)':'var(--amber)'],
+                ['Survive without cuts?', totalCash>cfg.expenses*months?'Yes ✓':'No ✗', totalCash>cfg.expenses*months?'var(--accent)':'var(--coral)'],
+            ],
+            action: totalCash < cfg.expenses * months ? `You cannot sustain ${months} months. Essential-only spend gives you ${Math.floor(totalCash/(cfg.expenses*0.6/30))} extra days.` : `Your reserves cover this period. Rebuild immediately after.`
+        };
+    }
+
+    document.getElementById('simResult').innerHTML = `
+        <div class="scenario-result">
+            <div style="font-size:0.85rem;font-weight:600;color:var(--amber);margin-bottom:14px">${result.title}</div>
+            ${result.rows.map(([label,val,color])=>`
+                <div class="scenario-row">
+                    <span>${label}</span>
+                    <span style="color:${color};font-weight:600">${val}</span>
+                </div>`).join('')}
+            <div style="margin-top:14px;padding:12px;background:var(--ink);border-radius:var(--r);font-size:0.82rem;color:var(--text-muted);border-left:3px solid var(--amber)">
+                💡 ${result.action}
+            </div>
+        </div>`;
+}
+
+// ================================================================
+// ALERTS
+// ================================================================
+function showAlert(type, title, msg) {
+    const icons = { success:'fa-check-circle', warning:'fa-exclamation-triangle', danger:'fa-times-circle', info:'fa-info-circle' };
+    const id = 'al-' + Date.now();
+    document.getElementById('alertsContainer').insertAdjacentHTML('beforeend', `
+        <div class="alert ${type}" id="${id}">
+            <div class="alert-icon-wrap"><i class="fas ${icons[type]||icons.info}"></i></div>
+            <div class="alert-body"><h4>${title}</h4><p>${msg}</p></div>
+            <button class="alert-close-btn" onclick="dismissAlert('${id}')"><i class="fas fa-times"></i></button>
+        </div>`);
+    setTimeout(()=>dismissAlert(id), 5000);
+}
+
+function dismissAlert(id) {
+    const el = document.getElementById(id);
+    if (el) { el.style.opacity='0'; el.style.transform='translateX(100%)'; el.style.transition='all 0.3s ease'; setTimeout(()=>el.remove(),300); }
+}
+
+// ================================================================
+// INIT PICKER COUNT
+// ================================================================
+document.addEventListener('DOMContentLoaded', ()=>{
+    document.querySelectorAll('.feature-card').forEach(card=>{
+        card.addEventListener('click', ()=> {});
+    });
+    updateCount();
+});
+</script>
+</body>
+</html>
