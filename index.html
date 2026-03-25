@@ -3,60 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cashline — Your Money, Your Clarity</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<title>Cashline — Know What's Coming Before It Hits</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════
-     SCREEN 1: ONBOARDING
-═══════════════════════════════════════ -->
-<div id="screen-onboard" class="screen active">
-  <div class="ob-bg">
-    <div class="ob-grid"></div>
-    <div class="ob-circle ob-c1"></div>
-    <div class="ob-circle ob-c2"></div>
-  </div>
+<!-- ══════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════ -->
+<div id="landing">
+  <nav id="topnav">
+    <div class="logo">Cashline</div>
+    <div class="nav-links">
+      <button class="nav-btn-ghost">Help</button>
+      <button class="nav-btn-ghost" onclick="showOnboarding()">Log In</button>
+      <button class="nav-btn-primary" onclick="showOnboarding()">Sign Up</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-orb"></div>
+    <div class="hero-content scroll-reveal">
+      <div class="hero-tag"><span class="hero-tag-dot"></span>Now in Beta · Free</div>
+      <h1 class="font-display">Know what's <span class="accent">coming</span> before it hits.</h1>
+      <p class="hero-sub">Cashline helps you manage irregular income by predicting cash flow and guiding your financial decisions — with clarity, not chaos.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary-lp" onclick="showOnboarding()">Get Started Free</button>
+        <button class="btn-ghost-lp" onclick="document.getElementById('personas').scrollIntoView({behavior:'smooth'})">See how it works <span class="btn-arrow">→</span></button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="hs-num">50K+</span><span class="hs-lbl">Active users</span></div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat"><span class="hs-num">+24%</span><span class="hs-lbl">Avg savings growth</span></div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat"><span class="hs-num">₹0</span><span class="hs-lbl">Forever free</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="persona-section scroll-reveal" id="personas">
+    <div class="persona-inner">
+      <div class="persona-header">
+        <div class="section-label">Who is it for</div>
+        <h2 class="font-display">Built for your reality.</h2>
+      </div>
+      <div class="persona-layout">
+        <div class="persona-tabs" id="personaTabs">
+          <div class="tab-pill" id="tabPill"></div>
+          <div class="tab-item active" data-tab="student">
+            <svg viewBox="0 0 24 24"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M6 12v6l6 3 6-3v-6"/></svg>Student
+          </div>
+          <div class="tab-item" data-tab="freelancer">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Freelancer
+          </div>
+          <div class="tab-item" data-tab="custom">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Custom
+          </div>
+        </div>
+        <div class="stage" id="stage">
+          <div class="stage-panel active" id="panel-student">
+            <div class="stage-title">Smart Budget Card</div>
+            <div class="stage-sub">Your spending dashboard for this semester</div>
+            <div class="budget-card">
+              <div class="spend-amount">₹8,240<span style="font-size:22px;opacity:.5">.00</span></div>
+              <div class="spend-label">Safe to spend this week</div>
+              <div class="progress-row"><span>Semester Savings</span><span>68%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="semFill" style="width:0%"></div></div>
+              <div class="mini-items">
+                <div class="mini-item"><div class="mini-item-left"><div class="mini-item-dot" style="background:#1a47ff"></div>Hostel Rent</div><span class="mini-item-amount">-₹5,000</span></div>
+                <div class="mini-item"><div class="mini-item-left"><div class="mini-item-dot" style="background:#00d68f"></div>Scholarship</div><span class="mini-item-amount badge-lp badge-green-lp">+₹12,500</span></div>
+                <div class="mini-item"><div class="mini-item-left"><div class="mini-item-dot" style="background:#e8253a"></div>Subscriptions</div><span class="mini-item-amount badge-lp badge-red-lp">-₹349</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="stage-panel" id="panel-freelancer">
+            <div class="stage-title">Velocity Graph</div>
+            <div class="stage-sub">Actual income vs Cashline projection</div>
+            <div class="graph-wrap">
+              <div class="graph-tooltip" id="gTooltip"></div>
+              <svg class="velocity-graph" id="velGraph" viewBox="0 0 520 180" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="graph-legend">
+              <div class="legend-item"><div class="legend-line" style="background:#c2ccff"></div>Actual income</div>
+              <div class="legend-item"><div class="legend-line" style="background:#1a47ff"></div>Cashline projection</div>
+            </div>
+          </div>
+          <div class="stage-panel" id="panel-custom">
+            <div class="stage-title">Control Center</div>
+            <div class="stage-sub">Configure your own income &amp; expense patterns</div>
+            <div class="control-grid">
+              <div class="control-card">
+                <div class="control-top"><span class="control-name">Predictive alerts</span><div class="toggle on" id="tog1"><div class="toggle-knob"></div></div></div>
+                <div class="control-val">On</div><div class="control-desc">Get notified 7 days before a shortfall</div>
+              </div>
+              <div class="control-card">
+                <div class="control-top"><span class="control-name">Auto-smooth</span><div class="toggle" id="tog2"><div class="toggle-knob"></div></div></div>
+                <div class="control-val">Off</div><div class="control-desc">Redistribute surplus to lean months</div>
+              </div>
+              <div class="control-card" style="grid-column:1/-1">
+                <div class="control-top"><span class="control-name">Monthly income target</span><span class="badge-lp badge-blue-lp" id="incomeVal">₹45,000</span></div>
+                <div class="slider-wrap"><input type="range" min="10000" max="100000" step="5000" value="45000" id="incomeSlider"></div>
+                <div class="control-desc">We'll model your projections around this figure</div>
+              </div>
+              <div class="control-card" style="grid-column:1/-1">
+                <div class="control-top"><span class="control-name">Risk buffer</span><span class="badge-lp badge-green-lp" id="bufferVal">15%</span></div>
+                <div class="slider-wrap"><input type="range" min="5" max="40" step="5" value="15" id="bufferSlider"></div>
+                <div class="control-desc">Emergency cash reserve held back each month</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature-strip scroll-reveal">
+    <div class="feature-inner">
+      <div class="feature-item"><div class="fi-icon">🎯</div><div class="fi-text"><div class="fi-title">Obligation ranking</div><div class="fi-sub">Know exactly what to pay first</div></div></div>
+      <div class="feature-item"><div class="fi-icon">🤖</div><div class="fi-text"><div class="fi-title">AI Cash Advisor</div><div class="fi-sub">Answers about your money instantly</div></div></div>
+      <div class="feature-item"><div class="fi-icon">📊</div><div class="fi-text"><div class="fi-title">Cash flow forecast</div><div class="fi-sub">See your balance 30 days ahead</div></div></div>
+      <div class="feature-item"><div class="fi-icon">🧾</div><div class="fi-text"><div class="fi-title">Invoice tracker</div><div class="fi-sub">Track pending &amp; overdue payments</div></div></div>
+    </div>
+  </section>
+
+  <section class="cta-section scroll-reveal">
+    <div class="cta-inner">
+      <div>
+        <h2 class="cta-h font-display">Ready for financial velocity?</h2>
+        <p class="cta-p">Join 50,000+ professionals who trust Cashline to stabilize their financial future.</p>
+        <div class="cta-btns">
+          <button class="cta-btn-main" onclick="showOnboarding()">Create Free Account</button>
+          <button class="cta-btn-outline">Contact Sales</button>
+        </div>
+      </div>
+      <div class="cta-stat">
+        <div class="cta-stat-num">+24%</div>
+        <div class="cta-stat-lbl">Avg. savings growth</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Cashline</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a><a href="#">Security</a>
+    </div>
+    <div class="footer-copy">© 2025 Cashline. Financial Velocity Engineered.</div>
+  </footer>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     ONBOARDING SCREEN
+══════════════════════════════════════ -->
+<div id="screen-onboard" class="screen">
+  <div class="ob-bg"><div class="ob-grid"></div><div class="ob-circle ob-c1"></div><div class="ob-circle ob-c2"></div></div>
   <div class="ob-content">
     <div class="ob-logo">cash<span>line</span></div>
     <div class="ob-tagline">Your money. Your clarity.</div>
-
     <div class="ob-question">Who are you?</div>
     <div class="ob-sub">We'll personalize everything just for you.</div>
-
     <div class="persona-grid">
-      <div class="persona-card" onclick="selectPersona(this, 'school')" style="animation: slideUp 0.4s 0.1s both;">
-        <div class="pc-emoji">🎒</div>
-        <div class="pc-name">School Student</div>
-        <div class="pc-desc">Pocket money, exam fees, stationery</div>
+      <div class="persona-card" onclick="selectPersona(this,'school')" style="animation:slideUp .4s .1s both">
+        <div class="pc-emoji-wrap student-wrap"><div class="pc-emoji">🎒</div></div>
+        <div class="pc-name">School Student</div><div class="pc-desc">Pocket money, exam fees, stationery</div>
       </div>
-      <div class="persona-card" onclick="selectPersona(this, 'college')" style="animation: slideUp 0.4s 0.2s both;">
-        <div class="pc-emoji">🎓</div>
-        <div class="pc-name">College Student</div>
-        <div class="pc-desc">Hostel, bills, part-time income</div>
+      <div class="persona-card" onclick="selectPersona(this,'college')" style="animation:slideUp .4s .2s both">
+        <div class="pc-emoji-wrap college-wrap"><div class="pc-emoji">🎓</div></div>
+        <div class="pc-name">College Student</div><div class="pc-desc">Hostel, bills, part-time income</div>
       </div>
-      <div class="persona-card" onclick="selectPersona(this, 'freelancer')" style="animation: slideUp 0.4s 0.3s both;">
-        <div class="pc-emoji">💻</div>
-        <div class="pc-name">Freelancer</div>
-        <div class="pc-desc">Invoices, clients, irregular income</div>
+      <div class="persona-card" onclick="selectPersona(this,'freelancer')" style="animation:slideUp .4s .3s both">
+        <div class="pc-emoji-wrap freelancer-wrap"><div class="pc-emoji">💻</div></div>
+        <div class="pc-name">Freelancer</div><div class="pc-desc">Invoices, clients, irregular income</div>
       </div>
-      <div class="persona-card" onclick="selectPersona(this, 'other')" style="animation: slideUp 0.4s 0.4s both;">
-        <div class="pc-emoji">✨</div>
-        <div class="pc-name">Other</div>
-        <div class="pc-desc">Custom setup for your situation</div>
+      <div class="persona-card" onclick="selectPersona(this,'other')" style="animation:slideUp .4s .4s both">
+        <div class="pc-emoji-wrap other-wrap"><div class="pc-emoji">✨</div></div>
+        <div class="pc-name">Other</div><div class="pc-desc">Custom setup for your situation</div>
       </div>
     </div>
-
-    <button class="btn-primary" id="ob-btn" onclick="enterApp()" disabled style="animation: slideUp 0.4s 0.5s both;">
-      Enter Cashline →
-    </button>
+    <button class="btn-ob-primary" id="ob-btn" onclick="enterApp()" disabled style="animation:slideUp .4s .5s both">Enter Cashline →</button>
+    <div style="margin-top:16px;text-align:center"><span class="ob-back" onclick="showLanding()">← Back to home</span></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     SCREEN 2: MAIN APP
-═══════════════════════════════════════ -->
+
+<!-- ══════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════ -->
 <div id="screen-app" class="screen">
 
   <!-- HEADER -->
@@ -69,21 +203,18 @@
     <div class="ah-balance">
       <div class="ah-bal-label">Available balance</div>
       <div class="ah-bal-amount" id="header-balance">₹8,240</div>
-      <div class="ah-bal-sub">Updated just now · <span style="color: var(--danger);" id="header-obligations">₹6,300 in obligations</span></div>
+      <div class="ah-bal-sub" id="header-obligations">Updated just now · <span style="color:var(--danger)">₹6,300 in obligations</span></div>
     </div>
-    <div class="ah-pills" id="header-pills">
-      <div class="ah-pill"><div class="dot" style="background: var(--danger)"></div> 4 days to zero</div>
-      <div class="ah-pill"><div class="dot" style="background: var(--warn)"></div> 2 bills due</div>
-      <div class="ah-pill"><div class="dot" style="background: var(--accent)"></div> 1 invoice pending</div>
+    <div class="ah-pills">
+      <div class="ah-pill"><div class="dot" style="background:var(--danger)"></div> 4 days to zero</div>
+      <div class="ah-pill"><div class="dot" style="background:var(--warn)"></div> 2 bills due</div>
+      <div class="ah-pill"><div class="dot" style="background:var(--accent)"></div> 1 invoice pending</div>
     </div>
   </div>
 
-  <!-- TAB CONTENTS -->
-
   <!-- HOME TAB -->
   <div id="tab-home" class="tab-content active">
-
-    <div style="height: 16px;"></div>
+    <div style="height:16px"></div>
 
     <!-- Alert -->
     <div class="alert-banner anim-up" id="home-alert">
@@ -91,223 +222,115 @@
       <div class="alert-text"><strong>Hostel rent due in 2 days.</strong> You have ₹8,240 but need ₹5,000. Pay this first — it cannot be rescheduled.</div>
     </div>
 
-    <!-- Score Ring -->
+    <!-- Stat cards (from dash files) -->
+    <div class="stat-cards-grid anim-up">
+      <div class="stat-card balance"><div class="stat-card-glow"></div><div class="stat-icon">💰</div><div class="stat-label">Balance</div><div class="stat-value">₹8,240</div><div class="stat-trend up">▲ +12% this month</div></div>
+      <div class="stat-card income"><div class="stat-card-glow"></div><div class="stat-icon">📥</div><div class="stat-label">Income (Apr)</div><div class="stat-value">₹12,500</div><div class="stat-trend up">▲ Scholarship received</div></div>
+      <div class="stat-card expense"><div class="stat-card-glow"></div><div class="stat-icon">📤</div><div class="stat-label">Obligations</div><div class="stat-value" id="stat-expenses">₹6,300</div><div class="stat-trend down">▼ 3 bills pending</div></div>
+      <div class="stat-card savings"><div class="stat-card-glow"></div><div class="stat-icon">🏦</div><div class="stat-label">Goals saved</div><div class="stat-value" id="stat-saved">₹15,200</div><div class="stat-trend up">▲ 2 active goals</div></div>
+    </div>
+
+    <!-- Health score -->
     <div class="score-ring-wrap anim-up">
       <div class="score-ring">
         <svg viewBox="0 0 72 72" width="72" height="72">
           <circle cx="36" cy="36" r="30" fill="none" stroke="#e8e8f0" stroke-width="6"/>
-          <circle cx="36" cy="36" r="30" fill="none" stroke="#00c896" stroke-width="6"
-            stroke-dasharray="188.5" stroke-dashoffset="56.5" stroke-linecap="round"/>
+          <circle cx="36" cy="36" r="30" fill="none" stroke="#00c896" stroke-width="6" stroke-dasharray="188.5" stroke-dashoffset="56.5" stroke-linecap="round"/>
         </svg>
-        <div class="score-num" style="color: var(--accent);">70</div>
+        <div class="score-num" style="color:var(--accent)">70</div>
       </div>
       <div class="score-info">
         <div class="score-info-title">Financial Health Score</div>
-        <div class="score-info-sub">Good — 3 obligations this month. Pay hostel rent first to avoid penalty. 2 investments due for review.</div>
+        <div class="score-info-sub">Good — 3 obligations this month. Pay hostel rent first to avoid penalty.</div>
       </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="sec-header anim-up">
-      <div class="sec-title">Quick actions</div>
-    </div>
+    <!-- Quick actions -->
+    <div class="sec-header anim-up"><div class="sec-title">Quick actions</div></div>
     <div class="quick-actions anim-up">
-      <div class="qa-item" onclick="openSheet('add-expense')">
-        <div class="qa-icon" style="background: var(--accent-soft);">➕</div>
-        <div class="qa-label">Add expense</div>
-      </div>
-      <div class="qa-item" onclick="openSheet('add-invoice')">
-        <div class="qa-icon" style="background: var(--blue-soft);">🧾</div>
-        <div class="qa-label">Add invoice</div>
-      </div>
-      <div class="qa-item" onclick="switchTab('ai')">
-        <div class="qa-icon" style="background: var(--purple-soft);">🤖</div>
-        <div class="qa-label">Ask AI</div>
-      </div>
-      <div class="qa-item" onclick="openSheet('upi-sync')">
-        <div class="qa-icon" style="background: var(--gold-soft);">📱</div>
-        <div class="qa-label">Sync UPI</div>
-      </div>
+      <div class="qa-item" onclick="openSheet('add-expense')"><div class="qa-icon" style="background:var(--accent-soft)">➕</div><div class="qa-label">Add expense</div></div>
+      <div class="qa-item" onclick="openSheet('add-invoice')"><div class="qa-icon" style="background:var(--blue-soft)">🧾</div><div class="qa-label">Add invoice</div></div>
+      <div class="qa-item" onclick="appSwitchTab('ai')"><div class="qa-icon" style="background:var(--purple-soft)">🤖</div><div class="qa-label">Ask AI</div></div>
+      <div class="qa-item" onclick="openSheet('upi-sync')"><div class="qa-icon" style="background:var(--gold-soft)">📱</div><div class="qa-label">Sync UPI</div></div>
     </div>
 
-    <!-- Obligations -->
-    <div class="sec-header anim-up">
-      <div class="sec-title">Obligations ranked</div>
-      <div class="sec-link" onclick="switchTab('calendar')">See all</div>
-    </div>
-    <div id="obligations-list">
-      <!-- Rendered by JS from localStorage -->
-    </div>
+    <!-- Obligations ranked -->
+    <div class="sec-header"><div class="sec-title">Obligations ranked</div><div class="sec-link" onclick="appSwitchTab('calendar')">See all</div></div>
+    <div id="obligations-list"></div>
 
-    <!-- Cash Flow Chart -->
-    <div class="sec-header" style="margin-top: 8px;">
-      <div class="sec-title">30-day cash forecast</div>
-    </div>
+    <!-- 30-day forecast mini chart -->
+    <div class="sec-header" style="margin-top:8px"><div class="sec-title">30-day cash forecast</div></div>
     <div class="chart-card">
       <div class="chart-sub">Projected balance if you pay obligations in priority order</div>
       <div class="chart-area">
         <svg class="chart-svg" viewBox="0 0 340 100" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#00c896" stop-opacity="0.25"/>
-              <stop offset="100%" stop-color="#00c896" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <path d="M0,30 L30,28 L60,45 L90,42 L120,70 L150,65 L180,55 L210,52 L240,40 L270,35 L300,28 L340,20"
-            fill="none" stroke="#00c896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M0,30 L30,28 L60,45 L90,42 L120,70 L150,65 L180,55 L210,52 L240,40 L270,35 L300,28 L340,20 L340,100 L0,100 Z"
-            fill="url(#chartGrad)"/>
+          <defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00c896" stop-opacity="0.25"/><stop offset="100%" stop-color="#00c896" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,30 L30,28 L60,45 L90,42 L120,70 L150,65 L180,55 L210,52 L240,40 L270,35 L300,28 L340,20" fill="none" stroke="#00c896" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M0,30 L30,28 L60,45 L90,42 L120,70 L150,65 L180,55 L210,52 L240,40 L270,35 L300,28 L340,20 L340,100 L0,100 Z" fill="url(#chartGrad)"/>
           <line x1="120" y1="0" x2="120" y2="100" stroke="#ff6b35" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
           <text x="122" y="12" font-size="9" fill="#ff6b35" font-family="DM Sans">Rent due</text>
         </svg>
       </div>
-      <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--faint); margin-top: 6px;">
-        <span>Today</span><span>Apr 10</span><span>Apr 20</span><span>Apr 30</span>
-      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--faint);margin-top:6px"><span>Today</span><span>Apr 10</span><span>Apr 20</span><span>Apr 30</span></div>
     </div>
 
-    <!-- Savings Goals -->
-    <div class="sec-header">
-      <div class="sec-title">Savings goals</div>
-      <div class="sec-link" onclick="openSheet('add-goal')">+ Add</div>
-    </div>
-    <div id="goals-list">
-      <!-- Rendered by JS from localStorage -->
-    </div>
+    <!-- Savings goals -->
+    <div class="sec-header"><div class="sec-title">Savings goals</div><div class="sec-link" onclick="openSheet('add-goal')">+ Add</div></div>
+    <div id="goals-list"></div>
 
+    <!-- Recent transactions (from dash files) -->
+    <div class="sec-header" style="margin-top:8px"><div class="sec-title">Recent transactions</div><div class="sec-link" onclick="appSwitchTab('invoices')">See all</div></div>
+    <div id="recent-transactions"></div>
+  </div>
+
+  <!-- INVOICES / TRANSACTIONS TAB (from freelancer dash) -->
+  <div id="tab-invoices" class="tab-content">
+    <div style="height:16px"></div>
+    <div class="sec-header"><div class="sec-title">🧾 Invoice Tracker</div><div class="sec-link" onclick="openSheet('add-invoice')">+ Add</div></div>
+    <div class="invoice-filters">
+      <button class="inv-filter active" onclick="filterInvoices('all',this)">All</button>
+      <button class="inv-filter" onclick="filterInvoices('pending',this)">Pending</button>
+      <button class="inv-filter" onclick="filterInvoices('overdue',this)">Overdue</button>
+      <button class="inv-filter" onclick="filterInvoices('paid',this)">Paid</button>
+    </div>
+    <div id="invoice-list"></div>
+    <div class="sec-header" style="margin-top:16px"><div class="sec-title">Transaction History</div><div class="sec-link" onclick="openSheet('add-transaction')">+ Add</div></div>
+    <div id="transaction-list"></div>
   </div>
 
   <!-- MARKET TAB -->
   <div id="tab-market" class="tab-content">
-    <div style="height: 16px;"></div>
-
-    <div class="sec-header">
-      <div class="sec-title"><span class="live-dot"></span>Live markets</div>
-      <div style="font-size: 11px; color: var(--muted);">Updated 2 min ago</div>
-    </div>
-
+    <div style="height:16px"></div>
+    <div class="sec-header"><div class="sec-title"><span class="live-dot"></span>Live markets</div><div style="font-size:11px;color:var(--muted)">Updated 2 min ago</div></div>
     <div class="market-strip">
-      <div class="market-card">
-        <div class="mc-label">Nifty 50</div>
-        <div class="mc-value">22,514</div>
-        <div class="mc-change up">▲ +0.42%</div>
-      </div>
-      <div class="market-card">
-        <div class="mc-label">Sensex</div>
-        <div class="mc-value">74,119</div>
-        <div class="mc-change up">▲ +0.38%</div>
-      </div>
-      <div class="market-card">
-        <div class="mc-label">USD/INR</div>
-        <div class="mc-value">₹83.42</div>
-        <div class="mc-change down">▼ -0.12%</div>
-      </div>
-      <div class="market-card">
-        <div class="mc-label">Gold 24K</div>
-        <div class="mc-value">₹7,240/g</div>
-        <div class="mc-change up">▲ +1.2%</div>
-      </div>
-      <div class="market-card">
-        <div class="mc-label">EUR/INR</div>
-        <div class="mc-value">₹90.18</div>
-        <div class="mc-change up">▲ +0.05%</div>
-      </div>
+      <div class="market-card"><div class="mc-label">Nifty 50</div><div class="mc-value">22,514</div><div class="mc-change up">▲ +0.42%</div></div>
+      <div class="market-card"><div class="mc-label">Sensex</div><div class="mc-value">74,119</div><div class="mc-change up">▲ +0.38%</div></div>
+      <div class="market-card"><div class="mc-label">USD/INR</div><div class="mc-value">₹83.42</div><div class="mc-change down">▼ -0.12%</div></div>
+      <div class="market-card"><div class="mc-label">Gold 24K</div><div class="mc-value">₹7,240/g</div><div class="mc-change up">▲ +1.2%</div></div>
+      <div class="market-card"><div class="mc-label">EUR/INR</div><div class="mc-value">₹90.18</div><div class="mc-change up">▲ +0.05%</div></div>
     </div>
-
-    <div class="sec-header">
-      <div class="sec-title">💡 Suggested for you</div>
-      <div class="sec-link">View all</div>
-    </div>
-    <div style="font-size: 12px; color: var(--muted); margin-bottom: 14px;" id="market-persona-label">Based on your profile</div>
-
-    <div class="invest-card">
-      <div class="invest-icon" style="background: var(--accent-soft);">📈</div>
-      <div class="invest-main">
-        <div class="invest-name">Nifty 50 Index Fund (SIP)</div>
-        <div class="invest-desc">Start from ₹100/month · Low risk · Long term</div>
-      </div>
-      <div class="invest-return">
-        <div class="invest-pct">12.4%</div>
-        <div class="invest-type">5yr avg</div>
-      </div>
-    </div>
-
-    <div class="invest-card">
-      <div class="invest-icon" style="background: var(--blue-soft);">🏦</div>
-      <div class="invest-main">
-        <div class="invest-name">Recurring Deposit (RD)</div>
-        <div class="invest-desc">₹500/month · Guaranteed returns · Safe</div>
-      </div>
-      <div class="invest-return">
-        <div class="invest-pct">6.8%</div>
-        <div class="invest-type">annual</div>
-      </div>
-    </div>
-
-    <div class="invest-card">
-      <div class="invest-icon" style="background: var(--gold-soft);">🪙</div>
-      <div class="invest-main">
-        <div class="invest-name">Digital Gold</div>
-        <div class="invest-desc">Buy from ₹10 · Backed by physical gold</div>
-      </div>
-      <div class="invest-return">
-        <div class="invest-pct">+1.2%</div>
-        <div class="invest-type">today</div>
-      </div>
-    </div>
-
-    <div class="invest-card">
-      <div class="invest-icon" style="background: var(--purple-soft);">📚</div>
-      <div class="invest-main">
-        <div class="invest-name">ELSS Tax Saving Fund</div>
-        <div class="invest-desc">Save tax under 80C · 3yr lock-in</div>
-      </div>
-      <div class="invest-return">
-        <div class="invest-pct">14.2%</div>
-        <div class="invest-type">5yr avg</div>
-      </div>
-    </div>
-
-    <div class="invest-card">
-      <div class="invest-icon" style="background: var(--warn-soft);">🏛️</div>
-      <div class="invest-main">
-        <div class="invest-name">Post Office PPF</div>
-        <div class="invest-desc">Government backed · Tax free returns</div>
-      </div>
-      <div class="invest-return">
-        <div class="invest-pct">7.1%</div>
-        <div class="invest-type">annual</div>
-      </div>
-    </div>
-
+    <div class="sec-header"><div class="sec-title">💡 Suggested for you</div></div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px" id="market-persona-label">Based on your profile</div>
+    <div class="invest-card"><div class="invest-icon" style="background:var(--accent-soft)">📈</div><div class="invest-main"><div class="invest-name">Nifty 50 Index Fund (SIP)</div><div class="invest-desc">Start from ₹100/month · Low risk · Long term</div></div><div class="invest-return"><div class="invest-pct">12.4%</div><div class="invest-type">5yr avg</div></div></div>
+    <div class="invest-card"><div class="invest-icon" style="background:var(--blue-soft)">🏦</div><div class="invest-main"><div class="invest-name">Recurring Deposit (RD)</div><div class="invest-desc">₹500/month · Guaranteed returns · Safe</div></div><div class="invest-return"><div class="invest-pct">6.8%</div><div class="invest-type">annual</div></div></div>
+    <div class="invest-card"><div class="invest-icon" style="background:var(--gold-soft)">🪙</div><div class="invest-main"><div class="invest-name">Digital Gold</div><div class="invest-desc">Buy from ₹10 · Backed by physical gold</div></div><div class="invest-return"><div class="invest-pct">+1.2%</div><div class="invest-type">today</div></div></div>
+    <div class="invest-card"><div class="invest-icon" style="background:var(--purple-soft)">📚</div><div class="invest-main"><div class="invest-name">ELSS Tax Saving Fund</div><div class="invest-desc">Save tax under 80C · 3yr lock-in</div></div><div class="invest-return"><div class="invest-pct">14.2%</div><div class="invest-type">5yr avg</div></div></div>
   </div>
 
   <!-- AI TAB -->
   <div id="tab-ai" class="tab-content">
-    <div style="height: 16px;"></div>
-    <div class="sec-header">
-      <div class="sec-title">🤖 AI Advisor</div>
-      <div style="font-size: 11px; color: var(--muted);">Powered by Cashline AI</div>
-    </div>
-
+    <div style="height:16px"></div>
+    <div class="sec-header"><div class="sec-title">🤖 AI Advisor</div><div style="font-size:11px;color:var(--muted)">Powered by Cashline AI</div></div>
     <div class="ai-chat-wrap">
       <div class="ai-messages" id="ai-messages">
-        <div class="msg ai">
-          <div class="msg-label">Cashline AI</div>
-          <div class="msg-bubble">
-            Hey! 👋 I'm your Cashline advisor. I can see your full financial picture — balance, obligations, goals, and market data.<br><br>
-            What would you like to know?
-          </div>
-        </div>
+        <div class="msg ai"><div class="msg-label">Cashline AI</div><div class="msg-bubble">Hey! 👋 I'm your Cashline advisor. I can see your full financial picture — balance, obligations, goals, and market data.<br><br>What would you like to know?</div></div>
       </div>
-
       <div class="ai-suggestions">
         <div class="ai-sug" onclick="askAI('How much can I save this month?')">How much can I save?</div>
         <div class="ai-sug" onclick="askAI('Which bill should I pay first?')">What to pay first?</div>
         <div class="ai-sug" onclick="askAI('Best investment for ₹1000?')">Invest ₹1,000?</div>
         <div class="ai-sug" onclick="askAI('Draft a follow-up to my client')">Draft client email</div>
       </div>
-
       <div class="ai-input-row">
         <textarea class="ai-input" id="ai-input" rows="1" placeholder="Ask anything about your money..."></textarea>
         <button class="ai-send" id="ai-send-btn" onclick="sendAIMessage()">↑</button>
@@ -317,52 +340,25 @@
 
   <!-- CALENDAR TAB -->
   <div id="tab-calendar" class="tab-content">
-    <div style="height: 16px;"></div>
-    <div class="cal-month" id="cal-month-label">April 2026</div>
-
+    <div style="height:16px"></div>
+    <div class="cal-header-row">
+      <div class="cal-month">April 2026</div>
+      <div class="cal-legend-row">
+        <span class="cal-leg"><span class="cal-leg-dot" style="background:var(--warn)"></span>Bills</span>
+        <span class="cal-leg"><span class="cal-leg-dot" style="background:var(--accent)"></span>Income</span>
+        <span class="cal-leg"><span class="cal-leg-dot" style="background:var(--danger)"></span>Overdue</span>
+      </div>
+    </div>
     <div class="cal-grid">
-      <div class="cal-day-header">Su</div>
-      <div class="cal-day-header">Mo</div>
-      <div class="cal-day-header">Tu</div>
-      <div class="cal-day-header">We</div>
-      <div class="cal-day-header">Th</div>
-      <div class="cal-day-header">Fr</div>
-      <div class="cal-day-header">Sa</div>
-
-      <div class="cal-day faded">30</div>
-      <div class="cal-day faded">31</div>
-      <div class="cal-day has-event">1</div>
-      <div class="cal-day">2</div>
-      <div class="cal-day">3</div>
-      <div class="cal-day">4</div>
-      <div class="cal-day has-event">5</div>
-      <div class="cal-day">6</div>
-      <div class="cal-day">7</div>
-      <div class="cal-day">8</div>
-      <div class="cal-day">9</div>
-      <div class="cal-day has-event">10</div>
-      <div class="cal-day">11</div>
-      <div class="cal-day">12</div>
-      <div class="cal-day">13</div>
-      <div class="cal-day">14</div>
-      <div class="cal-day">15</div>
-      <div class="cal-day has-event">16</div>
-      <div class="cal-day">17</div>
-      <div class="cal-day">18</div>
-      <div class="cal-day">19</div>
-      <div class="cal-day today has-event">25</div>
-      <div class="cal-day">26</div>
-      <div class="cal-day">27</div>
-      <div class="cal-day has-event">28</div>
-      <div class="cal-day">29</div>
-      <div class="cal-day">30</div>
+      <div class="cal-day-header">Su</div><div class="cal-day-header">Mo</div><div class="cal-day-header">Tu</div><div class="cal-day-header">We</div><div class="cal-day-header">Th</div><div class="cal-day-header">Fr</div><div class="cal-day-header">Sa</div>
+      <div class="cal-day faded">30</div><div class="cal-day faded">31</div><div class="cal-day has-event">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+      <div class="cal-day has-event">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day has-event">10</div><div class="cal-day">11</div>
+      <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div><div class="cal-day has-event">16</div><div class="cal-day">17</div><div class="cal-day">18</div>
+      <div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day today has-event">25</div>
+      <div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day has-event">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
     </div>
-
-    <div class="event-list-title">Upcoming obligations</div>
-    <div id="calendar-events-list">
-      <!-- Rendered from localStorage -->
-    </div>
-
+    <div class="event-list-title">Upcoming obligations &amp; income</div>
+    <div id="calendar-events-list"></div>
   </div>
 
   <!-- PROFILE TAB -->
@@ -372,212 +368,126 @@
       <div class="profile-name" id="profile-name">College Student</div>
       <div class="profile-tag">Cashline Member</div>
     </div>
-
     <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-val" style="color: var(--accent);">70</div>
-        <div class="stat-lbl">Health Score</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val" id="streak-val">7</div>
-        <div class="stat-lbl">Day Streak 🔥</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-val" style="color: var(--blue);" id="goals-count">0</div>
-        <div class="stat-lbl">Goals Active</div>
-      </div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--accent)">70</div><div class="stat-lbl">Health Score</div></div>
+      <div class="stat-box"><div class="stat-val" id="streak-val">1</div><div class="stat-lbl">Day Streak 🔥</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--blue)" id="goals-count">0</div><div class="stat-lbl">Goals Active</div></div>
     </div>
-
-    <div class="menu-item" onclick="openSheet('upi-sync')">
-      <div class="menu-icon" style="background: var(--gold-soft);">📱</div>
-      <div class="menu-label">Connect GPay / UPI</div>
-      <div class="menu-arrow">›</div>
-    </div>
-    <div class="menu-item" onclick="showToast('SMS sync coming soon!')">
-      <div class="menu-icon" style="background: var(--blue-soft);">💬</div>
-      <div class="menu-label">Sync bank SMS alerts</div>
-      <div class="menu-arrow">›</div>
-    </div>
-    <div class="menu-item" onclick="showToast('Alerts configured!')">
-      <div class="menu-icon" style="background: var(--warn-soft);">🔔</div>
-      <div class="menu-label">WhatsApp / SMS alerts</div>
-      <div class="menu-arrow">›</div>
-    </div>
-    <div class="menu-item" onclick="showToast('Report downloaded!')">
-      <div class="menu-icon" style="background: var(--accent-soft);">📄</div>
-      <div class="menu-label">Download PDF report</div>
-      <div class="menu-arrow">›</div>
-    </div>
-    <div class="menu-item" onclick="showToast('Language settings coming soon!')">
-      <div class="menu-icon" style="background: var(--purple-soft);">🌐</div>
-      <div class="menu-label">Language — English</div>
-      <div class="menu-arrow">›</div>
-    </div>
-    <div class="menu-item" onclick="goBack()">
-      <div class="menu-icon" style="background: var(--danger-soft);">🚪</div>
-      <div class="menu-label">Switch persona</div>
-      <div class="menu-arrow">›</div>
-    </div>
-
+    <div class="menu-item" onclick="openSheet('upi-sync')"><div class="menu-icon" style="background:var(--gold-soft)">📱</div><div class="menu-label">Connect GPay / UPI</div><div class="menu-arrow">›</div></div>
+    <div class="menu-item" onclick="showToast('SMS sync coming soon!')"><div class="menu-icon" style="background:var(--blue-soft)">💬</div><div class="menu-label">Sync bank SMS alerts</div><div class="menu-arrow">›</div></div>
+    <div class="menu-item" onclick="showToast('Alerts configured!')"><div class="menu-icon" style="background:var(--warn-soft)">🔔</div><div class="menu-label">WhatsApp / SMS alerts</div><div class="menu-arrow">›</div></div>
+    <div class="menu-item" onclick="showToast('Report downloaded!')"><div class="menu-icon" style="background:var(--accent-soft)">📄</div><div class="menu-label">Download PDF report</div><div class="menu-arrow">›</div></div>
+    <div class="menu-item" onclick="showLanding()"><div class="menu-icon" style="background:var(--danger-soft)">🚪</div><div class="menu-label">Switch persona / Log out</div><div class="menu-arrow">›</div></div>
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
-      <div class="nav-icon">🏠</div>
-      <div>Home</div>
-    </div>
-    <div class="nav-item" id="nav-market" onclick="switchTab('market')">
-      <div class="nav-icon">📊</div>
-      <div>Markets</div>
-    </div>
-    <div class="nav-item" id="nav-ai" onclick="switchTab('ai')">
-      <div class="nav-icon">🤖</div>
-      <div>AI</div>
-    </div>
-    <div class="nav-item" id="nav-calendar" onclick="switchTab('calendar')">
-      <div class="nav-icon">📅</div>
-      <div>Calendar</div>
-    </div>
-    <div class="nav-item" id="nav-profile" onclick="switchTab('profile')">
-      <div class="nav-icon">👤</div>
-      <div>Profile</div>
-    </div>
+    <div class="nav-item active" id="nav-home" onclick="appSwitchTab('home')"><div class="nav-icon">🏠</div><div>Home</div></div>
+    <div class="nav-item" id="nav-invoices" onclick="appSwitchTab('invoices')"><div class="nav-icon">🧾</div><div>Invoices</div></div>
+    <div class="nav-item" id="nav-ai" onclick="appSwitchTab('ai')"><div class="nav-icon">🤖</div><div>AI</div></div>
+    <div class="nav-item" id="nav-calendar" onclick="appSwitchTab('calendar')"><div class="nav-icon">📅</div><div>Calendar</div></div>
+    <div class="nav-item" id="nav-profile" onclick="appSwitchTab('profile')"><div class="nav-icon">👤</div><div>Profile</div></div>
   </div>
-
 </div>
 
-<!-- ═══════════════════════════════════════
-     BOTTOM SHEETS
-═══════════════════════════════════════ -->
 
-<!-- Add Expense -->
-<div class="sheet-overlay" id="sheet-add-expense" onclick="closeSheet(event, 'add-expense')">
+<!-- ══════════════════════════════════════
+     SHEETS
+══════════════════════════════════════ -->
+<div class="sheet-overlay" id="sheet-add-expense" onclick="closeSheet(event,'add-expense')">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Add expense</div>
     <div class="sheet-sub">Log a bill, payment, or obligation</div>
-    <div class="input-group">
-      <label class="input-label">What's this for?</label>
-      <input class="input-field" id="exp-name" placeholder="e.g. Hostel rent, Canteen, Books...">
-    </div>
+    <div class="input-group"><label class="input-label">What's this for?</label><input class="input-field" id="exp-name" placeholder="e.g. Hostel rent, Canteen, Books..."></div>
     <div class="input-row">
-      <div class="input-group">
-        <label class="input-label">Amount (₹)</label>
-        <input class="input-field" id="exp-amount" type="number" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Due date</label>
-        <input class="input-field" id="exp-date" type="date">
-      </div>
+      <div class="input-group"><label class="input-label">Amount (₹)</label><input class="input-field" id="exp-amount" type="number" placeholder="0"></div>
+      <div class="input-group"><label class="input-label">Due date</label><input class="input-field" id="exp-date" type="date"></div>
     </div>
-    <div class="input-group">
-      <label class="input-label">Can it be rescheduled?</label>
+    <div class="input-group"><label class="input-label">Urgency</label>
       <select class="input-field" id="exp-flex">
-        <option value="safe">Yes — flexible</option>
-        <option value="critical">No — fixed deadline</option>
-        <option value="tight">Maybe — with penalty</option>
+        <option value="critical">🔴 Critical — fixed deadline, no rescheduling</option>
+        <option value="tight">🟡 Tight — can delay with penalty</option>
+        <option value="safe" selected>🟢 Safe — flexible timing</option>
       </select>
     </div>
-    <button class="btn-primary" onclick="saveExpense()">Add to Cashline</button>
+    <button class="btn-ob-primary" onclick="saveExpense()">Add to Cashline</button>
   </div>
 </div>
 
-<!-- Add Invoice -->
-<div class="sheet-overlay" id="sheet-add-invoice" onclick="closeSheet(event, 'add-invoice')">
+<div class="sheet-overlay" id="sheet-add-invoice" onclick="closeSheet(event,'add-invoice')">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Add invoice / income</div>
     <div class="sheet-sub">Track a payment you're expecting</div>
-    <div class="input-group">
-      <label class="input-label">Client / Source</label>
-      <input class="input-field" id="inv-source" placeholder="e.g. Aryan Design Co., Part-time tutoring...">
-    </div>
+    <div class="input-group"><label class="input-label">Client / Source</label><input class="input-field" id="inv-source" placeholder="e.g. Aryan Design Co."></div>
     <div class="input-row">
-      <div class="input-group">
-        <label class="input-label">Amount (₹)</label>
-        <input class="input-field" id="inv-amount" type="number" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Expected by</label>
-        <input class="input-field" id="inv-date" type="date">
-      </div>
+      <div class="input-group"><label class="input-label">Amount (₹)</label><input class="input-field" id="inv-amount" type="number" placeholder="0"></div>
+      <div class="input-group"><label class="input-label">Expected by</label><input class="input-field" id="inv-date" type="date"></div>
     </div>
-    <div class="input-group">
-      <label class="input-label">Status</label>
+    <div class="input-group"><label class="input-label">Status</label>
       <select class="input-field" id="inv-status">
-        <option>Invoice sent — awaiting payment</option>
-        <option>Work done — invoice not sent yet</option>
-        <option>Partial payment received</option>
-        <option>Overdue</option>
+        <option value="pending">Invoice sent — awaiting payment</option>
+        <option value="pending">Work done — invoice not sent yet</option>
+        <option value="overdue">Overdue</option>
+        <option value="paid">Paid</option>
       </select>
     </div>
-    <button class="btn-primary" onclick="saveInvoice()">Track this income</button>
+    <button class="btn-ob-primary" onclick="saveInvoice()">Track this income</button>
   </div>
 </div>
 
-<!-- UPI Sync -->
-<div class="sheet-overlay" id="sheet-upi-sync" onclick="closeSheet(event, 'upi-sync')">
+<div class="sheet-overlay" id="sheet-add-transaction" onclick="closeSheet(event,'add-transaction')">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Connect UPI / GPay</div>
-    <div class="sheet-sub">Auto-read your UPI transactions — no passwords required</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-      <div onclick="showToast('GPay connected! ✓')" style="background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
-        <div style="font-size: 28px; margin-bottom: 6px;">📱</div>
-        <div style="font-size: 13px; font-weight: 500;">Google Pay</div>
-      </div>
-      <div onclick="showToast('PhonePe connected! ✓')" style="background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
-        <div style="font-size: 28px; margin-bottom: 6px;">💜</div>
-        <div style="font-size: 13px; font-weight: 500;">PhonePe</div>
-      </div>
-      <div onclick="showToast('Paytm connected! ✓')" style="background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
-        <div style="font-size: 28px; margin-bottom: 6px;">💙</div>
-        <div style="font-size: 13px; font-weight: 500;">Paytm</div>
-      </div>
-      <div onclick="openSheet('add-expense')" style="background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer;">
-        <div style="font-size: 28px; margin-bottom: 6px;">📄</div>
-        <div style="font-size: 13px; font-weight: 500;">Upload CSV</div>
-      </div>
+    <div class="sheet-title">Add transaction</div>
+    <div class="sheet-sub">Log any money in or out</div>
+    <div class="input-group"><label class="input-label">Description</label><input class="input-field" id="txn-name" placeholder="e.g. Zomato order, Client payment..."></div>
+    <div class="input-row">
+      <div class="input-group"><label class="input-label">Amount (₹)</label><input class="input-field" id="txn-amount" type="number" placeholder="0"></div>
+      <div class="input-group"><label class="input-label">Date</label><input class="input-field" id="txn-date" type="date"></div>
     </div>
-    <div style="font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6;">
-      🔒 We only read transaction descriptions and amounts.<br>
-      No passwords or OTPs are ever required.
+    <div class="input-group"><label class="input-label">Type</label>
+      <select class="input-field" id="txn-type">
+        <option value="expense">📤 Expense</option>
+        <option value="income">📥 Income</option>
+      </select>
     </div>
+    <button class="btn-ob-primary" onclick="saveTransaction()">Log transaction</button>
   </div>
 </div>
 
-<!-- Add Goal -->
-<div class="sheet-overlay" id="sheet-add-goal" onclick="closeSheet(event, 'add-goal')">
+<div class="sheet-overlay" id="sheet-add-goal" onclick="closeSheet(event,'add-goal')">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">New savings goal</div>
     <div class="sheet-sub">Set a target and we'll guide you there</div>
-    <div class="input-group">
-      <label class="input-label">Goal name</label>
-      <input class="input-field" id="goal-name" placeholder="e.g. New phone, Trip, Emergency fund...">
-    </div>
+    <div class="input-group"><label class="input-label">Goal name</label><input class="input-field" id="goal-name" placeholder="e.g. New phone, Trip, Emergency fund..."></div>
     <div class="input-row">
-      <div class="input-group">
-        <label class="input-label">Target amount (₹)</label>
-        <input class="input-field" id="goal-target" type="number" placeholder="0">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Target date</label>
-        <input class="input-field" id="goal-date" type="date">
-      </div>
+      <div class="input-group"><label class="input-label">Target amount (₹)</label><input class="input-field" id="goal-target" type="number" placeholder="0"></div>
+      <div class="input-group"><label class="input-label">Target date</label><input class="input-field" id="goal-date" type="date"></div>
     </div>
-    <div class="input-group">
-      <label class="input-label">Amount saved so far (₹)</label>
-      <input class="input-field" id="goal-saved" type="number" placeholder="0">
-    </div>
-    <button class="btn-primary" onclick="saveGoal()">Create goal</button>
+    <div class="input-group"><label class="input-label">Amount saved so far (₹)</label><input class="input-field" id="goal-saved" type="number" placeholder="0"></div>
+    <button class="btn-ob-primary" onclick="saveGoal()">Create goal</button>
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="sheet-overlay" id="sheet-upi-sync" onclick="closeSheet(event,'upi-sync')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Connect UPI / GPay</div>
+    <div class="sheet-sub">Auto-read your UPI transactions — no passwords required</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div onclick="showToast('GPay connected! ✓')" class="upi-option"><div style="font-size:28px;margin-bottom:6px">📱</div><div style="font-size:13px;font-weight:500">Google Pay</div></div>
+      <div onclick="showToast('PhonePe connected! ✓')" class="upi-option"><div style="font-size:28px;margin-bottom:6px">💜</div><div style="font-size:13px;font-weight:500">PhonePe</div></div>
+      <div onclick="showToast('Paytm connected! ✓')" class="upi-option"><div style="font-size:28px;margin-bottom:6px">💙</div><div style="font-size:13px;font-weight:500">Paytm</div></div>
+      <div onclick="openSheet('add-transaction')" class="upi-option"><div style="font-size:28px;margin-bottom:6px">📄</div><div style="font-size:13px;font-weight:500">Upload CSV</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;line-height:1.6">🔒 We only read transaction descriptions and amounts.<br>No passwords or OTPs ever required.</div>
+  </div>
+</div>
 
+<div class="toast" id="toast"></div>
 <script src="script.js"></script>
 </body>
 </html>
