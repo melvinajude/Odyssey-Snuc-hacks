@@ -1,0 +1,3117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASHLINE — Know What's Coming Before It Hits</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ===========================
+   GLOBAL RESET & VARIABLES
+=========================== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --ink:       #0d1117;
+  --surface:   #161b22;
+  --raised:    #21262d;
+  --overlay:   #2d333b;
+  --border:    rgba(255,255,255,0.08);
+  --border-hi: rgba(255,255,255,0.18);
+  --text:      #e6edf3;
+  --muted:     #8b949e;
+  --dim:       #484f58;
+
+  --accent:    #39d353;
+  --accent-gl: rgba(57,211,83,0.14);
+  --amber:     #e3b341;
+  --amber-gl:  rgba(227,179,65,0.14);
+  --coral:     #f85149;
+  --coral-gl:  rgba(248,81,73,0.14);
+  --sky:       #58a6ff;
+  --sky-gl:    rgba(88,166,255,0.14);
+  --violet:    #bc8cff;
+  --violet-gl: rgba(188,140,255,0.14);
+  --teal:      #2dd4bf;
+  --teal-gl:   rgba(45,212,191,0.14);
+
+  --sh-sm:  0 2px 8px rgba(0,0,0,0.5);
+  --sh:     0 8px 32px rgba(0,0,0,0.55);
+  --sh-lg:  0 20px 64px rgba(0,0,0,0.65);
+  --r-xs:   6px;
+  --r-sm:   8px;
+  --r:      12px;
+  --r-lg:   18px;
+  --r-xl:   24px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family:'DM Sans', sans-serif;
+  background: var(--ink);
+  color: var(--text);
+  min-height:100vh;
+  line-height:1.55;
+  overflow-x:hidden;
+}
+
+/* ===========================
+   PAGE TRANSITIONS
+=========================== */
+.page-fade { animation: pageFade 0.38s ease both; }
+@keyframes pageFade {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.slide-up { animation: slideUp 0.45s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes slideUp {
+  from { opacity:0; transform:translateY(32px) scale(0.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.stagger > * { animation: pageFade 0.35s ease both; }
+.stagger > *:nth-child(1) { animation-delay:0.04s; }
+.stagger > *:nth-child(2) { animation-delay:0.09s; }
+.stagger > *:nth-child(3) { animation-delay:0.14s; }
+.stagger > *:nth-child(4) { animation-delay:0.19s; }
+.stagger > *:nth-child(5) { animation-delay:0.24s; }
+
+/* ===========================
+   LOADER
+=========================== */
+.loader-overlay {
+  position:fixed; inset:0; background:var(--ink);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:9999;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.loader-overlay.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+
+.loader-ring {
+  width:56px; height:56px;
+  border:3px solid var(--raised);
+  border-top-color: var(--accent);
+  border-radius:50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom:20px;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.loader-text {
+  font-family:'Syne',sans-serif;
+  font-size:1rem; font-weight:700;
+  color:var(--muted);
+  letter-spacing:0.06em;
+}
+.loader-dot {
+  display:inline-block;
+  animation: dotPulse 1.2s ease infinite;
+}
+.loader-dot:nth-child(2) { animation-delay:0.2s; }
+.loader-dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes dotPulse { 0%,80%,100%{ opacity:0.2; } 40%{ opacity:1; } }
+
+/* ===========================
+   ERROR PAGE
+=========================== */
+.error-page {
+  display:none; min-height:100vh;
+  flex-direction:column; align-items:center; justify-content:center;
+  padding:40px 24px; text-align:center;
+}
+.error-page.active { display:flex; }
+.error-face {
+  width:120px; height:120px;
+  background: var(--surface);
+  border:2px solid var(--coral-gl);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:3.5rem; margin-bottom:28px;
+  box-shadow: 0 0 60px rgba(248,81,73,0.2);
+  animation: wobb 3s ease-in-out infinite;
+}
+@keyframes wobb {
+  0%,100% { transform:rotate(-3deg); }
+  50%      { transform:rotate(3deg); }
+}
+.error-page h2 {
+  font-family:'Syne',sans-serif;
+  font-size:1.8rem; font-weight:800;
+  margin-bottom:12px; color:var(--text);
+}
+.error-page p { color:var(--muted); max-width:380px; margin:0 auto 28px; }
+
+/* ===========================
+   LANDING PAGE
+=========================== */
+.landing {
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:72px 24px 80px;
+  background:
+    radial-gradient(ellipse 65% 45% at 50% -8%, rgba(57,211,83,0.1) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 35% at 85% 88%, rgba(88,166,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 80%, rgba(227,179,65,0.05) 0%, transparent 60%),
+    var(--ink);
+  position:relative; overflow:hidden;
+}
+.landing::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size:64px 64px;
+  pointer-events:none;
+}
+
+.landing-brand {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:16px; position:relative; z-index:1;
+}
+.brand-mark {
+  width:52px; height:52px;
+  background: linear-gradient(135deg, var(--accent), #26a641);
+  border-radius: var(--r);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem;
+  box-shadow: 0 0 44px rgba(57,211,83,0.3);
+}
+.brand-mark i { color: var(--ink); }
+.brand-title {
+  font-family:'Syne',sans-serif;
+  font-size:2.1rem; font-weight:800;
+  letter-spacing:-0.02em;
+  color:var(--text);
+}
+.brand-title span { color:var(--accent); }
+
+.landing-tagline {
+  font-size:1rem; color:var(--muted);
+  margin-bottom:72px; text-align:center;
+  max-width:440px; position:relative; z-index:1;
+}
+
+.landing-cards {
+  display:flex; gap:24px; flex-wrap:wrap;
+  justify-content:center; max-width:1100px;
+  width:100%; position:relative; z-index:1;
+}
+
+.landing-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  padding:48px 36px;
+  width:300px; cursor:pointer;
+  transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1),
+              border-color 0.25s, box-shadow 0.35s;
+  position:relative; overflow:hidden; text-align:center;
+}
+.landing-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0;
+  height:3px; opacity:0; transition:opacity 0.3s;
+}
+.landing-card.student::before   { background: linear-gradient(90deg, var(--violet), #e879f9); }
+.landing-card.freelancer::before{ background: linear-gradient(90deg, var(--accent), var(--sky)); }
+.landing-card.custom::before    { background: linear-gradient(90deg, var(--amber), var(--coral)); }
+.landing-card:hover::before { opacity:1; }
+.landing-card:hover {
+  transform:translateY(-14px);
+  border-color:var(--border-hi);
+  box-shadow:var(--sh-lg);
+}
+
+.card-icon-wrap {
+  width:80px; height:80px;
+  border-radius:50%;
+  margin:0 auto 24px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+  transition:transform 0.38s ease;
+}
+.landing-card:hover .card-icon-wrap { transform:scale(1.12) rotate(6deg); }
+.landing-card.student   .card-icon-wrap { background:var(--violet-gl); color:var(--violet); }
+.landing-card.freelancer.card-icon-wrap { background:var(--accent-gl); color:var(--accent); }
+.landing-card.freelancer .card-icon-wrap { background:var(--accent-gl); color:var(--accent); }
+.landing-card.custom    .card-icon-wrap { background:var(--amber-gl);  color:var(--amber); }
+
+.landing-card h2 {
+  font-family:'Syne',sans-serif;
+  font-size:1.45rem; font-weight:700;
+  margin-bottom:12px; color:var(--text);
+}
+.landing-card p { font-size:0.88rem; color:var(--muted); line-height:1.65; }
+
+/* ===========================
+   DASHBOARD SHELL
+=========================== */
+.app { display:none; min-height:100vh; }
+.app.active { display:flex; }
+
+/* SIDEBAR */
+.sidebar {
+  width:256px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:24px 14px;
+  position:fixed; height:100vh; overflow-y:auto;
+  z-index:200; display:flex; flex-direction:column;
+  transition: transform 0.3s ease;
+}
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--border-hi); border-radius:4px; }
+
+.sidebar-brand {
+  display:flex; align-items:center; gap:11px;
+  padding:6px 10px 22px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:22px;
+}
+.sb-mark {
+  width:36px; height:36px;
+  border-radius:var(--r-xs);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.95rem; flex-shrink:0;
+}
+.sb-mark.student   { background:linear-gradient(135deg, var(--violet), #e879f9); color:#fff; }
+.sb-mark.freelancer{ background:linear-gradient(135deg, var(--accent), #26a641); color:var(--ink); }
+.sb-mark.custom    { background:linear-gradient(135deg, var(--amber), #c97d10); color:var(--ink); }
+.sb-name {
+  font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; color:var(--text);
+}
+
+.nav-section {
+  font-size:0.66rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--dim); padding:0 10px; margin:18px 0 7px;
+}
+.nav-list { list-style:none; }
+.nav-item { margin-bottom:2px; }
+.nav-link {
+  display:flex; align-items:center; gap:11px;
+  padding:10px 12px; border-radius:var(--r-sm);
+  color:var(--muted); text-decoration:none;
+  font-size:0.875rem; font-weight:500;
+  transition: background 0.18s, color 0.18s;
+  cursor:pointer;
+}
+.nav-link i { width:18px; font-size:0.9rem; flex-shrink:0; }
+.nav-link:hover { background:var(--raised); color:var(--text); }
+.nav-link.active { color:var(--accent); border:1px solid rgba(57,211,83,0.2); }
+.nav-link.active.student-nav   { color:var(--violet); background:var(--violet-gl); border-color:rgba(188,140,255,0.2); }
+.nav-link.active.freelancer-nav{ color:var(--accent);  background:var(--accent-gl); border-color:rgba(57,211,83,0.2); }
+.nav-link.active.custom-nav    { color:var(--amber);   background:var(--amber-gl);  border-color:rgba(227,179,65,0.2); }
+
+.sidebar-footer {
+  margin-top:auto; padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.user-chip {
+  display:flex; align-items:center; gap:11px;
+  padding:11px; background:var(--raised); border-radius:var(--r);
+  cursor:pointer; transition:background 0.18s;
+}
+.user-chip:hover { background:var(--overlay); }
+.u-avatar {
+  width:36px; height:36px;
+  border-radius:var(--r-xs);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--ink); font-weight:700; font-size:0.95rem; flex-shrink:0;
+}
+.u-avatar.student   { background:linear-gradient(135deg, var(--violet), #e879f9); color:#fff; }
+.u-avatar.freelancer{ background:linear-gradient(135deg, var(--accent), var(--sky)); }
+.u-avatar.custom    { background:linear-gradient(135deg, var(--amber), var(--coral)); color:#fff; }
+.u-meta h4 { font-size:0.85rem; font-weight:600; color:var(--text); }
+.u-meta span { font-size:0.72rem; color:var(--muted); }
+
+/* MAIN CONTENT */
+.main {
+  margin-left:256px; flex:1;
+  padding:32px; background:var(--ink);
+  min-height:100vh;
+}
+
+.top-bar {
+  display:flex; justify-content:space-between;
+  align-items:flex-start; margin-bottom:32px;
+  flex-wrap:wrap; gap:16px;
+}
+.page-title h1 {
+  font-family:'Syne',sans-serif;
+  font-size:1.7rem; font-weight:700;
+  color:var(--text); letter-spacing:-0.02em;
+}
+.page-title p { color:var(--muted); font-size:0.875rem; margin-top:4px; }
+.top-actions { display:flex; gap:10px; align-items:center; }
+
+.mobile-menu-btn {
+  display:none; width:38px; height:38px;
+  border-radius:var(--r-sm); border:1px solid var(--border);
+  background:var(--surface); color:var(--text);
+  font-size:0.95rem; cursor:pointer;
+  align-items:center; justify-content:center;
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+.btn {
+  padding:10px 20px; border-radius:var(--r-sm);
+  border:none; font-family:'DM Sans',sans-serif;
+  font-weight:600; font-size:0.875rem; cursor:pointer;
+  transition: all 0.2s ease;
+  display:inline-flex; align-items:center; gap:8px;
+  white-space:nowrap;
+}
+.btn-primary {
+  background:var(--accent); color:var(--ink);
+}
+.btn-primary:hover {
+  background:#4ce363; transform:translateY(-2px);
+  box-shadow:0 6px 24px rgba(57,211,83,0.3);
+}
+.btn-secondary {
+  background:var(--raised); color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-secondary:hover { border-color:var(--border-hi); background:var(--overlay); }
+.btn-danger { background:var(--coral); color:#fff; }
+.btn-danger:hover { background:#ff6b63; transform:translateY(-2px); }
+.btn-sm { padding:7px 14px; font-size:0.8rem; }
+.btn-icon {
+  width:36px; height:36px; padding:0;
+  border-radius:var(--r-xs);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.btn-student.btn-primary  { background:var(--violet); color:#fff; }
+.btn-student.btn-primary:hover { background:#c8a2ff; box-shadow:0 6px 24px rgba(188,140,255,0.3); }
+.btn-custom.btn-primary   { background:var(--amber); color:var(--ink); }
+.btn-custom.btn-primary:hover { background:#f0c050; box-shadow:0 6px 24px rgba(227,179,65,0.3); }
+
+/* ===========================
+   PAGE SECTIONS
+=========================== */
+.page-section { display:none; }
+.page-section.active { display:block; animation:pageFade 0.35s ease both; }
+
+/* ===========================
+   STAT CARDS
+=========================== */
+.cards-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(215px, 1fr));
+  gap:16px; margin-bottom:22px;
+}
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:24px;
+  position:relative; overflow:hidden;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.stat-card:hover { border-color:var(--border-hi); transform:translateY(-3px); }
+.stat-glow {
+  position:absolute; top:-20px; right:-20px;
+  width:80px; height:80px; border-radius:50%;
+  opacity:0.25; filter:blur(20px); pointer-events:none;
+}
+.stat-icon {
+  width:42px; height:42px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; margin-bottom:16px;
+}
+.stat-label {
+  font-size:0.75rem; color:var(--muted); font-weight:600;
+  text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;
+}
+.stat-value {
+  font-family:'Syne',sans-serif; font-size:1.85rem;
+  font-weight:700; color:var(--text); line-height:1;
+}
+.stat-trend {
+  display:flex; align-items:center; gap:5px;
+  margin-top:10px; font-size:0.78rem; font-weight:500;
+  color:var(--muted);
+}
+.stat-trend.up   { color:var(--accent); }
+.stat-trend.down { color:var(--coral); }
+
+/* ===========================
+   PANELS
+=========================== */
+.panel {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:24px; margin-bottom:20px;
+  transition:border-color 0.2s;
+}
+.panel:hover { border-color:rgba(255,255,255,0.12); }
+.panel-header {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:22px;
+}
+.panel-title {
+  font-family:'Syne',sans-serif; font-size:1rem;
+  font-weight:700; color:var(--text);
+  display:flex; align-items:center; gap:10px;
+}
+.panel-title i { font-size:0.9rem; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+
+/* ===========================
+   FORM ELEMENTS
+=========================== */
+.form-group { margin-bottom:16px; }
+.form-group label {
+  display:block; font-size:0.76rem; font-weight:600;
+  color:var(--muted); text-transform:uppercase;
+  letter-spacing:0.06em; margin-bottom:7px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width:100%; padding:11px 14px;
+  background:var(--raised); border:1px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:'DM Sans',sans-serif; font-size:0.9rem;
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline:none; border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(57,211,83,0.12);
+}
+.form-group select option { background:var(--raised); color:var(--text); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-hint { font-size:0.78rem; color:var(--muted); margin-top:6px; }
+
+/* INPUT ACCENTS per user type */
+.student-mode .form-group input:focus,
+.student-mode .form-group select:focus { border-color:var(--violet); box-shadow:0 0 0 3px var(--violet-gl); }
+.custom-mode  .form-group input:focus,
+.custom-mode  .form-group select:focus { border-color:var(--amber);  box-shadow:0 0 0 3px var(--amber-gl); }
+
+/* ===========================
+   TRANSACTIONS
+=========================== */
+.tx-list { max-height:420px; overflow-y:auto; }
+.tx-list::-webkit-scrollbar { width:4px; }
+.tx-list::-webkit-scrollbar-thumb { background:var(--border-hi); border-radius:4px; }
+
+.tx-item {
+  display:flex; align-items:center; gap:14px;
+  padding:13px 14px; border-radius:var(--r);
+  margin-bottom:8px; background:var(--raised);
+  border:1px solid transparent;
+  transition: border-color 0.18s, transform 0.2s;
+}
+.tx-item:hover { border-color:var(--border); transform:translateX(4px); }
+.tx-icon {
+  width:42px; height:42px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; flex-shrink:0;
+}
+.tx-item.income  .tx-icon { background:var(--accent-gl); color:var(--accent); }
+.tx-item.expense .tx-icon { background:var(--coral-gl);  color:var(--coral); }
+.tx-meta { flex:1; min-width:0; }
+.tx-meta h4 { font-size:0.9rem; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tx-meta span { font-size:0.78rem; color:var(--muted); }
+.tx-amount { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; white-space:nowrap; }
+.tx-item.income  .tx-amount { color:var(--accent); }
+.tx-item.expense .tx-amount { color:var(--coral); }
+
+.delete-btn {
+  width:32px; height:32px; border-radius:var(--r-xs);
+  border:none; background:var(--coral-gl); color:var(--coral);
+  cursor:pointer; font-size:0.8rem; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.18s;
+}
+.delete-btn:hover { background:var(--coral); color:#fff; }
+
+/* ===========================
+   EMPTY STATE
+=========================== */
+.empty-state {
+  text-align:center; padding:44px 20px; color:var(--dim);
+}
+.empty-state i { font-size:3rem; margin-bottom:16px; display:block; opacity:0.4; }
+.empty-state p { font-size:0.92rem; color:var(--muted); }
+
+/* ===========================
+   MONEY JAR (Student)
+=========================== */
+.jar-wrap {
+  display:flex; flex-direction:column;
+  align-items:center; padding:28px;
+}
+.jar {
+  position:relative; width:160px; height:220px;
+  margin-bottom:22px;
+}
+.jar-body {
+  position:absolute; bottom:0; width:100%; height:185px;
+  border:3px solid rgba(255,255,255,0.15);
+  border-radius:0 0 36px 36px; overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+}
+.jar-lid {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:125px; height:44px;
+  background:linear-gradient(180deg, var(--overlay), var(--raised));
+  border-radius:9px 9px 0 0;
+  border:3px solid rgba(255,255,255,0.12);
+}
+.jar-lid::before {
+  content:''; position:absolute; bottom:-11px; left:-16px; right:-16px;
+  height:16px; background:var(--raised);
+  border-radius:4px; border:1px solid rgba(255,255,255,0.08);
+}
+.jar-fill {
+  position:absolute; bottom:0; width:100%;
+  transition:height 1s cubic-bezier(0.34,1.56,0.64,1);
+  border-radius:0 0 33px 33px;
+}
+.jar-fill::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.25), transparent);
+}
+.jar-percent {
+  font-family:'Syne',sans-serif; font-size:2.4rem; font-weight:700;
+  color:var(--text);
+}
+.jar-label { font-size:0.85rem; color:var(--muted); margin-top:6px; }
+
+/* ===========================
+   BILLS & INVOICE ITEMS
+=========================== */
+.bill-item {
+  display:flex; align-items:center; gap:14px;
+  padding:14px; border-radius:var(--r); margin-bottom:9px;
+  border:1px solid var(--border);
+  border-left:3px solid var(--border);
+  background:var(--raised);
+  transition:border-color 0.18s, transform 0.2s;
+}
+.bill-item:hover { transform:translateX(4px); }
+.bill-item.urgent { background:var(--coral-gl); border-left-color:var(--coral); }
+.bill-item.soon   { background:var(--amber-gl); border-left-color:var(--amber); }
+.bill-item.normal { border-left-color:var(--accent); }
+.bill-icon {
+  width:42px; height:42px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; flex-shrink:0;
+  background:var(--overlay);
+}
+.bill-item.urgent .bill-icon { color:var(--coral); }
+.bill-item.soon   .bill-icon { color:var(--amber); }
+.bill-item.normal .bill-icon { color:var(--accent); }
+.bill-meta { flex:1; }
+.bill-meta h4 { font-size:0.9rem; font-weight:600; color:var(--text); }
+.bill-meta span { font-size:0.78rem; color:var(--muted); }
+.bill-amount { font-family:'Syne',sans-serif; font-weight:700; color:var(--text); white-space:nowrap; }
+.bill-badge {
+  padding:4px 10px; border-radius:20px;
+  font-size:0.72rem; font-weight:700;
+  flex-shrink:0;
+}
+.bill-item.urgent .bill-badge { background:var(--coral); color:#fff; }
+.bill-item.soon   .bill-badge { background:var(--amber); color:var(--ink); }
+
+/* ===========================
+   INVOICE BADGES
+=========================== */
+.inv-badge {
+  padding:4px 10px; border-radius:20px;
+  font-size:0.72rem; font-weight:700; flex-shrink:0;
+}
+.inv-badge.paid    { background:var(--accent-gl); color:var(--accent); border:1px solid rgba(57,211,83,0.3); }
+.inv-badge.overdue { background:var(--coral-gl);  color:var(--coral);  border:1px solid rgba(248,81,73,0.3); }
+.inv-badge.pending { background:var(--amber-gl);  color:var(--amber);  border:1px solid rgba(227,179,65,0.3); }
+
+/* ===========================
+   CALENDAR
+=========================== */
+.cal-wrap {
+  background:var(--raised); border-radius:var(--r-lg);
+  padding:20px; border:1px solid var(--border);
+}
+.cal-header {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:18px;
+}
+.cal-header h3 {
+  font-family:'Syne',sans-serif; font-size:1rem; font-weight:700;
+}
+.cal-nav { display:flex; gap:8px; }
+.cal-nav button {
+  width:34px; height:34px; border-radius:var(--r-xs);
+  border:1px solid var(--border); background:var(--surface);
+  color:var(--text); cursor:pointer; transition:all 0.18s;
+  display:flex; align-items:center; justify-content:center;
+}
+.cal-nav button:hover { background:var(--accent); color:var(--ink); border-color:var(--accent); }
+.cal-grid {
+  display:grid; grid-template-columns:repeat(7, 1fr); gap:6px;
+}
+.cal-day-name {
+  text-align:center; font-weight:700; color:var(--dim);
+  font-size:0.72rem; letter-spacing:0.05em; padding:8px 0;
+}
+.cal-day {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  border-radius:var(--r-xs); font-weight:500; font-size:0.82rem;
+  cursor:pointer; position:relative; transition:background 0.15s, color 0.15s;
+}
+.cal-day:hover { background:var(--overlay); }
+.cal-day.today { background:var(--accent); color:var(--ink); font-weight:700; }
+.cal-day.other-month { color:var(--dim); }
+.cal-day.has-event::after {
+  content:''; position:absolute; bottom:3px;
+  width:4px; height:4px; border-radius:50%;
+  background:var(--coral);
+}
+
+/* ===========================
+   WHAT-IF / LIQUIDITY
+=========================== */
+.result-block {
+  background:var(--raised); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:28px;
+  text-align:center; margin-top:18px;
+}
+.result-days {
+  font-family:'Syne',sans-serif; font-size:4rem;
+  font-weight:800; color:var(--accent); line-height:1;
+}
+.result-label { color:var(--muted); font-size:1rem; margin-top:10px; }
+.result-warn {
+  margin-top:16px; padding:14px;
+  background:var(--coral-gl); border:1px solid rgba(248,81,73,0.3);
+  border-radius:var(--r); color:var(--coral); font-size:0.88rem; font-weight:500;
+}
+.scenario-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 0; border-bottom:1px solid var(--border);
+  font-size:0.88rem;
+}
+.scenario-row:last-child { border-bottom:none; }
+
+/* ===========================
+   EXAM ITEMS
+=========================== */
+.exam-item {
+  display:flex; align-items:center; gap:14px;
+  padding:14px; border-radius:var(--r);
+  margin-bottom:9px;
+  background:var(--violet-gl);
+  border:1px solid rgba(188,140,255,0.2);
+  transition:transform 0.2s;
+}
+.exam-item:hover { transform:translateX(4px); }
+.exam-icon {
+  width:42px; height:42px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; flex-shrink:0;
+  background:linear-gradient(135deg, var(--violet), #e879f9); color:#fff;
+}
+.exam-meta { flex:1; }
+.exam-meta h4 { font-size:0.9rem; font-weight:600; color:var(--text); }
+.exam-meta span { font-size:0.78rem; color:var(--muted); }
+.exam-status-badge {
+  padding:4px 10px; border-radius:20px;
+  font-size:0.72rem; font-weight:700; flex-shrink:0;
+}
+.exam-status-badge.soon { background:var(--coral-gl); color:var(--coral); border:1px solid rgba(248,81,73,0.3); }
+.exam-status-badge.upcoming { background:var(--violet-gl); color:var(--violet); border:1px solid rgba(188,140,255,0.3); }
+
+/* ===========================
+   TOGGLE SWITCH
+=========================== */
+.toggle-wrap {
+  display:flex; align-items:center; gap:14px;
+  padding:14px; background:var(--raised);
+  border-radius:var(--r); margin-bottom:16px;
+  border:1px solid var(--border);
+}
+.toggle { position:relative; width:52px; height:28px; flex-shrink:0; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider {
+  position:absolute; cursor:pointer;
+  inset:0; background:var(--overlay); border-radius:28px;
+  transition:background 0.3s;
+}
+.toggle-slider::before {
+  content:''; position:absolute;
+  width:20px; height:20px;
+  left:4px; bottom:4px;
+  background:#fff; border-radius:50%;
+  transition:transform 0.3s;
+}
+.toggle input:checked + .toggle-slider { background:var(--violet); }
+.toggle input:checked + .toggle-slider::before { transform:translateX(24px); }
+.toggle-label { font-size:0.875rem; font-weight:500; color:var(--text); }
+
+/* ===========================
+   CLIENT RELIABILITY (Freelancer)
+=========================== */
+.reliability-bar-wrap { margin-top:8px; }
+.reliability-bar-bg {
+  width:100%; height:6px; background:var(--overlay);
+  border-radius:4px; overflow:hidden;
+}
+.reliability-bar-fill { height:100%; border-radius:4px; transition:width 0.6s ease; }
+
+.client-card {
+  background:var(--raised); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:18px;
+  margin-bottom:12px; transition:border-color 0.18s;
+}
+.client-card:hover { border-color:var(--border-hi); }
+.client-score {
+  font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800;
+}
+
+/* ===========================
+   ACCOUNT ITEMS (Freelancer)
+=========================== */
+.account-card {
+  background:var(--raised); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:18px; margin-bottom:12px;
+  display:flex; align-items:center; gap:14px;
+  transition:border-color 0.18s, transform 0.2s;
+}
+.account-card:hover { border-color:var(--border-hi); transform:translateY(-2px); }
+.account-icon {
+  width:46px; height:46px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; flex-shrink:0;
+}
+
+/* ===========================
+   EMI ITEMS (Custom)
+=========================== */
+.emi-item {
+  display:flex; align-items:center; gap:14px;
+  padding:14px; border-radius:var(--r);
+  margin-bottom:9px; background:var(--raised);
+  border:1px solid var(--border);
+  border-left:3px solid var(--border);
+  transition:border-color 0.18s, transform 0.2s;
+}
+.emi-item:hover { transform:translateX(4px); }
+.emi-icon {
+  width:42px; height:42px; border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; flex-shrink:0;
+}
+.emi-meta { flex:1; }
+.emi-meta h4 { font-size:0.9rem; font-weight:600; color:var(--text); }
+.emi-meta span { font-size:0.78rem; color:var(--muted); }
+.emi-amount { font-family:'Syne',sans-serif; font-weight:700; }
+
+/* ===========================
+   CUSTOM FEATURE PICKER
+=========================== */
+.picker-page {
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  align-items:center; padding:60px 24px 80px;
+  background:
+    radial-gradient(ellipse 65% 40% at 50% -5%, rgba(227,179,65,0.1) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 90%, rgba(248,81,73,0.07) 0%, transparent 60%),
+    var(--ink);
+  position:relative; overflow:hidden;
+}
+.picker-page::before {
+  content:''; position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size:64px 64px; pointer-events:none;
+}
+.picker-header { text-align:center; margin-bottom:48px; position:relative; z-index:1; }
+.picker-header h2 {
+  font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800;
+  margin-bottom:10px;
+}
+.picker-header p { color:var(--muted); max-width:480px; margin:0 auto; }
+.cat-label {
+  font-size:0.7rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--dim);
+  margin-bottom:12px; margin-top:28px;
+  display:flex; align-items:center; gap:10px;
+}
+.cat-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.features-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+  gap:12px;
+}
+.feature-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:18px;
+  cursor:pointer; transition:all 0.22s ease;
+  position:relative; user-select:none;
+}
+.feature-card:hover {
+  border-color:var(--border-hi);
+  transform:translateY(-3px); box-shadow:var(--sh-sm);
+}
+.feature-card.selected {
+  border-color:var(--amber); background:var(--amber-gl);
+}
+.feature-card.selected::after {
+  content:'\f058'; font-family:'Font Awesome 6 Free'; font-weight:900;
+  position:absolute; top:14px; right:14px;
+  color:var(--amber); font-size:1rem;
+}
+.feature-icon {
+  width:38px; height:38px; border-radius:var(--r-xs);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.95rem; margin-bottom:12px;
+}
+.feature-card h4 { font-size:0.9rem; font-weight:700; color:var(--text); margin-bottom:5px; }
+.feature-card p  { font-size:0.78rem; color:var(--muted); line-height:1.5; }
+.picker-footer { position:relative; z-index:1; margin-top:36px; text-align:center; }
+.selected-count {
+  font-size:0.85rem; color:var(--muted); margin-bottom:16px;
+}
+.selected-count strong { color:var(--amber); }
+
+/* ===========================
+   ALERTS
+=========================== */
+.alerts-container {
+  position:fixed; top:20px; right:20px;
+  z-index:9000; max-width:380px; pointer-events:none;
+}
+.alert {
+  background:var(--surface); border-radius:var(--r-lg);
+  padding:16px 18px; margin-bottom:12px;
+  box-shadow:var(--sh); display:flex;
+  align-items:flex-start; gap:14px;
+  border-left:3px solid; pointer-events:all;
+  animation:alertIn 0.35s ease;
+}
+@keyframes alertIn {
+  from { transform:translateX(110%); opacity:0; }
+  to   { transform:translateX(0);    opacity:1; }
+}
+.alert.success { border-left-color:var(--accent); }
+.alert.warning { border-left-color:var(--amber); }
+.alert.danger  { border-left-color:var(--coral); }
+.alert.info    { border-left-color:var(--sky); }
+.alert.gentle  { border-left-color:var(--violet); }
+.alert-icon-wrap {
+  width:38px; height:38px; border-radius:var(--r-xs);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.95rem; flex-shrink:0;
+}
+.alert.success .alert-icon-wrap { background:var(--accent-gl); color:var(--accent); }
+.alert.warning .alert-icon-wrap { background:var(--amber-gl);  color:var(--amber); }
+.alert.danger  .alert-icon-wrap { background:var(--coral-gl);  color:var(--coral); }
+.alert.info    .alert-icon-wrap { background:var(--sky-gl);    color:var(--sky); }
+.alert.gentle  .alert-icon-wrap { background:var(--violet-gl); color:var(--violet); }
+.alert-body { flex:1; }
+.alert-body h4 { font-size:0.88rem; font-weight:700; color:var(--text); margin-bottom:3px; }
+.alert-body p  { font-size:0.8rem;  color:var(--muted); line-height:1.45; }
+.alert-close-btn {
+  background:none; border:none; color:var(--dim);
+  cursor:pointer; padding:2px; flex-shrink:0;
+  font-size:0.85rem; transition:color 0.18s;
+}
+.alert-close-btn:hover { color:var(--text); }
+
+/* ===========================
+   MODALS
+=========================== */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.65);
+  display:none; align-items:center; justify-content:center;
+  z-index:8000; backdrop-filter:blur(6px);
+}
+.modal-overlay.active { display:flex; }
+.modal {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r-xl); padding:32px;
+  max-width:480px; width:90%;
+  max-height:88vh; overflow-y:auto;
+  box-shadow:var(--sh-lg);
+  animation:modalIn 0.32s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.modal::-webkit-scrollbar { width:4px; }
+.modal::-webkit-scrollbar-thumb { background:var(--border-hi); border-radius:4px; }
+@keyframes modalIn {
+  from { transform:scale(0.88); opacity:0; }
+  to   { transform:scale(1);    opacity:1; }
+}
+.modal-header {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:24px;
+}
+.modal-header h2 {
+  font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:700;
+}
+.modal-close {
+  width:36px; height:36px; border-radius:var(--r-xs);
+  border:1px solid var(--border); background:var(--raised);
+  color:var(--muted); cursor:pointer; font-size:0.9rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.18s;
+}
+.modal-close:hover { background:var(--coral); color:#fff; border-color:var(--coral); }
+
+.onboard-modal { text-align:center; }
+.onboard-icon {
+  width:72px; height:72px; border-radius:50%;
+  margin:0 auto 22px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.8rem;
+}
+.onboard-icon.student   { background:var(--violet-gl); color:var(--violet); }
+.onboard-icon.freelancer{ background:var(--accent-gl); color:var(--accent); }
+.onboard-icon.custom    { background:var(--amber-gl);  color:var(--amber); }
+.onboard-modal h2 {
+  font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800;
+  margin-bottom:10px;
+}
+.onboard-modal p { color:var(--muted); font-size:0.9rem; margin-bottom:24px; }
+.onboard-fields { text-align:left; margin-top:16px; }
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width:1100px) {
+  .three-col { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:900px) {
+  .two-col { grid-template-columns:1fr; }
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .main { margin-left:0; padding:20px; }
+  .mobile-menu-btn { display:flex !important; }
+  .three-col { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+}
+@media (max-width:600px) {
+  .cards-grid { grid-template-columns:1fr 1fr; }
+  .landing-card { width:100%; max-width:340px; }
+}
+
+/* ===========================
+   MISC HELPERS
+=========================== */
+.divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
+.text-accent  { color:var(--accent); }
+.text-amber   { color:var(--amber); }
+.text-coral   { color:var(--coral); }
+.text-sky     { color:var(--sky); }
+.text-violet  { color:var(--violet); }
+.text-muted   { color:var(--muted); }
+.text-center  { text-align:center; }
+.font-syne    { font-family:'Syne',sans-serif; }
+.fw-700       { font-weight:700; }
+.fs-sm        { font-size:0.82rem; }
+.mt-8 { margin-top:8px; }
+.mt-16 { margin-top:16px; }
+.mt-24 { margin-top:24px; }
+.mb-0 { margin-bottom:0; }
+.gap-10 { display:flex; gap:10px; flex-wrap:wrap; }
+
+/* Filter tabs */
+.filter-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.filter-tab {
+  padding:6px 14px; border-radius:20px;
+  border:1px solid var(--border); background:var(--raised);
+  color:var(--muted); font-size:0.8rem; font-weight:600;
+  cursor:pointer; transition:all 0.18s;
+}
+.filter-tab.active, .filter-tab:hover {
+  background:var(--amber-gl); color:var(--amber); border-color:rgba(227,179,65,0.3);
+}
+.filter-tab.freelancer-active { background:var(--accent-gl); color:var(--accent); border-color:rgba(57,211,83,0.3); }
+</style>
+</head>
+<body>
+
+<!-- ================================
+     LOADER
+================================ -->
+<div class="loader-overlay" id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">CASHLINE<span class="loader-dot">.</span><span class="loader-dot">.</span><span class="loader-dot">.</span></div>
+</div>
+
+<!-- ================================
+     ERROR PAGE
+================================ -->
+<div class="error-page" id="errorPage">
+  <div class="error-face">:(</div>
+  <h2>Something went wrong</h2>
+  <p>We hit a bump in the road. Your data is safe — please refresh to get back on track.</p>
+  <button class="btn btn-primary" onclick="location.reload()">
+    <i class="fas fa-redo"></i> Try Again
+  </button>
+</div>
+
+<!-- ================================
+     LANDING PAGE
+================================ -->
+<div id="landingPage" style="display:none">
+  <div class="landing">
+    <div class="landing-brand slide-up">
+      <div class="brand-mark"><i class="fas fa-chart-line"></i></div>
+      <div class="brand-title">CASH<span>LINE</span></div>
+    </div>
+    <p class="landing-tagline slide-up" style="animation-delay:0.1s">Know what's coming before it hits. Smart finance for every life stage.</p>
+
+    <div class="landing-cards stagger">
+      <div class="landing-card student" onclick="selectProfile('student')">
+        <div class="card-icon-wrap"><i class="fas fa-graduation-cap"></i></div>
+        <h2>Student</h2>
+        <p>Track bills, plan for exam season, and manage your budget with gentle reminders that understand student life.</p>
+      </div>
+      <div class="landing-card freelancer" onclick="selectProfile('freelancer')">
+        <div class="card-icon-wrap"><i class="fas fa-laptop-code"></i></div>
+        <h2>Freelancer</h2>
+        <p>Invoice tracking, client reliability scores, tax estimates, and cash runway calculations — all in one place.</p>
+      </div>
+      <div class="landing-card custom" onclick="selectProfile('custom')">
+        <div class="card-icon-wrap"><i class="fas fa-sliders-h"></i></div>
+        <h2>Customizable</h2>
+        <p>Pick and choose the financial tools that fit your life. Build your own personalised dashboard.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================
+     CUSTOM FEATURE PICKER
+================================ -->
+<div id="customPickerPage" style="display:none">
+  <div class="picker-page">
+    <div class="picker-header slide-up">
+      <div class="landing-brand" style="justify-content:center; margin-bottom:20px">
+        <div class="brand-mark"><i class="fas fa-chart-line"></i></div>
+        <div class="brand-title">CASH<span>LINE</span></div>
+      </div>
+      <h2>Build your dashboard</h2>
+      <p>Select the tools that matter to you. You can always change these later in settings.</p>
+    </div>
+
+    <div style="width:100%;max-width:1100px;position:relative;z-index:1">
+      <div class="form-row" style="max-width:480px;margin:0 auto 36px">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="customName" placeholder="e.g. Priya">
+        </div>
+        <div class="form-group">
+          <label>Monthly Budget (₹)</label>
+          <input type="number" id="customBudget" placeholder="e.g. 50000" min="0">
+        </div>
+      </div>
+
+      <div class="cat-label"><span>Core Tools</span></div>
+      <div class="features-grid" id="featureGrid"></div>
+    </div>
+
+    <div class="picker-footer">
+      <div class="selected-count"><strong id="selCount">0</strong> features selected</div>
+      <button class="btn btn-custom btn-primary" onclick="launchCustom()">
+        <i class="fas fa-rocket"></i> Launch My Dashboard
+      </button>
+      <div style="margin-top:12px">
+        <button class="btn btn-secondary btn-sm" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================
+     MAIN APP DASHBOARD
+================================ -->
+<div class="app" id="appDash">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sb-mark" id="sbMark"><i class="fas fa-chart-line"></i></div>
+      <div class="sb-name">CASHLINE</div>
+    </div>
+
+    <div class="nav-section">Main</div>
+    <ul class="nav-list" id="navList"></ul>
+
+    <div class="sidebar-footer">
+      <div class="user-chip" onclick="openModal('settingsModal')">
+        <div class="u-avatar" id="uAvatar">U</div>
+        <div class="u-meta">
+          <h4 id="uName">User</h4>
+          <span id="uRole">Finance</span>
+        </div>
+        <i class="fas fa-cog" style="color:var(--dim);margin-left:auto;font-size:0.85rem"></i>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+    <div class="top-bar">
+      <div class="page-title">
+        <h1 id="pageTitle">Overview</h1>
+        <p id="pageSubtitle">Your financial snapshot</p>
+      </div>
+      <div class="top-actions">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="btn btn-secondary btn-sm" id="quickAddBtn" onclick="openModal('quickAddModal')">
+          <i class="fas fa-plus"></i> Quick Add
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="openModal('settingsModal')">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="pagesContainer"></div>
+  </main>
+</div>
+
+<!-- ================================
+     ALERTS
+================================ -->
+<div class="alerts-container" id="alertsContainer"></div>
+
+<!-- ================================
+     MODALS
+================================ -->
+<!-- Quick Add -->
+<div class="modal-overlay" id="quickAddModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Quick Add</h2>
+      <button class="modal-close" onclick="closeModal('quickAddModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="qType">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Amount (₹)</label>
+      <input type="number" id="qAmount" placeholder="0.00" step="0.01" min="0.01">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <input type="text" id="qDesc" placeholder="What was this for?">
+    </div>
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" id="qDate">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-primary" id="qAddBtn" onclick="addQuickTx()" style="flex:1">
+        <i class="fas fa-plus"></i> Add
+      </button>
+      <button class="btn btn-secondary" onclick="closeModal('quickAddModal')" style="flex:1">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Settings</h2>
+      <button class="modal-close" onclick="closeModal('settingsModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="settingsName" placeholder="Enter your name">
+    </div>
+    <div class="form-group">
+      <label>Monthly Budget / Target (₹)</label>
+      <input type="number" id="settingsBudget" placeholder="e.g. 50000" min="0">
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+      <button class="btn btn-primary" id="saveSettingsBtn" onclick="saveSettings()" style="flex:1">
+        <i class="fas fa-save"></i> Save
+      </button>
+      <button class="btn btn-danger" onclick="resetData()">
+        <i class="fas fa-trash"></i> Reset
+      </button>
+    </div>
+    <hr class="divider">
+    <button class="btn btn-secondary" onclick="backToLanding()" style="width:100%">
+      <i class="fas fa-arrow-left"></i> Change Profile
+    </button>
+  </div>
+</div>
+
+<!-- Onboard -->
+<div class="modal-overlay" id="onboardModal">
+  <div class="modal onboard-modal">
+    <div class="onboard-icon" id="onboardIcon"><i class="fas fa-chart-line"></i></div>
+    <h2 id="onboardTitle">Welcome!</h2>
+    <p id="onboardMsg">Let's personalise your dashboard.</p>
+    <div class="onboard-fields">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="onboardName" placeholder="e.g. Priya">
+      </div>
+      <div class="form-group">
+        <label id="onboardBudgetLabel">Monthly Budget (₹)</label>
+        <input type="number" id="onboardBudget" placeholder="e.g. 30000" min="0">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="onboardBtn" onclick="finishOnboard()" style="width:100%;margin-top:8px">
+      <i class="fas fa-rocket"></i> Let's Go!
+    </button>
+  </div>
+</div>
+
+<!-- Bills Question (Student) -->
+<div class="modal-overlay" id="billsQuestionModal">
+  <div class="modal" style="text-align:center">
+    <div class="onboard-icon student"><i class="fas fa-file-invoice-dollar"></i></div>
+    <h2>Track recurring bills?</h2>
+    <p style="color:var(--muted);margin:12px 0 28px">We'll remind you before rent, utilities, subscriptions, and more are due.</p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button class="btn btn-primary btn-student" onclick="setBillsTracking(true)">
+        <i class="fas fa-check"></i> Yes, track bills
+      </button>
+      <button class="btn btn-secondary" onclick="setBillsTracking(false)">
+        <i class="fas fa-times"></i> Skip for now
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  STATE & PERSISTENCE
+// ================================================================
+const STORAGE_KEY = 'cashline_v3';
+
+let state = {
+  profile: null,           // 'student' | 'freelancer' | 'custom'
+  name: '',
+  budget: 50000,
+  hasBills: false,
+  examMode: false,
+  features: [],            // for custom profile
+  transactions: [],
+  bills: [],
+  exams: [],
+  invoices: [],
+  accounts: [],
+  clients: [],
+  emis: [],
+  calMonth: new Date().getMonth(),
+  calYear:  new Date().getFullYear(),
+  invFilter: 'all',
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) Object.assign(state, JSON.parse(raw));
+  } catch(e) { showErrorPage(); }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e) { showAlert('warning','Storage Full','Could not save data.'); }
+}
+
+// ================================================================
+//  BOOT
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Set default date for quick-add
+  document.getElementById('qDate').value = today();
+
+  loadState();
+
+  // Simulate brief load
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+    if (state.profile) {
+      renderDashboard();
+    } else {
+      document.getElementById('landingPage').style.display = 'block';
+    }
+  }, 700);
+
+  // Close modals on outside click
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('active'); });
+  });
+});
+
+function showErrorPage() {
+  document.getElementById('loader').classList.add('hidden');
+  document.getElementById('errorPage').classList.add('active');
+}
+
+// ================================================================
+//  PROFILE SELECTION
+// ================================================================
+function selectProfile(profile) {
+  if (profile === 'custom') {
+    document.getElementById('landingPage').style.display = 'none';
+    buildFeaturePicker();
+    document.getElementById('customPickerPage').style.display = 'block';
+    return;
+  }
+  state.profile = profile;
+  saveState();
+  document.getElementById('landingPage').style.display = 'none';
+  renderDashboard();
+  showLoader(400, () => openModal('onboardModal'));
+}
+
+function buildFeaturePicker() {
+  const features = [
+    { id:'transactions', icon:'exchange-alt', color:'var(--sky)',    title:'Transactions',          desc:'Log income & expenses, view history.' },
+    { id:'bills',        icon:'file-invoice', color:'var(--coral)',  title:'Bills Tracker',         desc:'Track recurring bills with due-date reminders.' },
+    { id:'jar',          icon:'piggy-bank',   color:'var(--amber)',  title:'Savings Jar',           desc:'Visual budget tracker that fills as you save.' },
+    { id:'whatif',       icon:'calculator',   color:'var(--accent)', title:'What-If Calculator',    desc:'How long will your money last?' },
+    { id:'emi',          icon:'calendar-alt', color:'var(--violet)', title:'EMI Timeline',          desc:'Track all your loan EMIs in one place.' },
+    { id:'tax',          icon:'percentage',   color:'var(--amber)',  title:'Tax Estimator',         desc:'Estimate your income tax liability (India).' },
+    { id:'annual',       icon:'chart-area',   color:'var(--teal)',   title:'Annual Predictor',      desc:'Project your spending through the year.' },
+    { id:'scenarios',    icon:'flask',        color:'var(--coral)',  title:'Scenario Simulator',    desc:'What if a client delays or income drops?' },
+    { id:'accounts',     icon:'university',   color:'var(--sky)',    title:'Multi-Account View',    desc:'See all your accounts in one dashboard.' },
+  ];
+
+  const grid = document.getElementById('featureGrid');
+  grid.innerHTML = features.map(f => `
+    <div class="feature-card" id="fc-${f.id}" onclick="toggleFeature('${f.id}')">
+      <div class="feature-icon" style="background:${f.color}22;color:${f.color}">
+        <i class="fas fa-${f.icon}"></i>
+      </div>
+      <h4>${f.title}</h4>
+      <p>${f.desc}</p>
+    </div>`).join('');
+  updateSelCount();
+}
+
+function toggleFeature(id) {
+  const idx = state.features.indexOf(id);
+  if (idx > -1) state.features.splice(idx, 1);
+  else state.features.push(id);
+  document.getElementById('fc-'+id).classList.toggle('selected', state.features.includes(id));
+  updateSelCount();
+}
+function updateSelCount() {
+  document.getElementById('selCount').textContent = state.features.length;
+}
+
+function launchCustom() {
+  const name = document.getElementById('customName').value.trim();
+  const budget = parseFloat(document.getElementById('customBudget').value)||50000;
+  if (!name) { showAlert('warning','Name required','Please enter your name.'); return; }
+  if (!state.features.length) { showAlert('warning','Select features','Choose at least one feature.'); return; }
+  state.profile = 'custom';
+  state.name = name;
+  state.budget = budget;
+  saveState();
+  document.getElementById('customPickerPage').style.display = 'none';
+  renderDashboard();
+}
+
+function goBack() {
+  document.getElementById('customPickerPage').style.display = 'none';
+  document.getElementById('landingPage').style.display = 'block';
+}
+
+// ================================================================
+//  DASHBOARD RENDERING
+// ================================================================
+const profileMeta = {
+  student:    { color:'var(--violet)', icon:'graduation-cap',  label:'Student',    navColor:'student-nav' },
+  freelancer: { color:'var(--accent)', icon:'laptop-code',     label:'Freelancer', navColor:'freelancer-nav' },
+  custom:     { color:'var(--amber)',  icon:'sliders-h',       label:'Custom',     navColor:'custom-nav' },
+};
+
+function getNavItems() {
+  const p = state.profile;
+  const base = [
+    { page:'overview',      icon:'th-large',          label:'Overview' },
+    { page:'transactions',  icon:'exchange-alt',      label:'Transactions' },
+  ];
+  if (p === 'student') return [
+    ...base,
+    { page:'bills',   icon:'file-invoice-dollar', label:'Bills & Calendar' },
+    { page:'whatif',  icon:'calculator',           label:'What-If' },
+    { page:'exams',   icon:'book-open',            label:'Exam Schedule' },
+  ];
+  if (p === 'freelancer') return [
+    ...base,
+    { page:'invoices', icon:'file-invoice',   label:'Invoice Calendar' },
+    { page:'accounts', icon:'university',     label:'Accounts' },
+    { page:'liquidity',icon:'tint',           label:'Liquidity Bridge' },
+    { page:'tax',      icon:'percentage',     label:'Tax Estimator' },
+    { page:'clients',  icon:'star',           label:'Client Scores' },
+  ];
+  // custom
+  const custom = [...base];
+  if (state.features.includes('bills'))     custom.push({ page:'bills',     icon:'file-invoice',  label:'Bills' });
+  if (state.features.includes('whatif'))    custom.push({ page:'whatif',    icon:'calculator',    label:'What-If' });
+  if (state.features.includes('emi'))       custom.push({ page:'emi',       icon:'calendar-alt',  label:'EMI Timeline' });
+  if (state.features.includes('tax'))       custom.push({ page:'tax',       icon:'percentage',    label:'Tax Estimator' });
+  if (state.features.includes('annual'))    custom.push({ page:'annual',    icon:'chart-area',    label:'Annual Predictor' });
+  if (state.features.includes('scenarios')) custom.push({ page:'scenarios', icon:'flask',         label:'Scenarios' });
+  if (state.features.includes('accounts'))  custom.push({ page:'accounts',  icon:'university',    label:'Accounts' });
+  return custom;
+}
+
+function renderDashboard() {
+  const p = state.profile;
+  const meta = profileMeta[p];
+
+  // Update sidebar mark & avatar
+  const sbMark = document.getElementById('sbMark');
+  sbMark.className = 'sb-mark ' + p;
+  sbMark.innerHTML = `<i class="fas fa-${meta.icon}"></i>`;
+
+  const uAvatar = document.getElementById('uAvatar');
+  uAvatar.className = 'u-avatar ' + p;
+  uAvatar.textContent = (state.name || 'U').charAt(0).toUpperCase();
+
+  document.getElementById('uName').textContent = state.name || 'User';
+  document.getElementById('uRole').textContent = meta.label;
+
+  // Build save/settings button colors
+  document.getElementById('saveSettingsBtn').className = 'btn btn-primary' + (p==='student'?' btn-student':p==='custom'?' btn-custom':'');
+  document.getElementById('qAddBtn').className = 'btn btn-primary' + (p==='student'?' btn-student':p==='custom'?' btn-custom':'');
+
+  // Build nav
+  const navList = document.getElementById('navList');
+  const navItems = getNavItems();
+  navList.innerHTML = navItems.map(item => `
+    <li class="nav-item">
+      <a class="nav-link" data-page="${item.page}" onclick="navigateTo('${item.page}')">
+        <i class="fas fa-${item.icon}"></i>
+        <span>${item.label}</span>
+      </a>
+    </li>`).join('');
+
+  // Build pages
+  buildPages();
+
+  // Show app
+  document.getElementById('appDash').classList.add('active');
+
+  // Navigate to overview
+  navigateTo('overview');
+
+  // Onboard if new
+  if (!state.name) {
+    showLoader(300, () => {
+      setupOnboard(p);
+      openModal('onboardModal');
+    });
+  } else {
+    // student bills question
+    if (p === 'student' && state.hasBills === false && state.bills.length === 0) {
+      setTimeout(() => openModal('billsQuestionModal'), 900);
+    }
+  }
+
+  // Check alerts
+  setTimeout(checkAlerts, 1500);
+}
+
+function buildPages() {
+  const p = state.profile;
+  const container = document.getElementById('pagesContainer');
+  const navItems = getNavItems();
+
+  let html = '';
+  navItems.forEach(item => {
+    html += `<div class="page-section" id="page-${item.page}"></div>`;
+  });
+  container.innerHTML = html;
+
+  // Render each page content
+  navItems.forEach(item => renderPage(item.page));
+}
+
+function renderPage(page) {
+  const el = document.getElementById('page-' + page);
+  if (!el) return;
+  try {
+    switch(page) {
+      case 'overview':     el.innerHTML = buildOverview();     break;
+      case 'transactions': el.innerHTML = buildTransactions(); break;
+      case 'bills':        el.innerHTML = buildBills();        renderCalendar('billCalGrid', state.bills.map(b=>b.dueDate)); break;
+      case 'whatif':       el.innerHTML = buildWhatIf();       break;
+      case 'exams':        el.innerHTML = buildExams();        break;
+      case 'invoices':     el.innerHTML = buildInvoices();     renderCalendar('invCalGrid', state.invoices.map(i=>i.due)); break;
+      case 'accounts':     el.innerHTML = buildAccounts();     break;
+      case 'liquidity':    el.innerHTML = buildLiquidity();    break;
+      case 'tax':          el.innerHTML = buildTax();          break;
+      case 'clients':      el.innerHTML = buildClients();      break;
+      case 'emi':          el.innerHTML = buildEMI();          break;
+      case 'annual':       el.innerHTML = buildAnnual();       break;
+      case 'scenarios':    el.innerHTML = buildScenarios();    break;
+    }
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Error rendering this page.</p></div>`;
+  }
+}
+
+function navigateTo(page) {
+  document.querySelectorAll('.nav-link').forEach(l => {
+    const isActive = l.dataset.page === page;
+    l.classList.toggle('active', isActive);
+    if (isActive) l.classList.add(profileMeta[state.profile].navColor);
+    else l.classList.remove('student-nav','freelancer-nav','custom-nav');
+  });
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.classList.add('active');
+    renderPage(page);
+  }
+  const meta = {
+    overview:'Overview', transactions:'Transactions', bills:'Bills & Calendar',
+    whatif:'What-If Calculator', exams:'Exam Schedule', invoices:'Invoice Calendar',
+    accounts:'Accounts', liquidity:'Liquidity Bridge', tax:'Tax Estimator',
+    clients:'Client Scores', emi:'EMI Timeline', annual:'Annual Predictor',
+    scenarios:'Scenario Simulator'
+  };
+  const sub = {
+    overview:"Here's your financial snapshot.",
+    transactions:'Every rupee in and out.',
+    bills:'Manage recurring bills with due-date alerts.',
+    whatif:'How long will your money last?',
+    exams:'Schedule exams, enable gentle mode.',
+    invoices:'Track all client invoices visually.',
+    accounts:'All your accounts in one view.',
+    liquidity:'Cash runway calculator.',
+    tax:'Estimate your income tax.',
+    clients:'Rate how reliably clients pay.',
+    emi:'All your loan EMIs at a glance.',
+    annual:'Project spending through the year.',
+    scenarios:'Stress-test your finances.',
+  };
+  document.getElementById('pageTitle').textContent = meta[page] || page;
+  document.getElementById('pageSubtitle').textContent = sub[page] || '';
+  // Mobile: close sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+// ================================================================
+//  OVERVIEW PAGE
+// ================================================================
+function buildOverview() {
+  const totIncome  = state.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const totExpense = state.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const balance    = totIncome - totExpense;
+  const savRate    = totIncome > 0 ? Math.round((balance/totIncome)*100) : 0;
+  const p = state.profile;
+
+  const jarHtml = (p === 'student' || (p==='custom' && state.features.includes('jar'))) ? buildJarHtml(balance) : '';
+
+  const recentTx = state.transactions.slice(0,5).map(t => txItemHtml(t, false)).join('') ||
+    `<div class="empty-state"><i class="fas fa-receipt"></i><p>No transactions yet. Add your first one!</p></div>`;
+
+  const upcomingBills = p==='student' || (p==='custom'&&state.features.includes('bills'))
+    ? buildUpcomingBillsHtml() : '';
+
+  const overviewInvoices = p === 'freelancer' ? buildOverviewInvoicesHtml() : '';
+
+  return `
+  <div class="cards-grid stagger">
+    ${statCardHtml('balance','university','Balance',fmtRs(balance),'var(--sky)','var(--sky-gl)',
+        balance>=0?'<i class="fas fa-arrow-up"></i> Positive cash flow':'<i class="fas fa-arrow-down"></i> Negative balance', balance>=0?'up':'down')}
+    ${statCardHtml('income','arrow-circle-down','Total Income',fmtRs(totIncome),'var(--accent)','var(--accent-gl)',
+        '<i class="fas fa-chart-line"></i> Lifetime earnings','up')}
+    ${statCardHtml('expense','arrow-circle-up','Total Expenses',fmtRs(totExpense),'var(--coral)','var(--coral-gl)',
+        '<i class="fas fa-shopping-cart"></i> Total spent','down')}
+    ${statCardHtml('savings','piggy-bank','Savings Rate',savRate+'%','var(--amber)','var(--amber-gl)',
+        savRate>=20?'<i class="fas fa-star"></i> Great savings!':'<i class="fas fa-seedling"></i> Keep building',savRate>=20?'up':'down')}
+  </div>
+  <div class="${jarHtml?'two-col':''}">
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-clock text-muted"></i> Recent Transactions</div>
+          <button class="btn btn-secondary btn-sm" onclick="navigateTo('transactions')">View All</button>
+        </div>
+        <div class="tx-list">${recentTx}</div>
+      </div>
+      ${upcomingBills}
+      ${overviewInvoices}
+    </div>
+    ${jarHtml}
+  </div>`;
+}
+
+function buildJarHtml(balance) {
+  const pct = state.budget > 0 ? Math.max(0, Math.min(100, (balance/state.budget)*100)) : 0;
+  const col = pct > 60 ? 'var(--accent)' : pct > 30 ? 'var(--amber)' : 'var(--coral)';
+  return `
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-piggy-bank text-accent"></i> Savings Jar</div>
+    </div>
+    <div class="jar-wrap">
+      <div class="jar">
+        <div class="jar-lid"></div>
+        <div class="jar-body">
+          <div class="jar-fill" id="jarFill" style="height:${pct}%;background:linear-gradient(180deg,${col}cc,${col})"></div>
+        </div>
+      </div>
+      <div class="jar-percent" style="color:${col}">${Math.round(pct)}%</div>
+      <div class="jar-label">of monthly budget</div>
+      <div style="margin-top:16px;font-size:0.82rem;color:var(--muted);text-align:center">
+        ${fmtRs(balance)} of ${fmtRs(state.budget)} saved
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildUpcomingBillsHtml() {
+  if (!state.hasBills || !state.bills.length) return '';
+  const upcoming = state.bills.filter(b=>!b.paid && getDays(b.dueDate) >= 0).sort((a,b)=>getDays(a.dueDate)-getDays(b.dueDate)).slice(0,3);
+  if (!upcoming.length) return '';
+  return `
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-file-invoice text-violet"></i> Upcoming Bills</div>
+      <button class="btn btn-secondary btn-sm" onclick="navigateTo('bills')">View All</button>
+    </div>
+    ${upcoming.map(b => billItemHtml(b)).join('')}
+  </div>`;
+}
+
+function buildOverviewInvoicesHtml() {
+  const pending = state.invoices.filter(i=>i.status==='pending').sort((a,b)=>new Date(a.due)-new Date(b.due)).slice(0,3);
+  if (!pending.length) return '';
+  return `
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-file-invoice text-accent"></i> Pending Invoices</div>
+      <button class="btn btn-secondary btn-sm" onclick="navigateTo('invoices')">View All</button>
+    </div>
+    ${pending.map(i => invoiceItemHtml(i, false)).join('')}
+  </div>`;
+}
+
+// ================================================================
+//  TRANSACTIONS PAGE
+// ================================================================
+function buildTransactions() {
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-plus-circle" style="color:var(--accent)"></i> Add Transaction</div>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="txType">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <input type="number" id="txAmount" placeholder="0.00" step="0.01" min="0.01">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="txDate" value="${today()}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="txDesc" placeholder="What was this for?">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="txCat">
+          <option value="salary">Salary / Stipend</option>
+          <option value="freelance">Freelance / Project</option>
+          <option value="food">Food & Dining</option>
+          <option value="rent">Rent / Housing</option>
+          <option value="transport">Transport</option>
+          <option value="utilities">Utilities</option>
+          <option value="subscription">Subscription</option>
+          <option value="education">Education</option>
+          <option value="health">Health & Fitness</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="shopping">Shopping</option>
+          <option value="investment">Investment</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="addTxBtn" onclick="addTransaction()" style="width:100%">
+        <i class="fas fa-plus"></i> Add Transaction
+      </button>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-list" style="color:var(--muted)"></i> All Transactions</div>
+        <span style="font-size:0.78rem;color:var(--muted)">${state.transactions.length} entries</span>
+      </div>
+      <div class="tx-list" id="allTxList">
+        ${state.transactions.length ? state.transactions.map(t=>txItemHtml(t,true)).join('') :
+          '<div class="empty-state"><i class="fas fa-receipt"></i><p>No transactions yet. Add your first one above!</p></div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  BILLS PAGE (Student/Custom)
+// ================================================================
+function buildBills() {
+  if (!state.hasBills) return `
+  <div class="panel" style="max-width:500px;margin:0 auto;text-align:center;padding:48px">
+    <div class="empty-state">
+      <i class="fas fa-file-invoice-dollar"></i>
+      <p>Bill tracking is not enabled.</p>
+      <button class="btn btn-primary btn-student" onclick="openModal('billsQuestionModal')" style="margin-top:16px">
+        <i class="fas fa-plus"></i> Enable Bill Tracking
+      </button>
+    </div>
+  </div>`;
+
+  return `
+  <div class="two-col">
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-plus-circle" style="color:var(--violet)"></i> Add Bill</div>
+        </div>
+        <div class="form-group">
+          <label>Bill Name</label>
+          <input type="text" id="billName" placeholder="e.g. Rent, Netflix">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Amount (₹)</label>
+            <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0.01">
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="billDue">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="billCat">
+            <option value="rent">Rent / Housing</option>
+            <option value="utilities">Utilities</option>
+            <option value="internet">Internet</option>
+            <option value="phone">Phone</option>
+            <option value="insurance">Insurance</option>
+            <option value="subscription">Subscription</option>
+            <option value="loan">Loan Payment</option>
+            <option value="education">Education / Fees</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-student" onclick="addBill()" style="width:100%">
+          <i class="fas fa-plus"></i> Add Bill
+        </button>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-calendar-alt" style="color:var(--violet)"></i> Bills Calendar</div>
+        </div>
+        <div class="cal-wrap">
+          <div class="cal-header">
+            <h3 id="billCalTitle"></h3>
+            <div class="cal-nav">
+              <button onclick="changeMonth('bill',-1)"><i class="fas fa-chevron-left"></i></button>
+              <button onclick="changeMonth('bill',1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="cal-grid" id="billCalGrid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-list" style="color:var(--muted)"></i> All Bills</div>
+      </div>
+      <div id="allBillsList">
+        ${state.bills.length ? state.bills.map(b=>billItemHtml(b,true)).join('') :
+          '<div class="empty-state"><i class="fas fa-file-invoice"></i><p>No bills added yet.</p></div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  WHAT-IF / LIQUIDITY PAGES
+// ================================================================
+function buildWhatIf() {
+  const bal = calcBalance();
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-calculator" style="color:var(--amber)"></i> What-If Calculator</div>
+      </div>
+      <p class="text-muted fs-sm" style="margin-bottom:18px">Enter your daily spending to see how long your money will last.</p>
+      <div class="form-group">
+        <label>Current Balance (₹)</label>
+        <input type="number" id="wiBalance" value="${bal.toFixed(0)}" step="1" min="0">
+      </div>
+      <div class="form-group">
+        <label>Daily Spending (₹)</label>
+        <input type="number" id="wiDaily" placeholder="e.g. 500" step="1" min="1">
+      </div>
+      <div class="form-group">
+        <label>Include Upcoming Bills (30 days)?</label>
+        <select id="wiIncludeBills">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="calcWhatIf()">
+        <i class="fas fa-chart-line"></i> Calculate
+      </button>
+      <div id="wiResult" style="display:none"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-lightbulb" style="color:var(--amber)"></i> Smart Insights</div>
+      </div>
+      <div id="wiInsights">
+        <div class="empty-state"><i class="fas fa-brain"></i><p>Run the calculator to get personalised insights!</p></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildLiquidity() {
+  const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0);
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-tint" style="color:var(--sky)"></i> Liquidity Bridge</div>
+      </div>
+      <p class="text-muted fs-sm" style="margin-bottom:18px">Calculate how long your cash reserves can sustain your business.</p>
+      <div class="form-group">
+        <label>Total Cash (₹) <span class="text-muted">(auto from accounts)</span></label>
+        <input type="number" id="liqCash" value="${totalCash.toFixed(0)}" step="1" min="0">
+      </div>
+      <div class="form-group">
+        <label>Monthly Expenses (₹)</label>
+        <input type="number" id="liqExpenses" placeholder="${state.budget}" step="100" min="0">
+      </div>
+      <div class="form-group">
+        <label>Include Pending Invoices?</label>
+        <select id="liqInvoices">
+          <option value="yes">Yes — add pending invoice totals</option>
+          <option value="no">No — cash only</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="calcLiquidity()">
+        <i class="fas fa-calculator"></i> Calculate Runway
+      </button>
+      <div id="liqResult" style="display:none"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-lightbulb" style="color:var(--sky)"></i> Insights</div>
+      </div>
+      <div id="liqInsights">
+        <div class="empty-state"><i class="fas fa-brain"></i><p>Run the calculator to see your runway insights.</p></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  EXAM PAGE (Student)
+// ================================================================
+function buildExams() {
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-plus-circle" style="color:var(--violet)"></i> Add Exam</div>
+      </div>
+      <div class="form-group">
+        <label>Subject / Exam Name</label>
+        <input type="text" id="examName" placeholder="e.g. Mathematics Final">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="examDate">
+        </div>
+        <div class="form-group">
+          <label>Time (optional)</label>
+          <input type="time" id="examTime">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-student" onclick="addExam()" style="width:100%">
+        <i class="fas fa-plus"></i> Add Exam
+      </button>
+
+      <div class="divider"></div>
+
+      <div class="toggle-wrap">
+        <label class="toggle">
+          <input type="checkbox" id="examModeToggle" ${state.examMode?'checked':''} onchange="toggleExamMode()">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <div style="font-weight:600">Exam Season Mode</div>
+          <div class="fs-sm text-muted">Enables gentle, non-stressful reminders</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-book-open" style="color:var(--violet)"></i> Exam Schedule</div>
+      </div>
+      <div id="examListEl">
+        ${state.exams.length ? state.exams.map(e=>examItemHtml(e)).join('') :
+          '<div class="empty-state"><i class="fas fa-graduation-cap"></i><p>No exams scheduled. Add your exams to get gentle reminders!</p></div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  INVOICES PAGE (Freelancer)
+// ================================================================
+function buildInvoices() {
+  const pending = state.invoices.filter(i=>i.status==='pending');
+  const paid    = state.invoices.filter(i=>i.status==='paid');
+  const overdue = state.invoices.filter(i=>i.status==='overdue'||getDays(i.due)<0&&i.status!=='paid');
+  const pendingAmt = pending.reduce((s,i)=>s+i.amount,0);
+
+  return `
+  <div class="cards-grid" style="margin-bottom:20px">
+    ${statCardHtml('','file-invoice','Pending',fmtRs(pendingAmt),'var(--amber)','var(--amber-gl)',pending.length+' invoices','up')}
+    ${statCardHtml('','check-circle','Paid',fmtRs(paid.reduce((s,i)=>s+i.amount,0)),'var(--accent)','var(--accent-gl)',paid.length+' invoices','up')}
+    ${statCardHtml('','exclamation-circle','Overdue',fmtRs(overdue.reduce((s,i)=>s+i.amount,0)),'var(--coral)','var(--coral-gl)',overdue.length+' invoices','down')}
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-plus-circle text-accent"></i> Add Invoice</div>
+      </div>
+      <div class="form-group">
+        <label>Client Name</label>
+        <input type="text" id="invClient" placeholder="e.g. Acme Corp">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="invDesc" placeholder="Project or service">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <input type="number" id="invAmount" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="invDue">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="invStatus">
+          <option value="pending">Pending</option>
+          <option value="paid">Paid</option>
+          <option value="overdue">Overdue</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="addInvoice()" style="width:100%">
+        <i class="fas fa-plus"></i> Add Invoice
+      </button>
+
+      <div style="margin-top:20px">
+        <div class="panel-header" style="margin-bottom:12px">
+          <div class="panel-title" style="font-size:0.9rem"><i class="fas fa-calendar-alt text-accent"></i> Calendar</div>
+        </div>
+        <div class="cal-wrap">
+          <div class="cal-header">
+            <h3 id="invCalTitle"></h3>
+            <div class="cal-nav">
+              <button onclick="changeMonth('inv',-1)"><i class="fas fa-chevron-left"></i></button>
+              <button onclick="changeMonth('inv',1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="cal-grid" id="invCalGrid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-list text-muted"></i> Invoices</div>
+      </div>
+      <div class="filter-tabs">
+        <span class="filter-tab ${state.invFilter==='all'?'freelancer-active':''}" onclick="filterInv('all')">All</span>
+        <span class="filter-tab ${state.invFilter==='pending'?'freelancer-active':''}" onclick="filterInv('pending')">Pending</span>
+        <span class="filter-tab ${state.invFilter==='paid'?'freelancer-active':''}" onclick="filterInv('paid')">Paid</span>
+        <span class="filter-tab ${state.invFilter==='overdue'?'freelancer-active':''}" onclick="filterInv('overdue')">Overdue</span>
+      </div>
+      <div id="invListEl">
+        ${buildInvListHtml()}
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildInvListHtml() {
+  let list = state.invoices;
+  if (state.invFilter !== 'all') list = list.filter(i=>i.status===state.invFilter);
+  list = [...list].sort((a,b)=>new Date(a.due)-new Date(b.due));
+  if (!list.length) return '<div class="empty-state"><i class="fas fa-file-invoice"></i><p>No invoices here.</p></div>';
+  return list.map(i=>invoiceItemHtml(i,true)).join('');
+}
+
+function filterInv(f) {
+  state.invFilter = f;
+  const el = document.getElementById('invListEl');
+  if (el) el.innerHTML = buildInvListHtml();
+  document.querySelectorAll('.filter-tab').forEach(t => {
+    t.classList.toggle('freelancer-active', t.textContent.toLowerCase() === f || (f==='all'&&t.textContent==='All'));
+  });
+}
+
+// ================================================================
+//  ACCOUNTS PAGE
+// ================================================================
+function buildAccounts() {
+  const total = state.accounts.reduce((s,a)=>s+a.balance,0);
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-plus-circle text-sky"></i> Add Account</div>
+      </div>
+      <div class="form-group">
+        <label>Account Name</label>
+        <input type="text" id="accName" placeholder="e.g. HDFC Savings">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="accType">
+          <option value="savings">Savings Account</option>
+          <option value="current">Current Account</option>
+          <option value="cash">Cash</option>
+          <option value="wallet">Digital Wallet</option>
+          <option value="fd">Fixed Deposit</option>
+          <option value="investment">Investment</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Balance (₹)</label>
+        <input type="number" id="accBalance" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <button class="btn btn-primary" onclick="addAccount()" style="width:100%">
+        <i class="fas fa-plus"></i> Add Account
+      </button>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-layer-group text-sky"></i> Total Across Accounts</div>
+        </div>
+        <div style="text-align:center;padding:24px 0">
+          <div style="font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;color:var(--sky)">${fmtRs(total)}</div>
+          <div class="text-muted fs-sm" style="margin-top:8px">${state.accounts.length} account${state.accounts.length!==1?'s':''}</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-university text-muted"></i> Accounts</div>
+        </div>
+        <div id="accListEl">
+          ${state.accounts.length ? state.accounts.map(a=>accountItemHtml(a)).join('') :
+            '<div class="empty-state"><i class="fas fa-university"></i><p>Add your accounts to see a consolidated view.</p></div>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  TAX PAGE
+// ================================================================
+function buildTax() {
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-percentage" style="color:var(--amber)"></i> Tax Input</div>
+      </div>
+      <div class="form-group">
+        <label>Annual Income (₹)</label>
+        <input type="number" id="taxIncome" placeholder="e.g. 1200000" min="0">
+      </div>
+      <div class="form-group">
+        <label>Tax Regime</label>
+        <select id="taxRegime">
+          <option value="new">New Tax Regime (2024–25)</option>
+          <option value="old">Old Tax Regime</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>TDS Already Deducted (₹)</label>
+        <input type="number" id="taxTDS" placeholder="0" min="0">
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="calcTax()">
+        <i class="fas fa-calculator"></i> Estimate Tax
+      </button>
+      <div class="form-hint mt-8">This is an estimate only. Consult a tax professional for actual liability.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-receipt" style="color:var(--amber)"></i> Tax Breakdown</div>
+      </div>
+      <div id="taxResult">
+        <div class="empty-state"><i class="fas fa-percentage"></i><p>Enter income details to calculate.</p></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  CLIENT RELIABILITY (Freelancer)
+// ================================================================
+function buildClients() {
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-user-plus text-accent"></i> Add Client</div>
+      </div>
+      <div class="form-group"><label>Client / Company Name</label><input type="text" id="cliName" placeholder="e.g. Acme Corp"></div>
+      <div class="form-group"><label>Total Invoices Sent</label><input type="number" id="cliTotal" placeholder="e.g. 10" min="1"></div>
+      <div class="form-group"><label>Paid On Time</label><input type="number" id="cliOnTime" placeholder="e.g. 8" min="0"></div>
+      <div class="form-group"><label>Avg Payment Delay (days)</label><input type="number" id="cliDelay" placeholder="0" min="0"></div>
+      <div class="form-group"><label>Total Revenue (₹)</label><input type="number" id="cliRevenue" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="form-group"><label>Notes</label><input type="text" id="cliNotes" placeholder="Optional notes"></div>
+      <button class="btn btn-primary" onclick="addClient()" style="width:100%">
+        <i class="fas fa-plus"></i> Add Client
+      </button>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-chart-bar text-accent"></i> Portfolio Summary</div>
+        </div>
+        <div id="clientSummary">
+          ${buildClientSummaryHtml()}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fas fa-star text-amber"></i> Reliability Scores</div>
+        </div>
+        <div id="clientListEl">
+          ${state.clients.length ? state.clients.map(c=>clientCardHtml(c)).join('') :
+            '<div class="empty-state"><i class="fas fa-users"></i><p>Add clients to see reliability scores.</p></div>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildClientSummaryHtml() {
+  if (!state.clients.length) return '<div class="empty-state"><i class="fas fa-users"></i><p>No clients yet.</p></div>';
+  const avg = state.clients.reduce((s,c)=>s+clientScore(c),0)/state.clients.length;
+  const best = state.clients.reduce((a,b)=>clientScore(a)>clientScore(b)?a:b);
+  const worst = state.clients.reduce((a,b)=>clientScore(a)<clientScore(b)?a:b);
+  return `
+  <div class="scenario-row"><span>Clients</span><span style="color:var(--text);font-weight:600">${state.clients.length}</span></div>
+  <div class="scenario-row"><span>Avg Reliability</span><span style="color:${avg>=70?'var(--accent)':avg>=40?'var(--amber)':'var(--coral)'};font-weight:700">${Math.round(avg)}%</span></div>
+  <div class="scenario-row"><span>Best Client</span><span style="color:var(--accent);font-weight:600">${esc(best.name)}</span></div>
+  <div class="scenario-row"><span>Needs Attention</span><span style="color:var(--coral);font-weight:600">${esc(worst.name)}</span></div>
+  <div class="scenario-row" style="border-bottom:none"><span>Total Revenue</span><span style="color:var(--sky);font-weight:700">${fmtRs(state.clients.reduce((s,c)=>s+(c.revenue||0),0))}</span></div>`;
+}
+
+function clientScore(c) {
+  if (!c.total) return 0;
+  const payRate = (c.onTime / c.total) * 100;
+  const delayPenalty = Math.min(c.delay * 2, 30);
+  return Math.round(Math.max(0, payRate - delayPenalty));
+}
+
+function clientCardHtml(c) {
+  const score = clientScore(c);
+  const col = score >= 70 ? 'var(--accent)' : score >= 40 ? 'var(--amber)' : 'var(--coral)';
+  const label = score >= 70 ? 'Reliable' : score >= 40 ? 'Moderate' : 'At-Risk';
+  return `
+  <div class="client-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+      <div>
+        <div style="font-weight:700;color:var(--text)">${esc(c.name)}</div>
+        <div class="fs-sm text-muted">${c.total} invoices · ${fmtRs(c.revenue||0)}</div>
+        ${c.notes?`<div class="fs-sm text-muted" style="margin-top:4px">${esc(c.notes)}</div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div class="client-score" style="color:${col}">${score}%</div>
+        <div class="fs-sm" style="color:${col}">${label}</div>
+      </div>
+    </div>
+    <div class="reliability-bar-wrap">
+      <div class="reliability-bar-bg">
+        <div class="reliability-bar-fill" style="width:${score}%;background:${col}"></div>
+      </div>
+    </div>
+    <div style="font-size:0.72rem;color:var(--dim);margin-top:8px">${c.onTime}/${c.total} on time · ${c.delay}d avg delay</div>
+    <button class="delete-btn" style="margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px" onclick="removeClient(${c.id})">
+      <i class="fas fa-trash"></i> Remove
+    </button>
+  </div>`;
+}
+
+// ================================================================
+//  EMI PAGE (Custom)
+// ================================================================
+function buildEMI() {
+  const totalEMI = state.emis.reduce((s,e)=>s+e.amount,0);
+  const today_d = new Date().getDate();
+  const colors = ['var(--sky)','var(--accent)','var(--violet)','var(--amber)','var(--teal)','var(--coral)'];
+  const emiRatio = state.budget > 0 ? Math.round((totalEMI/state.budget)*100) : 0;
+
+  return `
+  <div class="cards-grid" style="margin-bottom:20px">
+    ${statCardHtml('','calendar-alt','Monthly EMIs',fmtRs(totalEMI),'var(--sky)','var(--sky-gl)',state.emis.length+' active loans','')}
+    ${statCardHtml('','percentage','EMI / Budget',emiRatio+'%','var(--amber)','var(--amber-gl)',emiRatio<=40?'Healthy ratio':'Above recommended',emiRatio<=40?'up':'down')}
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-calendar-alt" style="color:var(--sky)"></i> EMI Calendar</div>
+      </div>
+      ${state.emis.length ? state.emis.sort((a,b)=>a.dueDay-b.dueDay).map((e,i)=>{
+        const daysLeft = e.dueDay - today_d;
+        const urgent = daysLeft >= 0 && daysLeft <= 3;
+        const col = e.color || colors[i%colors.length];
+        return `<div class="emi-item" style="border-left-color:${col}">
+          <div class="emi-icon" style="background:${col}22;color:${col}"><i class="fas fa-landmark"></i></div>
+          <div class="emi-meta">
+            <h4>${esc(e.name)}</h4>
+            <span>Due on <strong>${e.dueDay}${ordinal(e.dueDay)}</strong> every month${urgent?` <span style="color:var(--coral)"> · In ${daysLeft}d!</span>`:''}</span>
+          </div>
+          <div style="text-align:right">
+            <div class="emi-amount" style="color:${col}">${fmtRs(e.amount)}</div>
+            <button class="delete-btn" style="margin-top:6px" onclick="removeEMI(${e.id})"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>`;
+      }).join('') : '<div class="empty-state"><i class="fas fa-landmark"></i><p>No EMIs added yet.</p></div>'}
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-plus-circle" style="color:var(--violet)"></i> Add EMI</div>
+      </div>
+      <div class="form-group"><label>Loan Name</label><input type="text" id="emiName" placeholder="e.g. Personal Loan"></div>
+      <div class="form-group"><label>Monthly EMI (₹)</label><input type="number" id="emiAmt" placeholder="5000" min="1"></div>
+      <div class="form-group"><label>Due Day of Month</label><input type="number" id="emiDay" placeholder="5" min="1" max="31"></div>
+      <button class="btn btn-primary btn-custom" onclick="addEMI()" style="width:100%">
+        <i class="fas fa-plus"></i> Add EMI
+      </button>
+      <div class="form-hint mt-8">Healthy EMI-to-income ratio is below 40%. Yours is <strong style="color:${emiRatio<=40?'var(--accent)':'var(--coral)'}">${emiRatio}%</strong>.</div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  ANNUAL PREDICTOR (Custom)
+// ================================================================
+function buildAnnual() {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const base = state.budget;
+  const yearTotal = base * 12;
+
+  return `
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><i class="fas fa-chart-area" style="color:var(--teal)"></i> Annual Spending Forecast</div>
+    </div>
+    <div class="cards-grid" style="margin-bottom:24px">
+      ${statCardHtml('','chart-area','Projected Annual',fmtRs(yearTotal),'var(--teal)','var(--teal-gl)','Based on monthly budget','')}
+      ${statCardHtml('','coins','Monthly Avg',fmtRs(base),'var(--amber)','var(--amber-gl)','Your set budget','')}
+      ${statCardHtml('','piggy-bank','Annual Savings',fmtRs(Math.max(0, yearTotal * 0.2)),'var(--accent)','var(--accent-gl)','Projected 20% savings rate','up')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px">
+      ${months.map((m,i)=>{
+        const val = base;
+        const pct = 75;
+        return `<div class="panel" style="margin-bottom:0;text-align:center;padding:16px 12px">
+          <div class="fs-sm text-muted" style="margin-bottom:8px">${m}</div>
+          <div style="font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text)">${fmtRs(val)}</div>
+          <div style="margin-top:8px;background:var(--raised);border-radius:4px;height:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:var(--teal);border-radius:4px"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  SCENARIOS (Custom)
+// ================================================================
+function buildScenarios() {
+  return `
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-flask" style="color:var(--coral)"></i> Stress Test</div>
+      </div>
+      <p class="text-muted fs-sm" style="margin-bottom:18px">Simulate financial shocks to see how resilient your finances are.</p>
+      <div class="form-group">
+        <label>Scenario Type</label>
+        <select id="siType" onchange="updateScenarioInputs()">
+          <option value="client_delay">Client payment delay</option>
+          <option value="income_drop">Income drop (%)</option>
+          <option value="expense_spike">Sudden expense</option>
+          <option value="no_income">Months without income</option>
+        </select>
+      </div>
+      <div id="siInputs"></div>
+      <button class="btn btn-primary btn-custom" onclick="runSimulation()" style="width:100%">
+        <i class="fas fa-play"></i> Run Simulation
+      </button>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="fas fa-chart-line" style="color:var(--coral)"></i> Results</div>
+      </div>
+      <div id="simResult">
+        <div class="empty-state"><i class="fas fa-flask"></i><p>Pick a scenario and run the simulation.</p></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ================================================================
+//  ITEM HTML BUILDERS
+// ================================================================
+function statCardHtml(cls, icon, label, value, color, glow, trend, trendDir) {
+  return `
+  <div class="stat-card ${cls}">
+    <div class="stat-glow" style="background:${color}"></div>
+    <div class="stat-icon" style="background:${glow};color:${color}"><i class="fas fa-${icon}"></i></div>
+    <div class="stat-label">${label}</div>
+    <div class="stat-value">${value}</div>
+    ${trend ? `<div class="stat-trend ${trendDir}">${trend}</div>` : ''}
+  </div>`;
+}
+
+const catIcons = {
+  salary:'briefcase', freelance:'laptop-code', food:'utensils', rent:'home',
+  transport:'car', utilities:'bolt', subscription:'play-circle',
+  education:'book', health:'heartbeat', entertainment:'film', shopping:'shopping-bag',
+  investment:'chart-bar', other:'circle',
+  internet:'wifi', phone:'mobile-alt', insurance:'shield-alt', loan:'credit-card',
+  savings:'piggy-bank', cash:'money-bill',
+};
+
+function txItemHtml(t, deletable) {
+  const icon = catIcons[t.cat] || (t.type==='income'?'arrow-circle-down':'arrow-circle-up');
+  return `
+  <div class="tx-item ${t.type}">
+    <div class="tx-icon"><i class="fas fa-${icon}"></i></div>
+    <div class="tx-meta">
+      <h4>${esc(t.desc)}</h4>
+      <span>${fmtDate(t.date)} · ${esc(t.cat||'')}</span>
+    </div>
+    <div class="tx-amount">${t.type==='income'?'+':'-'}${fmtRs(t.amount)}</div>
+    ${deletable ? `<button class="delete-btn" onclick="deleteTx(${t.id})"><i class="fas fa-trash"></i></button>` : ''}
+  </div>`;
+}
+
+function billItemHtml(b, deletable) {
+  const days = getDays(b.dueDate);
+  const cls   = days <= 1 ? 'urgent' : days <= 5 ? 'soon' : 'normal';
+  const badge = days <= 1 ? `<span class="bill-badge">${days===0?'Today':'Tmw'}</span>`
+               : days <= 5 ? `<span class="bill-badge">${days}d</span>` : '';
+  const icon  = catIcons[b.category] || 'file-invoice';
+  return `
+  <div class="bill-item ${cls}">
+    <div class="bill-icon"><i class="fas fa-${icon}"></i></div>
+    <div class="bill-meta">
+      <h4>${esc(b.name)}</h4>
+      <span>Due ${fmtDate(b.dueDate)}${b.paid?' · Paid':''}</span>
+    </div>
+    <div class="bill-amount">${fmtRs(b.amount)}</div>
+    ${badge}
+    ${deletable ? `<button class="delete-btn" onclick="deleteBill(${b.id})"><i class="fas fa-trash"></i></button>` : ''}
+  </div>`;
+}
+
+function invoiceItemHtml(inv, deletable) {
+  const days = getDays(inv.due);
+  let status = inv.status;
+  if (status !== 'paid' && days < 0) status = 'overdue';
+  const badgeText = status==='paid' ? 'Paid' : status==='overdue' ? `Overdue ${Math.abs(days)}d` : `Due in ${days}d`;
+  return `
+  <div class="tx-item ${status==='paid'?'income':'expense'}" style="margin-bottom:8px">
+    <div class="tx-icon"><i class="fas fa-file-invoice"></i></div>
+    <div class="tx-meta">
+      <h4>${esc(inv.client)}</h4>
+      <span>${esc(inv.desc||'')} · ${fmtDate(inv.due)}</span>
+    </div>
+    <div class="tx-amount">${fmtRs(inv.amount)}</div>
+    <span class="inv-badge ${status}">${badgeText}</span>
+    ${deletable ? `
+      <select style="background:var(--raised);border:1px solid var(--border);border-radius:var(--r-xs);color:var(--text);font-size:0.75rem;padding:4px 6px;margin-left:4px" onchange="updateInvStatus(${inv.id},this.value)">
+        <option ${inv.status==='pending'?'selected':''}>pending</option>
+        <option ${inv.status==='paid'?'selected':''}>paid</option>
+        <option ${inv.status==='overdue'?'selected':''}>overdue</option>
+      </select>
+      <button class="delete-btn" onclick="deleteInvoice(${inv.id})"><i class="fas fa-trash"></i></button>` : ''}
+  </div>`;
+}
+
+function examItemHtml(e) {
+  const days = getDays(e.date);
+  const cls = days <= 3 && days >= 0 ? 'soon' : 'upcoming';
+  const label = days < 0 ? 'Done' : days === 0 ? 'Today!' : `In ${days}d`;
+  return `
+  <div class="exam-item">
+    <div class="exam-icon"><i class="fas fa-book-open"></i></div>
+    <div class="exam-meta">
+      <h4>${esc(e.name)}</h4>
+      <span>${fmtDate(e.date)}${e.time?' at '+e.time:''}</span>
+    </div>
+    <span class="exam-status-badge ${cls}">${label}</span>
+    <button class="delete-btn" onclick="deleteExam(${e.id})"><i class="fas fa-trash"></i></button>
+  </div>`;
+}
+
+function accountItemHtml(a) {
+  const accColors = { savings:'var(--sky)', current:'var(--accent)', cash:'var(--amber)', wallet:'var(--violet)', fd:'var(--teal)', investment:'var(--coral)' };
+  const accIcons  = { savings:'university', current:'building', cash:'money-bill', wallet:'mobile-alt', fd:'lock', investment:'chart-bar' };
+  const col  = accColors[a.type] || 'var(--sky)';
+  const icon = accIcons[a.type] || 'university';
+  return `
+  <div class="account-card">
+    <div class="account-icon" style="background:${col}22;color:${col}"><i class="fas fa-${icon}"></i></div>
+    <div style="flex:1">
+      <div style="font-weight:600;color:var(--text)">${esc(a.name)}</div>
+      <div class="fs-sm text-muted">${a.type}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;color:${col}">${fmtRs(a.balance)}</div>
+    </div>
+    <button class="delete-btn" onclick="removeAccount(${a.id})"><i class="fas fa-trash"></i></button>
+  </div>`;
+}
+
+// ================================================================
+//  CALENDAR
+// ================================================================
+let calStates = { bill: { m: new Date().getMonth(), y: new Date().getFullYear() },
+                  inv:  { m: new Date().getMonth(), y: new Date().getFullYear() } };
+
+function renderCalendar(gridId, dates) {
+  const isBill = gridId === 'billCalGrid';
+  const key = isBill ? 'bill' : 'inv';
+  const cs = calStates[key];
+  const titleId = isBill ? 'billCalTitle' : 'invCalTitle';
+  const grid  = document.getElementById(gridId);
+  const title = document.getElementById(titleId);
+  if (!grid || !title) return;
+
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  title.textContent = months[cs.m] + ' ' + cs.y;
+
+  const days = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html = days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+
+  const first = new Date(cs.y, cs.m, 1).getDay();
+  const daysInMonth = new Date(cs.y, cs.m+1, 0).getDate();
+  const today = new Date();
+  const evtDates = new Set((dates||[]).map(d=>d?.split('T')[0]));
+
+  for (let i=0; i<first; i++) html += `<div class="cal-day other-month"></div>`;
+  for (let d=1; d<=daysInMonth; d++) {
+    const isToday = d===today.getDate()&&cs.m===today.getMonth()&&cs.y===today.getFullYear();
+    const dateStr = `${cs.y}-${String(cs.m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasEvt = evtDates.has(dateStr);
+    html += `<div class="cal-day${isToday?' today':''}${hasEvt?' has-event':''}">${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function changeMonth(type, dir) {
+  const cs = calStates[type];
+  cs.m += dir;
+  if (cs.m < 0)  { cs.m = 11; cs.y--; }
+  if (cs.m > 11) { cs.m = 0;  cs.y++; }
+  const gridId = type === 'bill' ? 'billCalGrid' : 'invCalGrid';
+  const dates  = type === 'bill' ? state.bills.map(b=>b.dueDate) : state.invoices.map(i=>i.due);
+  renderCalendar(gridId, dates);
+}
+
+// ================================================================
+//  ACTIONS — TRANSACTIONS
+// ================================================================
+function addTransaction() {
+  const type = document.getElementById('txType').value;
+  const amount = parseFloat(document.getElementById('txAmount').value);
+  const desc   = document.getElementById('txDesc').value.trim();
+  const cat    = document.getElementById('txCat').value;
+  const date   = document.getElementById('txDate').value;
+  if (!amount || amount <= 0 || !desc || !date) {
+    showAlert('warning','Missing Fields','Please fill all required fields.'); return;
+  }
+  state.transactions.unshift({ id:Date.now(), type, amount, desc, cat, date });
+  saveState();
+  renderPage('transactions');
+  renderPage('overview');
+  document.getElementById('txAmount').value = '';
+  document.getElementById('txDesc').value = '';
+  showAlert('success','Transaction Added', `${type==='income'?'+':'-'}${fmtRs(amount)} — ${desc}`);
+}
+
+function addQuickTx() {
+  const type   = document.getElementById('qType').value;
+  const amount = parseFloat(document.getElementById('qAmount').value);
+  const desc   = document.getElementById('qDesc').value.trim();
+  const date   = document.getElementById('qDate').value || today();
+  if (!amount||!desc) { showAlert('warning','Missing Fields','Fill amount and description.'); return; }
+  state.transactions.unshift({ id:Date.now(), type, amount, desc, cat:'other', date });
+  saveState();
+  renderPage('overview');
+  renderPage('transactions');
+  closeModal('quickAddModal');
+  document.getElementById('qAmount').value = '';
+  document.getElementById('qDesc').value = '';
+  showAlert('success','Added',`${type==='income'?'+':'-'}${fmtRs(amount)}`);
+}
+
+function deleteTx(id) {
+  state.transactions = state.transactions.filter(t=>t.id!==id);
+  saveState(); renderPage('transactions'); renderPage('overview');
+}
+
+// ================================================================
+//  ACTIONS — BILLS
+// ================================================================
+function addBill() {
+  const name   = document.getElementById('billName').value.trim();
+  const amount = parseFloat(document.getElementById('billAmount').value);
+  const due    = document.getElementById('billDue').value;
+  const cat    = document.getElementById('billCat').value;
+  if (!name||!amount||!due) { showAlert('warning','Missing Fields','Fill name, amount and date.'); return; }
+  state.bills.push({ id:Date.now(), name, amount, dueDate:due, category:cat, paid:false });
+  saveState(); renderPage('bills'); renderPage('overview');
+  showAlert('success','Bill Added',`${name} — ${fmtRs(amount)} due ${fmtDate(due)}`);
+}
+
+function deleteBill(id) {
+  state.bills = state.bills.filter(b=>b.id!==id);
+  saveState(); renderPage('bills'); renderPage('overview');
+}
+
+function setBillsTracking(val) {
+  state.hasBills = val;
+  saveState();
+  closeModal('billsQuestionModal');
+  if (val) { renderPage('bills'); renderPage('overview'); showAlert('info','Bills Enabled','You can now track recurring bills.'); }
+}
+
+// ================================================================
+//  ACTIONS — EXAMS
+// ================================================================
+function addExam() {
+  const name = document.getElementById('examName').value.trim();
+  const date = document.getElementById('examDate').value;
+  const time = document.getElementById('examTime').value;
+  if (!name||!date) { showAlert('warning','Missing Fields','Fill name and date.'); return; }
+  state.exams.push({ id:Date.now(), name, date, time });
+  saveState(); renderPage('exams');
+  showAlert('success','Exam Added',`${name} — ${fmtDate(date)}`);
+}
+
+function deleteExam(id) {
+  state.exams = state.exams.filter(e=>e.id!==id);
+  saveState(); renderPage('exams');
+}
+
+function toggleExamMode() {
+  state.examMode = document.getElementById('examModeToggle').checked;
+  saveState();
+  showAlert(state.examMode?'gentle':'info', state.examMode?'Exam Mode On':'Exam Mode Off',
+    state.examMode?'Reminders will be gentle and encouraging.':'Reminders back to normal mode.');
+}
+
+// ================================================================
+//  ACTIONS — INVOICES
+// ================================================================
+function addInvoice() {
+  const client = document.getElementById('invClient').value.trim();
+  const desc   = document.getElementById('invDesc').value.trim();
+  const amount = parseFloat(document.getElementById('invAmount').value);
+  const due    = document.getElementById('invDue').value;
+  const status = document.getElementById('invStatus').value;
+  if (!client||!amount||!due) { showAlert('warning','Missing Fields','Fill client, amount and date.'); return; }
+  state.invoices.push({ id:Date.now(), client, desc, amount, due, status });
+  saveState(); renderPage('invoices'); renderPage('overview');
+  showAlert('success','Invoice Added',`${client} — ${fmtRs(amount)}`);
+  document.getElementById('invClient').value='';
+  document.getElementById('invDesc').value='';
+  document.getElementById('invAmount').value='';
+}
+
+function updateInvStatus(id, status) {
+  const inv = state.invoices.find(i=>i.id===id);
+  if (inv) { inv.status = status; saveState(); renderPage('overview'); }
+  filterInv(state.invFilter);
+}
+
+function deleteInvoice(id) {
+  state.invoices = state.invoices.filter(i=>i.id!==id);
+  saveState(); renderPage('invoices'); renderPage('overview');
+}
+
+// ================================================================
+//  ACTIONS — ACCOUNTS
+// ================================================================
+function addAccount() {
+  const name    = document.getElementById('accName').value.trim();
+  const type    = document.getElementById('accType').value;
+  const balance = parseFloat(document.getElementById('accBalance').value)||0;
+  if (!name) { showAlert('warning','Name required','Enter the account name.'); return; }
+  state.accounts.push({ id:Date.now(), name, type, balance });
+  saveState(); renderPage('accounts'); renderPage('overview');
+  showAlert('success','Account Added',`${name} — ${fmtRs(balance)}`);
+}
+
+function removeAccount(id) {
+  state.accounts = state.accounts.filter(a=>a.id!==id);
+  saveState(); renderPage('accounts');
+}
+
+// ================================================================
+//  ACTIONS — CLIENTS
+// ================================================================
+function addClient() {
+  const name    = document.getElementById('cliName').value.trim();
+  const total   = parseInt(document.getElementById('cliTotal').value)||0;
+  const onTime  = parseInt(document.getElementById('cliOnTime').value)||0;
+  const delay   = parseInt(document.getElementById('cliDelay').value)||0;
+  const revenue = parseFloat(document.getElementById('cliRevenue').value)||0;
+  const notes   = document.getElementById('cliNotes').value.trim();
+  if (!name||!total) { showAlert('warning','Missing Fields','Fill name and total invoices.'); return; }
+  state.clients.push({ id:Date.now(), name, total, onTime, delay, revenue, notes });
+  saveState(); renderPage('clients');
+  showAlert('success','Client Added',`${name} — score ${clientScore({total,onTime,delay})}%`);
+}
+
+function removeClient(id) {
+  state.clients = state.clients.filter(c=>c.id!==id);
+  saveState(); renderPage('clients');
+}
+
+// ================================================================
+//  ACTIONS — EMI
+// ================================================================
+function addEMI() {
+  const name   = document.getElementById('emiName').value.trim();
+  const amount = parseFloat(document.getElementById('emiAmt').value)||0;
+  const dueDay = parseInt(document.getElementById('emiDay').value)||1;
+  if (!name||!amount) { showAlert('warning','Missing Info','Fill name and amount.'); return; }
+  const colors = ['var(--sky)','var(--accent)','var(--violet)','var(--amber)','var(--teal)','var(--coral)'];
+  state.emis.push({ id:Date.now(), name, amount, dueDay, color:colors[state.emis.length%colors.length] });
+  saveState(); renderPage('emi');
+  showAlert('success','EMI Added',`${name} — ${fmtRs(amount)}/mo due ${dueDay}${ordinal(dueDay)}`);
+}
+
+function removeEMI(id) {
+  state.emis = state.emis.filter(e=>e.id!==id);
+  saveState(); renderPage('emi');
+}
+
+// ================================================================
+//  WHAT-IF CALC
+// ================================================================
+function calcWhatIf() {
+  const bal   = parseFloat(document.getElementById('wiBalance').value)||0;
+  const daily = parseFloat(document.getElementById('wiDaily').value)||0;
+  const incBills = document.getElementById('wiIncludeBills').value === 'yes';
+  if (!daily) { showAlert('warning','Missing','Enter daily spending.'); return; }
+
+  let billTotal = 0;
+  if (incBills && state.hasBills) {
+    billTotal = state.bills.filter(b=>!b.paid&&getDays(b.dueDate)>=0&&getDays(b.dueDate)<=30)
+                            .reduce((s,b)=>s+b.amount,0);
+  }
+  const effectiveBal = Math.max(0, bal - billTotal);
+  const days = Math.floor(effectiveBal / daily);
+  const col  = days >= 30 ? 'var(--accent)' : days >= 14 ? 'var(--amber)' : 'var(--coral)';
+
+  document.getElementById('wiResult').style.display = 'block';
+  document.getElementById('wiResult').innerHTML = `
+  <div class="result-block">
+    <div class="result-days" style="color:${col}">${days}</div>
+    <div class="result-label">days until money runs out</div>
+    ${billTotal > 0 ? `<div class="result-warn"><i class="fas fa-exclamation-triangle"></i> ${fmtRs(billTotal)} reserved for upcoming bills</div>` : ''}
+  </div>`;
+
+  const insights = [
+    days < 7  ? `<div class="result-warn"><i class="fas fa-exclamation-triangle"></i> Critical: Less than a week of runway. Reduce spending immediately.</div>` : '',
+    days >= 30 ? `<div style="padding:12px;background:var(--accent-gl);border:1px solid rgba(57,211,83,0.3);border-radius:var(--r);color:var(--accent);font-size:0.88rem;margin-top:10px"><i class="fas fa-check-circle"></i> Great runway! Consider investing the surplus.</div>` : '',
+    `<div class="scenario-row" style="margin-top:12px"><span>Daily budget</span><span style="color:var(--text);font-weight:600">${fmtRs(daily)}/day</span></div>`,
+    `<div class="scenario-row"><span>Effective balance</span><span style="color:var(--sky);font-weight:600">${fmtRs(effectiveBal)}</span></div>`,
+    `<div class="scenario-row" style="border:none"><span>If reduced by 20%</span><span style="color:var(--accent);font-weight:600">${Math.floor(effectiveBal/(daily*0.8))} days</span></div>`,
+  ].join('');
+  document.getElementById('wiInsights').innerHTML = insights;
+}
+
+// ================================================================
+//  LIQUIDITY CALC
+// ================================================================
+function calcLiquidity() {
+  const cash     = parseFloat(document.getElementById('liqCash').value)||0;
+  const expenses = parseFloat(document.getElementById('liqExpenses').value)||state.budget;
+  const incInv   = document.getElementById('liqInvoices').value === 'yes';
+  const pendingInv = incInv ? state.invoices.filter(i=>i.status==='pending').reduce((s,i)=>s+i.amount,0) : 0;
+  const totalCash = cash + pendingInv;
+  const dailyBurn = expenses / 30;
+  const days = dailyBurn > 0 ? Math.floor(totalCash / dailyBurn) : 999;
+  const months = (days/30).toFixed(1);
+  const col = days >= 90 ? 'var(--accent)' : days >= 30 ? 'var(--amber)' : 'var(--coral)';
+
+  document.getElementById('liqResult').style.display = 'block';
+  document.getElementById('liqResult').innerHTML = `
+  <div class="result-block">
+    <div class="result-days" style="color:${col}">${days}</div>
+    <div class="result-label">days of runway (~${months} months)</div>
+  </div>`;
+
+  document.getElementById('liqInsights').innerHTML = `
+  <div class="scenario-row"><span>Cash in hand</span><span style="color:var(--sky);font-weight:600">${fmtRs(cash)}</span></div>
+  ${pendingInv > 0 ? `<div class="scenario-row"><span>Pending invoices</span><span style="color:var(--amber);font-weight:600">+${fmtRs(pendingInv)}</span></div>` : ''}
+  <div class="scenario-row"><span>Monthly expenses</span><span style="color:var(--coral);font-weight:600">${fmtRs(expenses)}</span></div>
+  <div class="scenario-row"><span>Daily burn rate</span><span style="color:var(--text);font-weight:600">${fmtRs(Math.round(dailyBurn))}/day</span></div>
+  <div class="scenario-row" style="border:none"><span>Recommendation</span><span style="color:${col};font-weight:600">${days<30?'Urgent: find new income':'Runway looks healthy'}</span></div>`;
+}
+
+// ================================================================
+//  TAX CALC
+// ================================================================
+function calcTax() {
+  const income = parseFloat(document.getElementById('taxIncome').value)||0;
+  const regime = document.getElementById('taxRegime').value;
+  const tds    = parseFloat(document.getElementById('taxTDS').value)||0;
+  let tax = 0;
+
+  if (regime === 'new') {
+    if (income <= 300000) tax = 0;
+    else if (income <= 600000)  tax = (income-300000)*0.05;
+    else if (income <= 900000)  tax = 15000+(income-600000)*0.10;
+    else if (income <= 1200000) tax = 45000+(income-900000)*0.15;
+    else if (income <= 1500000) tax = 90000+(income-1200000)*0.20;
+    else tax = 150000+(income-1500000)*0.30;
+    if (income <= 700000) tax = 0;
+  } else {
+    if (income <= 250000) tax = 0;
+    else if (income <= 500000)  tax = (income-250000)*0.05;
+    else if (income <= 1000000) tax = 12500+(income-500000)*0.20;
+    else tax = 112500+(income-1000000)*0.30;
+    if (income <= 500000) tax = 0;
+  }
+
+  const cess    = tax * 0.04;
+  const total   = tax + cess;
+  const payable = Math.max(0, total - tds);
+  const refund  = Math.max(0, tds - total);
+  const eff     = income > 0 ? ((total/income)*100).toFixed(1) : 0;
+
+  document.getElementById('taxResult').innerHTML = `
+  <div class="scenario-row"><span>Gross Income</span><span style="color:var(--text)">${fmtRs(income)}</span></div>
+  <div class="scenario-row"><span>Base Tax</span><span style="color:var(--amber)">${fmtRs(Math.round(tax))}</span></div>
+  <div class="scenario-row"><span>Health & Education Cess (4%)</span><span style="color:var(--amber)">${fmtRs(Math.round(cess))}</span></div>
+  <div class="scenario-row"><span>Total Tax Liability</span><span style="color:var(--coral);font-weight:700">${fmtRs(Math.round(total))}</span></div>
+  <div class="scenario-row"><span>TDS Deducted</span><span style="color:var(--accent)">-${fmtRs(tds)}</span></div>
+  <div class="scenario-row" style="border-top:2px solid var(--amber);padding-top:12px;margin-top:4px;border-bottom:none">
+    <span style="font-weight:700">Net ${payable>0?'Payable':'Refund'}</span>
+    <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:${payable>0?'var(--coral)':'var(--accent)'}">
+      ${fmtRs(Math.round(payable>0?payable:refund))} ${payable>0?'to pay':'refund'}
+    </span>
+  </div>
+  <div style="margin-top:14px;padding:12px;background:var(--raised);border-radius:var(--r);font-size:0.82rem;color:var(--muted)">
+    Effective rate: <strong style="color:var(--text)">${eff}%</strong> · Set aside <strong style="color:var(--amber)">${fmtRs(Math.round(total/12))}/month</strong>
+  </div>`;
+}
+
+// ================================================================
+//  SCENARIOS CALC
+// ================================================================
+function updateScenarioInputs() {
+  const type = document.getElementById('siType').value;
+  const map = {
+    client_delay: `
+      <div class="form-row">
+        <div class="form-group"><label>Delay (days)</label><input type="number" id="siDelay" placeholder="30" min="1"></div>
+        <div class="form-group"><label>Amount Delayed (₹)</label><input type="number" id="siAmount" placeholder="50000"></div>
+      </div>`,
+    income_drop: `<div class="form-group"><label>Drop Percentage (%)</label><input type="number" id="siDrop" placeholder="30" min="1" max="100"></div>`,
+    expense_spike: `<div class="form-group"><label>Sudden Expense (₹)</label><input type="number" id="siSpike" placeholder="100000"></div>`,
+    no_income: `<div class="form-group"><label>Months Without Income</label><input type="number" id="siMonths" placeholder="2" min="1"></div>`,
+  };
+  document.getElementById('siInputs').innerHTML = map[type] || '';
+}
+
+function runSimulation() {
+  const type      = document.getElementById('siType').value;
+  const totalCash = state.accounts.reduce((s,a)=>s+a.balance,0) || state.budget;
+  const expenses  = state.budget;
+  const dailyBurn = expenses / 30;
+  let result = {};
+
+  if (type === 'client_delay') {
+    const days   = parseFloat(document.getElementById('siDelay')?.value)||0;
+    const amount = parseFloat(document.getElementById('siAmount')?.value)||0;
+    const rwBefore = Math.floor(totalCash/dailyBurn);
+    const rwAfter  = Math.floor(Math.max(0, totalCash-amount)/dailyBurn);
+    result = {
+      title:`Client delays ${fmtRs(amount)} by ${days} days`,
+      rows:[
+        ['Runway before',''+rwBefore+'d','var(--accent)'],
+        ['Cash gap','-'+fmtRs(amount),'var(--coral)'],
+        ['Runway after',''+rwAfter+'d',rwAfter<30?'var(--coral)':'var(--amber)'],
+        ['Need bridge?',amount>totalCash?'Yes — '+fmtRs(amount-totalCash):'No','var(--accent)'],
+      ],
+      action: rwAfter<30?'Critical: Request advance or defer expenses.':'You can absorb this delay.'
+    };
+  } else if (type === 'income_drop') {
+    const pct = parseFloat(document.getElementById('siDrop')?.value)||0;
+    const income = state.budget * 1.3; // estimate
+    const newIncome = income*(1-pct/100);
+    const surplus = newIncome - expenses;
+    result = {
+      title:`Income drops ${pct}%`,
+      rows:[
+        ['Previous income',fmtRs(Math.round(income)),'var(--accent)'],
+        ['New income',fmtRs(Math.round(newIncome)),'var(--amber)'],
+        ['Monthly surplus/deficit',fmtRs(Math.round(surplus)),surplus>=0?'var(--accent)':'var(--coral)'],
+      ],
+      action: surplus<0?`Cut expenses by ${fmtRs(Math.abs(Math.round(surplus)))} to break even.`:`Remain cash-flow positive.`
+    };
+  } else if (type === 'expense_spike') {
+    const spike = parseFloat(document.getElementById('siSpike')?.value)||0;
+    const newCash = totalCash - spike;
+    const rw = Math.floor(Math.max(0,newCash)/dailyBurn);
+    result = {
+      title:`Sudden expense of ${fmtRs(spike)}`,
+      rows:[
+        ['Current cash',fmtRs(totalCash),'var(--sky)'],
+        ['After expense',fmtRs(Math.max(0,newCash)),newCash<0?'var(--coral)':'var(--amber)'],
+        ['Runway after',rw+'d',rw<30?'var(--coral)':'var(--amber)'],
+        ['Shortfall?',newCash<0?'-'+fmtRs(Math.abs(newCash)):'Covered','newCash<0?var(--coral):var(--accent)'],
+      ],
+      action: newCash<0?`Shortfall of ${fmtRs(Math.abs(Math.round(newCash)))}.`:`You can absorb this.`
+    };
+  } else {
+    const months = parseFloat(document.getElementById('siMonths')?.value)||1;
+    const cashLost = expenses*months;
+    result = {
+      title:`${months} month${months>1?'s':''} without income`,
+      rows:[
+        ['Income lost',fmtRs(cashLost),'var(--coral)'],
+        ['Cash reserves',fmtRs(totalCash),'var(--sky)'],
+        ['Cash after',fmtRs(Math.max(0,totalCash-cashLost)),totalCash-cashLost<0?'var(--coral)':'var(--amber)'],
+        ['Can survive?',totalCash>cashLost?'Yes':'No',totalCash>cashLost?'var(--accent)':'var(--coral)'],
+      ],
+      action: totalCash<cashLost?'Cannot sustain. Cut to essential spend immediately.':'Reserves cover this period.'
+    };
+  }
+
+  document.getElementById('simResult').innerHTML = `
+  <div style="font-size:0.85rem;font-weight:700;color:var(--amber);margin-bottom:14px">${result.title}</div>
+  ${result.rows.map(([l,v,c])=>`<div class="scenario-row"><span>${l}</span><span style="color:${c};font-weight:600">${v}</span></div>`).join('')}
+  <div style="margin-top:14px;padding:12px;background:var(--ink);border-radius:var(--r);font-size:0.82rem;color:var(--muted);border-left:3px solid var(--amber)">
+    <i class="fas fa-lightbulb" style="color:var(--amber);margin-right:6px"></i>${result.action}
+  </div>`;
+}
+
+// ================================================================
+//  ONBOARDING
+// ================================================================
+function setupOnboard(profile) {
+  const icon = document.getElementById('onboardIcon');
+  icon.className = 'onboard-icon ' + profile;
+  icon.innerHTML = `<i class="fas fa-${profileMeta[profile].icon}"></i>`;
+  const titles = { student:'Welcome, Student!', freelancer:'Welcome, Freelancer!', custom:'Welcome!' };
+  const msgs   = { student:"CashLine helps you manage money during student life, with exam-season friendly reminders.",
+                   freelancer:"Your freelance finance HQ — invoices, clients, tax, and runway in one place.",
+                   custom:"Your personalised dashboard is ready. What's your name?" };
+  const budgetLabels = { student:'Monthly Stipend / Budget (₹)', freelancer:'Monthly Revenue Target (₹)', custom:'Monthly Budget (₹)' };
+  document.getElementById('onboardTitle').textContent = titles[profile];
+  document.getElementById('onboardMsg').textContent = msgs[profile];
+  document.getElementById('onboardBudgetLabel').textContent = budgetLabels[profile];
+  document.getElementById('onboardBtn').className = `btn btn-primary${profile==='student'?' btn-student':profile==='custom'?' btn-custom':''}`;
+}
+
+function finishOnboard() {
+  const name   = document.getElementById('onboardName').value.trim();
+  const budget = parseFloat(document.getElementById('onboardBudget').value)||50000;
+  if (!name) { showAlert('warning','Name required','Please tell us your name.'); return; }
+  state.name = name;
+  state.budget = budget;
+  saveState();
+
+  document.getElementById('uAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('uName').textContent = name;
+
+  closeModal('onboardModal');
+  renderPage('overview');
+  showAlert('success','Welcome, '+name+'!','Your dashboard is ready.');
+
+  if (state.profile === 'student') setTimeout(() => openModal('billsQuestionModal'), 600);
+}
+
+// ================================================================
+//  SETTINGS
+// ================================================================
+function openSettingsModal() {
+  document.getElementById('settingsName').value   = state.name;
+  document.getElementById('settingsBudget').value = state.budget;
+  openModal('settingsModal');
+}
+
+function saveSettings() {
+  const name   = document.getElementById('settingsName').value.trim();
+  const budget = parseFloat(document.getElementById('settingsBudget').value)||50000;
+  if (!name) { showAlert('warning','Name required','Enter your name.'); return; }
+  state.name   = name;
+  state.budget = budget;
+  saveState();
+  document.getElementById('uAvatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('uName').textContent = name;
+  closeModal('settingsModal');
+  renderPage('overview');
+  showAlert('success','Settings Saved','Your preferences have been updated.');
+}
+
+function resetData() {
+  if (!confirm('Reset all data? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+function backToLanding() {
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+// ================================================================
+//  ALERTS SYSTEM
+// ================================================================
+function checkAlerts() {
+  if (!state.hasBills) return;
+  state.bills.filter(b=>!b.paid).forEach(b=>{
+    const days = getDays(b.dueDate);
+    if (days >= 0 && days <= 3) {
+      const msg = state.examMode
+        ? `Hey! Just a gentle reminder — ${b.name} (${fmtRs(b.amount)}) is due ${days===0?'today':`in ${days} day${days!==1?'s':''}`}. You've got this!`
+        : `${b.name} (${fmtRs(b.amount)}) is due ${days===0?'today':`in ${days} day${days!==1?'s':''}`}!`;
+      showAlert(state.examMode?'gentle':'warning', state.examMode?'Friendly Reminder':'Bill Due Soon', msg);
+    }
+  });
+  const overdueInv = state.invoices.filter(i=>i.status!=='paid'&&getDays(i.due)<0);
+  if (overdueInv.length) {
+    showAlert('warning','Overdue Invoices', `${overdueInv.length} invoice${overdueInv.length!==1?'s':''} overdue — ${fmtRs(overdueInv.reduce((s,i)=>s+i.amount,0))} outstanding.`);
+  }
+}
+
+function showAlert(type, title, msg) {
+  const icons = { success:'check-circle', warning:'exclamation-triangle', danger:'times-circle', info:'info-circle', gentle:'heart' };
+  const id = 'al-' + Date.now();
+  document.getElementById('alertsContainer').insertAdjacentHTML('beforeend', `
+    <div class="alert ${type}" id="${id}">
+      <div class="alert-icon-wrap"><i class="fas fa-${icons[type]||icons.info}"></i></div>
+      <div class="alert-body"><h4>${title}</h4><p>${msg}</p></div>
+      <button class="alert-close-btn" onclick="dismissAlert('${id}')"><i class="fas fa-times"></i></button>
+    </div>`);
+  setTimeout(() => dismissAlert(id), 6000);
+}
+
+function dismissAlert(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.cssText = 'opacity:0;transform:translateX(110%);transition:all 0.3s ease';
+    setTimeout(() => el.remove(), 310);
+  }
+}
+
+// ================================================================
+//  MODALS
+// ================================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  if (id === 'settingsModal') {
+    document.getElementById('settingsName').value   = state.name;
+    document.getElementById('settingsBudget').value = state.budget;
+  }
+}
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+// ================================================================
+//  UTILITY
+// ================================================================
+function calcBalance() {
+  return state.transactions.reduce((s,t) => t.type==='income' ? s+t.amount : s-t.amount, 0);
+}
+function getDays(dateStr) {
+  if (!dateStr) return 999;
+  const d = new Date(dateStr); const n = new Date();
+  n.setHours(0,0,0,0); d.setHours(0,0,0,0);
+  return Math.ceil((d-n)/(86400000));
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtRs(n) {
+  if (isNaN(n)) return '₹0';
+  return '₹' + Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits:0, maximumFractionDigits:2 });
+}
+function fmtDate(s) {
+  if (!s) return '';
+  return new Date(s).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ordinal(n) {
+  if (n===1) return 'st'; if (n===2) return 'nd'; if (n===3) return 'rd'; return 'th';
+}
+
+function showLoader(duration, cb) {
+  const l = document.getElementById('loader');
+  l.classList.remove('hidden');
+  setTimeout(() => { l.classList.add('hidden'); if (cb) cb(); }, duration);
+}
+
+// Init scenario inputs
+setTimeout(() => {
+  const siType = document.getElementById('siType');
+  if (siType) updateScenarioInputs();
+}, 100);
+</script>
+</body>
+</html>
