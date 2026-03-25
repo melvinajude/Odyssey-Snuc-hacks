@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cashline — Know What's Coming Before It Hits</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     LANDING PAGE
+═══════════════════════════════════ -->
+<div id="landing">
+
+  <nav id="topnav">
+    <div class="logo">Cashline</div>
+    <div class="nav-links">
+      <button class="nav-btn-ghost">Help</button>
+      <button class="nav-btn-ghost" onclick="showOnboarding()">Log In</button>
+      <button class="nav-btn-primary" onclick="showOnboarding()">Sign Up</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-orb"></div>
+    <div class="hero-content scroll-reveal">
+      <div class="hero-tag"><span class="hero-tag-dot"></span>Now in Beta</div>
+      <h1 class="font-display">Know what's <span class="accent">coming</span> before it hits.</h1>
+      <p class="hero-sub">Cashline helps you manage irregular income by predicting cash flow and guiding your financial decisions — with clarity, not chaos.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="showOnboarding()">Get Started Free</button>
+        <button class="btn-ghost" onclick="document.getElementById('personas').scrollIntoView({behavior:'smooth'})">See how it works <span class="btn-arrow">→</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="persona-section scroll-reveal" id="personas">
+    <div class="persona-inner">
+      <div class="persona-header">
+        <div class="section-label">Personas</div>
+        <h2 class="font-display">Who are you?</h2>
+      </div>
+      <div class="persona-layout">
+        <div class="persona-tabs" id="personaTabs">
+          <div class="tab-pill" id="tabPill"></div>
+          <div class="tab-item active" data-tab="student">
+            <svg viewBox="0 0 24 24"><path d="M12 3L2 9l10 6 10-6-10-6z"/><path d="M6 12v6l6 3 6-3v-6"/></svg>Student
+          </div>
+          <div class="tab-item" data-tab="freelancer">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>Freelancer
+          </div>
+          <div class="tab-item" data-tab="custom">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Custom
+          </div>
+        </div>
+        <div class="stage" id="stage">
+          <div class="stage-panel active" id="panel-student">
+            <div class="stage-title">Smart Budget Card</div>
+            <div class="stage-sub">Your spending dashboard for this semester</div>
+            <div class="budget-card">
+              <div class="spend-amount">₹8,240<span style="font-size:22px;opacity:.5">.00</span></div>
+              <div class="spend-label">Safe to spend this week</div>
+              <div class="progress-row"><span>Semester Savings</span><span>68%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="semFill" style="width:0%"></div></div>
+              <div class="mini-items">
+                <div class="mini-item"><div class="mini-item-left"><div class="mini-item-dot" style="background:#1a47ff"></div>Hostel Rent</div><span class="mini-item-amount">-₹5,000</span></div>
+                <div class="mini-item"><div class="mini-item-left"><div class="mini-item-dot" style="background:#00d68f"></div>Scholarship</div><span class="mini-item-amount badge badge-green">+₹12,500</span></div>
+                <div class="mini-item"><div class="mini-item-left"><div class="mini-item-dot" style="background:#e8253a"></div>Subscriptions</div><span class="mini-item-amount badge badge-red">-₹349</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="stage-panel" id="panel-freelancer">
+            <div class="stage-title">Velocity Graph</div>
+            <div class="stage-sub">Actual income vs Cashline projection</div>
+            <div class="graph-wrap">
+              <div class="graph-tooltip" id="gTooltip"></div>
+              <svg class="velocity-graph" id="velGraph" viewBox="0 0 520 180" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="graph-legend">
+              <div class="legend-item"><div class="legend-line" style="background:#c2ccff"></div>Actual income</div>
+              <div class="legend-item"><div class="legend-line" style="background:#1a47ff"></div>Cashline projection</div>
+            </div>
+          </div>
+          <div class="stage-panel" id="panel-custom">
+            <div class="stage-title">Control Center</div>
+            <div class="stage-sub">Configure your own income &amp; expense patterns</div>
+            <div class="control-grid" id="controlGrid">
+              <div class="control-card">
+                <div class="control-top"><span class="control-name">Predictive alerts</span><div class="toggle on" id="tog1"><div class="toggle-knob"></div></div></div>
+                <div class="control-val">On</div><div class="control-desc">Get notified 7 days before a shortfall</div>
+              </div>
+              <div class="control-card">
+                <div class="control-top"><span class="control-name">Auto-smooth</span><div class="toggle" id="tog2"><div class="toggle-knob"></div></div></div>
+                <div class="control-val">Off</div><div class="control-desc">Redistribute surplus to lean months</div>
+              </div>
+              <div class="control-card" style="grid-column:1/-1">
+                <div class="control-top"><span class="control-name">Monthly income target</span><span class="badge badge-blue" id="incomeVal">₹45,000</span></div>
+                <div class="slider-wrap"><input type="range" min="10000" max="100000" step="5000" value="45000" id="incomeSlider"></div>
+                <div class="control-desc">We'll model your projections around this figure</div>
+              </div>
+              <div class="control-card" style="grid-column:1/-1">
+                <div class="control-top"><span class="control-name">Risk buffer</span><span class="badge badge-green" id="bufferVal">15%</span></div>
+                <div class="slider-wrap"><input type="range" min="5" max="40" step="5" value="15" id="bufferSlider"></div>
+                <div class="control-desc">Emergency cash reserve held back each month</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section scroll-reveal">
+    <div class="cta-inner">
+      <div>
+        <h2 class="cta-h font-display">Ready for financial velocity?</h2>
+        <p class="cta-p">Join 50,000+ professionals who trust Cashline to stabilize their financial future.</p>
+        <div class="cta-btns">
+          <button class="cta-btn-main" onclick="showOnboarding()">Create Free Account</button>
+          <button class="cta-btn-outline">Contact Sales</button>
+        </div>
+      </div>
+      <div class="cta-stat">
+        <div class="cta-stat-num">+24%</div>
+        <div class="cta-stat-lbl">Avg. savings growth</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Cashline</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a><a href="#">Security</a>
+    </div>
+    <div class="footer-copy">© 2025 Cashline. Financial Velocity Engineered.</div>
+  </footer>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     ONBOARDING
+═══════════════════════════════════ -->
+<div id="screen-onboard" class="screen">
+  <div class="ob-hero-bg"></div>
+  <nav class="ob-nav">
+    <div class="logo">Cashline</div>
+    <button class="nav-btn-ghost" onclick="showLanding()">← Back</button>
+  </nav>
+  <div class="ob-body">
+    <div class="hero-tag" style="margin-bottom:20px"><span class="hero-tag-dot"></span>Step 1 of 1</div>
+    <h2 class="font-display ob-title">Who are you?</h2>
+    <p class="ob-sub">We'll personalize Cashline just for you.</p>
+    <div class="ob-persona-grid">
+      <div class="ob-persona-card" onclick="selectPersona(this,'school')">
+        <div class="ob-pc-icon student-icon">🎒</div>
+        <div class="ob-pc-name">School Student</div>
+        <div class="ob-pc-desc">Pocket money, fees, stationery</div>
+      </div>
+      <div class="ob-persona-card" onclick="selectPersona(this,'college')">
+        <div class="ob-pc-icon college-icon">🎓</div>
+        <div class="ob-pc-name">College Student</div>
+        <div class="ob-pc-desc">Hostel, bills, part-time income</div>
+      </div>
+      <div class="ob-persona-card" onclick="selectPersona(this,'freelancer')">
+        <div class="ob-pc-icon freelancer-icon">💻</div>
+        <div class="ob-pc-name">Freelancer</div>
+        <div class="ob-pc-desc">Invoices, clients, irregular income</div>
+      </div>
+      <div class="ob-persona-card" onclick="selectPersona(this,'other')">
+        <div class="ob-pc-icon other-icon">✨</div>
+        <div class="ob-pc-name">Other</div>
+        <div class="ob-pc-desc">Custom setup for your situation</div>
+      </div>
+    </div>
+    <button class="btn-primary ob-enter-btn" id="ob-btn" onclick="enterApp()" disabled>Enter Cashline →</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     APP SHELL
+═══════════════════════════════════ -->
+<div id="screen-app" class="screen">
+
+  <!-- App Top Nav (mirrors landing nav style) -->
+  <nav class="app-nav" id="app-topnav">
+    <div class="logo">Cashline</div>
+    <div class="app-nav-right">
+      <div class="app-persona-chip" id="persona-badge">🎓 College Student</div>
+    </div>
+  </nav>
+
+  <!-- Balance Bar (blue header card, below nav) -->
+  <div class="balance-bar">
+    <div class="balance-bar-inner">
+      <div class="bb-left">
+        <div class="bb-label">Available balance</div>
+        <div class="bb-amount" id="header-balance">₹8,240</div>
+        <div class="bb-sub" id="header-obligations"><span class="badge badge-red-sm">₹6,300 obligations</span></div>
+      </div>
+      <div class="bb-pills">
+        <div class="bb-pill danger"><div class="dot-sm"></div>Critical bill</div>
+        <div class="bb-pill warn"><div class="dot-sm"></div>2 due soon</div>
+        <div class="bb-pill success"><div class="dot-sm"></div>1 invoice</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div class="app-alert" id="home-alert">
+    <span class="alert-icon-sm">⚠️</span>
+    <div class="alert-text-sm" id="alert-text-content"><strong>Hostel rent due in 2 days.</strong> Pay this first — it cannot be rescheduled.</div>
+  </div>
+
+  <!-- HOME TAB -->
+  <div id="tab-home" class="tab-content active">
+
+    <!-- Stat cards -->
+    <div class="app-section-label">Overview</div>
+    <div class="stat-grid">
+      <div class="stat-tile balance-tile">
+        <div class="st-icon">💰</div>
+        <div class="st-label">Balance</div>
+        <div class="st-value">₹8,240</div>
+        <div class="st-trend up">▲ +12%</div>
+      </div>
+      <div class="stat-tile income-tile">
+        <div class="st-icon">📥</div>
+        <div class="st-label">Income (Apr)</div>
+        <div class="st-value">₹12,500</div>
+        <div class="st-trend up">▲ Received</div>
+      </div>
+      <div class="stat-tile expense-tile">
+        <div class="st-icon">📤</div>
+        <div class="st-label">Obligations</div>
+        <div class="st-value" id="stat-expenses">₹6,300</div>
+        <div class="st-trend down">▼ 3 pending</div>
+      </div>
+      <div class="stat-tile savings-tile">
+        <div class="st-icon">🏦</div>
+        <div class="st-label">Goals saved</div>
+        <div class="st-value" id="stat-saved">₹15,200</div>
+        <div class="st-trend up">▲ 2 goals</div>
+      </div>
+    </div>
+
+    <!-- Health score -->
+    <div class="panel">
+      <div class="panel-header-row">
+        <div class="panel-title">Financial Health Score</div>
+        <div class="score-ring-sm">
+          <svg viewBox="0 0 52 52" width="52" height="52">
+            <circle cx="26" cy="26" r="22" fill="none" stroke="#e8ecff" stroke-width="5"/>
+            <circle cx="26" cy="26" r="22" fill="none" stroke="#1a47ff" stroke-width="5" stroke-dasharray="138" stroke-dashoffset="42" stroke-linecap="round"/>
+          </svg>
+          <div class="score-ring-num">70</div>
+        </div>
+      </div>
+      <p class="panel-desc">Good — 3 obligations this month. Pay hostel rent first to avoid late fees.</p>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="app-section-label">Quick actions</div>
+    <div class="quick-grid">
+      <div class="quick-btn" onclick="openSheet('add-expense')"><div class="qb-icon" style="background:#e8ecff;color:#1a47ff">➕</div><div class="qb-label">Add expense</div></div>
+      <div class="quick-btn" onclick="openSheet('add-invoice')"><div class="qb-icon" style="background:#e8f9f4;color:#00a87e">🧾</div><div class="qb-label">Add invoice</div></div>
+      <div class="quick-btn" onclick="appSwitchTab('ai')"><div class="qb-icon" style="background:#f5f3ff;color:#7c3aed">🤖</div><div class="qb-label">Ask AI</div></div>
+      <div class="quick-btn" onclick="openSheet('upi-sync')"><div class="qb-icon" style="background:#fff9eb;color:#d97706">📱</div><div class="qb-label">Sync UPI</div></div>
+    </div>
+
+    <!-- Obligations -->
+    <div class="app-section-label-row"><div class="app-section-label" style="margin:0">Obligations ranked</div><div class="section-link" onclick="appSwitchTab('calendar')">See all →</div></div>
+    <div id="obligations-list"></div>
+
+    <!-- Forecast chart -->
+    <div class="panel" style="margin-top:0">
+      <div class="panel-title" style="margin-bottom:8px">30-day cash forecast</div>
+      <p class="panel-desc" style="margin-bottom:14px">Projected balance if you pay obligations in priority order</p>
+      <div style="height:90px;position:relative">
+        <svg width="100%" height="90" viewBox="0 0 340 90" preserveAspectRatio="none">
+          <defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a47ff" stop-opacity="0.12"/><stop offset="100%" stop-color="#1a47ff" stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,30 L30,28 L60,44 L90,40 L120,65 L150,60 L180,50 L210,47 L240,36 L270,30 L300,24 L340,16" fill="none" stroke="#1a47ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M0,30 L30,28 L60,44 L90,40 L120,65 L150,60 L180,50 L210,47 L240,36 L270,30 L300,24 L340,16 L340,90 L0,90Z" fill="url(#fg)"/>
+          <line x1="120" y1="0" x2="120" y2="90" stroke="#e8253a" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
+          <text x="122" y="12" font-size="9" fill="#e8253a" font-family="DM Sans">Rent due</text>
+        </svg>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#6b6b6b;margin-top:6px"><span>Today</span><span>Apr 10</span><span>Apr 20</span><span>Apr 30</span></div>
+    </div>
+
+    <!-- Goals -->
+    <div class="app-section-label-row"><div class="app-section-label" style="margin:0">Savings goals</div><div class="section-link" onclick="openSheet('add-goal')">+ Add</div></div>
+    <div id="goals-list"></div>
+
+    <!-- Recent transactions -->
+    <div class="app-section-label-row"><div class="app-section-label" style="margin:0">Recent transactions</div><div class="section-link" onclick="appSwitchTab('invoices')">See all →</div></div>
+    <div id="recent-transactions"></div>
+  </div>
+
+  <!-- INVOICES TAB -->
+  <div id="tab-invoices" class="tab-content">
+    <div class="app-section-label">Invoice Tracker</div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterInvoices('all',this)">All</button>
+      <button class="filter-btn" onclick="filterInvoices('pending',this)">Pending</button>
+      <button class="filter-btn" onclick="filterInvoices('overdue',this)">Overdue</button>
+      <button class="filter-btn" onclick="filterInvoices('paid',this)">Paid</button>
+      <button class="filter-btn-add btn-primary" onclick="openSheet('add-invoice')">+ New</button>
+    </div>
+    <div id="invoice-list"></div>
+    <div class="app-section-label" style="margin-top:24px">Transaction History</div>
+    <button class="btn-ghost-sm" onclick="openSheet('add-transaction')" style="margin-bottom:14px">+ Add transaction</button>
+    <div id="transaction-list"></div>
+  </div>
+
+  <!-- MARKET TAB -->
+  <div id="tab-market" class="tab-content">
+    <div class="app-section-label">Live markets</div>
+    <div class="market-scroll">
+      <div class="market-tile"><div class="mt-name">Nifty 50</div><div class="mt-val">22,514</div><div class="mt-chg up">▲ +0.42%</div></div>
+      <div class="market-tile"><div class="mt-name">Sensex</div><div class="mt-val">74,119</div><div class="mt-chg up">▲ +0.38%</div></div>
+      <div class="market-tile"><div class="mt-name">USD/INR</div><div class="mt-val">₹83.42</div><div class="mt-chg down">▼ -0.12%</div></div>
+      <div class="market-tile"><div class="mt-name">Gold 24K</div><div class="mt-val">₹7,240/g</div><div class="mt-chg up">▲ +1.2%</div></div>
+      <div class="market-tile"><div class="mt-name">EUR/INR</div><div class="mt-val">₹90.18</div><div class="mt-chg up">▲ +0.05%</div></div>
+    </div>
+    <div class="app-section-label" id="market-persona-label">Suggested for you</div>
+    <div class="invest-row"><div class="ir-icon" style="background:#e8ecff">📈</div><div class="ir-body"><div class="ir-name">Nifty 50 Index Fund (SIP)</div><div class="ir-desc">From ₹100/month · Low risk</div></div><div class="ir-ret"><div class="ir-pct">12.4%</div><div class="ir-sub">5yr avg</div></div></div>
+    <div class="invest-row"><div class="ir-icon" style="background:#e8f9f4">🏦</div><div class="ir-body"><div class="ir-name">Recurring Deposit (RD)</div><div class="ir-desc">₹500/month · Safe</div></div><div class="ir-ret"><div class="ir-pct">6.8%</div><div class="ir-sub">annual</div></div></div>
+    <div class="invest-row"><div class="ir-icon" style="background:#fff9eb">🪙</div><div class="ir-body"><div class="ir-name">Digital Gold</div><div class="ir-desc">From ₹10 · Physical-backed</div></div><div class="ir-ret"><div class="ir-pct">+1.2%</div><div class="ir-sub">today</div></div></div>
+    <div class="invest-row"><div class="ir-icon" style="background:#f5f3ff">📚</div><div class="ir-body"><div class="ir-name">ELSS Tax Saving Fund</div><div class="ir-desc">80C benefit · 3yr lock-in</div></div><div class="ir-ret"><div class="ir-pct">14.2%</div><div class="ir-sub">5yr avg</div></div></div>
+  </div>
+
+  <!-- AI TAB -->
+  <div id="tab-ai" class="tab-content">
+    <div class="app-section-label">AI Advisor</div>
+    <div class="ai-wrap">
+      <div class="ai-msgs" id="ai-messages">
+        <div class="ai-msg bot"><div class="ai-avatar">🤖</div><div class="ai-bubble">Hey! 👋 I'm your Cashline advisor. I can see your full financial picture. What would you like to know?</div></div>
+      </div>
+      <div class="ai-chips">
+        <div class="ai-chip" onclick="askAI('How much can I save this month?')">How much can I save?</div>
+        <div class="ai-chip" onclick="askAI('Which bill should I pay first?')">What to pay first?</div>
+        <div class="ai-chip" onclick="askAI('Best investment for ₹1000?')">Invest ₹1,000?</div>
+        <div class="ai-chip" onclick="askAI('Draft a follow-up to my client')">Draft client email</div>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-input" id="ai-input" placeholder="Ask anything about your money...">
+        <button class="ai-send" id="ai-send-btn" onclick="sendAIMessage()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR TAB -->
+  <div id="tab-calendar" class="tab-content">
+    <div class="app-section-label">April 2026</div>
+    <div class="cal-grid">
+      <div class="cal-dh">Su</div><div class="cal-dh">Mo</div><div class="cal-dh">Tu</div><div class="cal-dh">We</div><div class="cal-dh">Th</div><div class="cal-dh">Fr</div><div class="cal-dh">Sa</div>
+      <div class="cal-d faded">30</div><div class="cal-d faded">31</div><div class="cal-d has-ev">1</div><div class="cal-d">2</div><div class="cal-d">3</div><div class="cal-d">4</div>
+      <div class="cal-d has-ev">5</div><div class="cal-d">6</div><div class="cal-d">7</div><div class="cal-d">8</div><div class="cal-d">9</div><div class="cal-d has-ev">10</div><div class="cal-d">11</div>
+      <div class="cal-d">12</div><div class="cal-d">13</div><div class="cal-d">14</div><div class="cal-d">15</div><div class="cal-d has-ev">16</div><div class="cal-d">17</div><div class="cal-d">18</div>
+      <div class="cal-d">19</div><div class="cal-d">20</div><div class="cal-d">21</div><div class="cal-d">22</div><div class="cal-d">23</div><div class="cal-d">24</div><div class="cal-d today has-ev">25</div>
+      <div class="cal-d">26</div><div class="cal-d">27</div><div class="cal-d has-ev">28</div><div class="cal-d">29</div><div class="cal-d">30</div>
+    </div>
+    <div class="app-section-label">Upcoming</div>
+    <div id="calendar-events-list"></div>
+  </div>
+
+  <!-- PROFILE TAB -->
+  <div id="tab-profile" class="tab-content">
+    <div class="profile-hero">
+      <div class="profile-av" id="profile-avatar">🎓</div>
+      <div class="profile-name" id="profile-name">College Student</div>
+      <div class="badge badge-blue">Cashline Member</div>
+    </div>
+    <div class="stat-row-3">
+      <div class="s3-box"><div class="s3-val" style="color:#1a47ff">70</div><div class="s3-lbl">Health Score</div></div>
+      <div class="s3-box"><div class="s3-val" id="streak-val">1</div><div class="s3-lbl">Streak 🔥</div></div>
+      <div class="s3-box"><div class="s3-val" id="goals-count">0</div><div class="s3-lbl">Goals</div></div>
+    </div>
+    <div class="menu-row" onclick="openSheet('upi-sync')"><div class="mr-icon" style="background:#fff9eb">📱</div><div class="mr-label">Connect GPay / UPI</div><div class="mr-arrow">›</div></div>
+    <div class="menu-row" onclick="showToast('SMS sync coming soon!')"><div class="mr-icon" style="background:#e8ecff">💬</div><div class="mr-label">Sync bank SMS alerts</div><div class="mr-arrow">›</div></div>
+    <div class="menu-row" onclick="showToast('Alerts configured!')"><div class="mr-icon" style="background:#fff9eb">🔔</div><div class="mr-label">WhatsApp / SMS alerts</div><div class="mr-arrow">›</div></div>
+    <div class="menu-row" onclick="showToast('Report downloaded!')"><div class="mr-icon" style="background:#e8f9f4">📄</div><div class="mr-label">Download PDF report</div><div class="mr-arrow">›</div></div>
+    <div class="menu-row" onclick="showLanding()"><div class="mr-icon" style="background:#fff0f1">🚪</div><div class="mr-label">Switch persona / Log out</div><div class="mr-arrow">›</div></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="app-bottom-nav">
+    <div class="abn-item active" id="nav-home"     onclick="appSwitchTab('home')">    <div class="abn-icon">🏠</div><div>Home</div></div>
+    <div class="abn-item"        id="nav-invoices" onclick="appSwitchTab('invoices')"><div class="abn-icon">🧾</div><div>Invoices</div></div>
+    <div class="abn-item"        id="nav-ai"       onclick="appSwitchTab('ai')">      <div class="abn-icon">🤖</div><div>AI</div></div>
+    <div class="abn-item"        id="nav-calendar" onclick="appSwitchTab('calendar')"><div class="abn-icon">📅</div><div>Calendar</div></div>
+    <div class="abn-item"        id="nav-profile"  onclick="appSwitchTab('profile')"> <div class="abn-icon">👤</div><div>Profile</div></div>
+  </div>
+</div>
+
+
+<!-- SHEETS -->
+<div class="sheet-overlay" id="sheet-add-expense"     onclick="closeSheet(event,'add-expense')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add expense</div>
+    <div class="form-row"><label class="form-lbl">What's this for?</label><input class="form-inp" id="exp-name" placeholder="e.g. Hostel rent, Books..."></div>
+    <div class="form-2col">
+      <div class="form-row"><label class="form-lbl">Amount (₹)</label><input class="form-inp" id="exp-amount" type="number" placeholder="0"></div>
+      <div class="form-row"><label class="form-lbl">Due date</label><input class="form-inp" id="exp-date" type="date"></div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Urgency</label>
+      <select class="form-inp" id="exp-flex">
+        <option value="critical">🔴 Critical — fixed, no delay</option>
+        <option value="tight">🟡 Tight — can delay with penalty</option>
+        <option value="safe" selected>🟢 Safe — flexible</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:8px" onclick="saveExpense()">Add to Cashline</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheet-add-invoice"     onclick="closeSheet(event,'add-invoice')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add invoice / income</div>
+    <div class="form-row"><label class="form-lbl">Client / Source</label><input class="form-inp" id="inv-source" placeholder="e.g. Aryan Design Co."></div>
+    <div class="form-2col">
+      <div class="form-row"><label class="form-lbl">Amount (₹)</label><input class="form-inp" id="inv-amount" type="number" placeholder="0"></div>
+      <div class="form-row"><label class="form-lbl">Expected by</label><input class="form-inp" id="inv-date" type="date"></div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Status</label>
+      <select class="form-inp" id="inv-status">
+        <option value="pending">Invoice sent — awaiting payment</option>
+        <option value="overdue">Overdue</option>
+        <option value="paid">Paid</option>
+      </select>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:8px" onclick="saveInvoice()">Track this income</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheet-add-goal"        onclick="closeSheet(event,'add-goal')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">New savings goal</div>
+    <div class="form-row"><label class="form-lbl">Goal name</label><input class="form-inp" id="goal-name" placeholder="e.g. New phone, Trip..."></div>
+    <div class="form-2col">
+      <div class="form-row"><label class="form-lbl">Target (₹)</label><input class="form-inp" id="goal-target" type="number" placeholder="0"></div>
+      <div class="form-row"><label class="form-lbl">Target date</label><input class="form-inp" id="goal-date" type="date"></div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Saved so far (₹)</label><input class="form-inp" id="goal-saved" type="number" placeholder="0"></div>
+    <button class="btn-primary" style="width:100%;margin-top:8px" onclick="saveGoal()">Create goal</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheet-add-transaction" onclick="closeSheet(event,'add-transaction')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add transaction</div>
+    <div class="form-row"><label class="form-lbl">Description</label><input class="form-inp" id="txn-name" placeholder="e.g. Zomato, Client payment..."></div>
+    <div class="form-2col">
+      <div class="form-row"><label class="form-lbl">Amount (₹)</label><input class="form-inp" id="txn-amount" type="number" placeholder="0"></div>
+      <div class="form-row"><label class="form-lbl">Date</label><input class="form-inp" id="txn-date" type="date"></div>
+    </div>
+    <div class="form-row"><label class="form-lbl">Type</label>
+      <select class="form-inp" id="txn-type"><option value="expense">📤 Expense</option><option value="income">📥 Income</option></select>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:8px" onclick="saveTransaction()">Log transaction</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheet-upi-sync"        onclick="closeSheet(event,'upi-sync')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Connect UPI / GPay</div>
+    <p style="font-size:13px;color:#6b6b6b;margin-bottom:20px">Auto-read your UPI transactions — no passwords required</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div class="upi-opt" onclick="showToast('GPay connected! ✓')"><div style="font-size:26px;margin-bottom:6px">📱</div>Google Pay</div>
+      <div class="upi-opt" onclick="showToast('PhonePe connected! ✓')"><div style="font-size:26px;margin-bottom:6px">💜</div>PhonePe</div>
+      <div class="upi-opt" onclick="showToast('Paytm connected! ✓')"><div style="font-size:26px;margin-bottom:6px">💙</div>Paytm</div>
+      <div class="upi-opt" onclick="openSheet('add-transaction')"><div style="font-size:26px;margin-bottom:6px">📄</div>Upload CSV</div>
+    </div>
+    <p style="font-size:11px;color:#6b6b6b;text-align:center">🔒 No passwords or OTPs ever required.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
